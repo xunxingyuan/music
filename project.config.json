@@ -1,0 +1,15 @@
+{
+	"description": "music",
+	"setting": {
+		"urlCheck": true,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"appid": "wxa92415451b6dd7de",
+	"projectname": "musiclesson",
+	"miniprogramRoot": "./dist",
+	"condition": {}
+}
