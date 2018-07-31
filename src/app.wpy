@@ -9,10 +9,10 @@ export default class extends wepy.app {
       'pages/index'
     ],
     window: {
-      backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
+      "backgroundTextStyle":"light",
+      "navigationBarBackgroundColor": "#D0B485",
+      "navigationBarTitleText": "律声云课堂",
+      "navigationBarTextStyle":"write"
     }
   }
 
@@ -58,6 +58,9 @@ export default class extends wepy.app {
 </script>
 
 <style lang="less">
+page{
+  height: 100%;
+}
 .container {
   height: 100%;
   display: flex;
