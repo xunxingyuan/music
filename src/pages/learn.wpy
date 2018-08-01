@@ -1,0 +1,61 @@
+<!--  -->
+<template>
+  <view class='container'>
+    <list :listData.sync="lists"></list>
+    <nav></nav>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import Nav from '@/components/common/nav'
+  import LearnList from '@/components/learn/list'
+
+  export default class Learn extends wepy.page {
+    config = {
+      navigationBarTitleText: "学习",
+    };
+    data = {
+      lists: [{
+        name: '曲谱2',
+        time: '2018-06-28 周四',
+        location: '松江VIP集中特训班',
+        author: '张老师',
+        publishTime: '2018-07-04'
+      }, {
+        name: '曲谱2',
+        time: '2018-06-28 周四',
+        location: '松江VIP集中特训班',
+        author: '张老师',
+        publishTime: '2018-07-04'
+      }, {
+        name: '曲谱2',
+        time: '2018-06-28 周四',
+        location: '松江VIP集中特训班',
+        author: '张老师',
+        publishTime: '2018-07-04'
+      }, {
+        name: '曲谱2',
+        time: '2018-06-28 周四',
+        location: '松江VIP集中特训班',
+        author: '张老师',
+        publishTime: '2018-07-04'
+      }]
+    };
+    components = {
+      nav: Nav,
+      list: LearnList
+    };
+    methods = {};
+    events = {};
+
+    watch = {};
+    computed = {};
+    onLoad() {};
+    onShow() {};
+  }
+</script>
+
+<style lang='less'>
+
+</style>

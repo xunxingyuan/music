@@ -1,0 +1,38 @@
+<!--  -->
+<template>
+  <view class="navBot">
+    <text class='nav'>学习</text>
+    <text class='nav'>资源</text>
+    <text class="nav">我的</text>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  export default class Nav extends wepy.component {
+    props = {};
+    data = {};
+    components = {};
+    methods = {};
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {};
+    onShow() {};
+  }
+</script>
+<style lang='less'>
+  .navBot {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100rpx;
+    display: flex;
+    width: 100%;
+    .nav {
+      flex: 1;
+      text-align: center;
+      line-height: 100rpx;
+      border: solid 1px #ddd;
+    }
+  }
+</style>

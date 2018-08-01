@@ -2,8 +2,8 @@
 <template>
   <view class='login'>
     <view>
-      <button @tap.capture.stop="login">VIP登录</button>
-      <text>游客登录</text>
+      <button @tap="login" open-type="getUserInfo">VIP登录</button>
+      <text @tap="login">游客登录</text>
     </view>
     <view class='coverBox' wx:if="{{showLogin}}">
       <view class='loginCheck'>
@@ -15,7 +15,7 @@
             <button class='getCode'>获取验证码</button>
           </view>
         </view>
-        <button class='auth' bindtap="auth">验证VIP</button>
+        <button class='auth' @tap="auth">验证VIP</button>
       </view>
     </view>
   </view>
@@ -23,22 +23,28 @@
 
 <script>
   import wepy from 'wepy';
-  export default class Index extends wepy.component {
+  export default class Index extends wepy.page {
     props = {};
     data = {
-      showLogin: false
+      showLogin: false,
+      num: 20
     };
     components = {};
     methods = {
       login() {
-        console.log(this.showLogin)
-        this.data.showLogin = true;
+        this.showLogin = true
+        this.num++
+      },
+      auth(){
+        wepy.navigateTo({ url: '/pages/learn' });
       }
     };
     events = {};
     watch = {};
     computed = {};
-    onLoad() {}
+    onLoad() {
+      
+    }
     onShow() {}
   }
 </script>

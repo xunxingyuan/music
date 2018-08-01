@@ -1,0 +1,48 @@
+<!--  -->
+<template>
+  <view class='listContain'>
+
+
+    <view class="listItem" wx:for="{{listData}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+      <view class='msgTop'>
+        <text>{{item.time}}</text>
+        <text>{{item.name}}</text>
+      </view>
+      <view class='msgBot'>
+        <text>{{item.location}}</text>
+        <text>{{item.author}}</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class List extends wepy.component {
+    props = {
+      listData: Array
+    };
+    data = {};
+    components = {};
+    methods = {
+      check(){
+        console.log(this.listData);
+      }
+    };
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {};
+    onShow() {};
+  }
+</script>
+
+<style lang='less'>
+  .listContain{
+    width: 100%;
+    .listItem{
+      border: solid 1px #ddd;
+      margin: 0.5rem 1rem;
+    }
+  }
+</style>
