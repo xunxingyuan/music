@@ -1,0 +1,109 @@
+<!--  -->
+<template>
+  <scroll-view class='resource'>
+    <view class='search'>
+      <view class='searchInner'>
+        <span>sou</span>
+      </view>
+      <view class='flex type'>
+        <text>视频</text>
+        <text>/</text>
+        <text>音频</text>
+        <text>/</text>
+        <text>曲谱</text>
+      </view>
+    </view>
+    <view class='content'>
+      <view class='item flex'>
+        <text class='name'>故乡的原风景</text>
+        <view class='detail'>
+          <text>5</text>
+          <text>2</text>
+          <text>7</text>
+        </view>
+      </view>
+      <view class='item flex'>
+        <text class='name'>故乡的原风景</text>
+        <view class='detail'>
+          <text>5</text>
+          <text>2</text>
+          <text>7</text>
+        </view>
+      </view>
+      <view class='item flex'>
+        <text class='name'>故乡的原风景</text>
+        <view class='detail'>
+          <text>5</text>
+          <text>2</text>
+          <text>7</text>
+        </view>
+      </view>
+      
+    </view>
+    <nav></nav>
+  </scroll-view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import Nav from '@/components/common/nav'
+  export default class Resource extends wepy.page {
+    config = {
+      navigationBarTitleText: "资源",
+    };
+    data = {};
+    components = {
+      nav: Nav,
+    };
+    methods = {};
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {};
+    onShow() {};
+  }
+</script>
+
+<style lang='less'>
+  .resource{
+    .search{
+      background: #D0B485;
+      margin-top: 1rpx;
+      padding: 0.5rem 1rem;
+      .searchInner{
+        background: #e5e5e5;
+        border-radius: 14px;
+        height: 30px;
+        padding: 0 0.5rem;
+        color: #fff;
+      }
+      .type{
+        justify-content: space-around;
+        font-size: 16px;
+        color: #fff;
+        height: 80rpx;
+      }
+    }
+    .content{
+      padding-bottom: 120rpx;
+      .item{
+        background: #fff;
+        margin-bottom: 1px;
+        height: 120rpx;
+        padding: 0 1rem;
+        line-height: 120rpx;
+        justify-content: space-between;
+        .name{
+          font-size: 16px;
+          color: #000;
+        }
+        .detail{
+          color: #C1C1C1;
+          text{
+            margin-left: 1rem;
+          }
+        }
+      }
+    }
+  }
+</style>

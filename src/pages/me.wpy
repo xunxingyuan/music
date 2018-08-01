@@ -1,0 +1,143 @@
+<!--  -->
+<template>
+  <view class='me'>
+    <view class='info flex'>
+      <text class='icon'></text>
+      <span><text class='username'>欧阳成双</text> / 老师</span>
+    </view>
+    <view class='infoBox'>
+      <view class='userItem flex'>
+        <view class='itemBox first'>
+          <text class='title'>我的学生</text>
+          <view class='count flex'>
+            <text class='number'>30</text>
+            <text class='line'>/</text>
+            <text>人</text>
+          </view>
+          <text class='tips'>共3个班级</text>
+        </view>
+        <view class='itemBox'>
+          <text class='title'>我的下载</text>
+          <view class='count flex'>
+            <text class='number'>40</text>
+            <text class='line'>/</text>
+            <text>个</text>
+          </view>
+          <text class='tips'>3个视频，4个音频</text>
+        </view>
+      </view>
+      <view class='userItem flex bot'>
+        <view class='itemBox first'>
+          <text class='title'>我的收藏</text>
+          <view class='count flex'>
+            <text class='number'>30</text>
+            <text class='line'>/</text>
+                        <text>个</text>
+
+          </view>
+          <text class='tips'>2个音频，4个视频，2个曲集</text>
+        </view>
+        <view class='itemBox'>
+          <text class='title'>我的评论</text>
+          <view class='count flex'>
+            <text class='number'>60</text>
+            <text class='line'>/</text>
+            <text>条</text>
+          </view>
+          <text class='tips'>已评论50个作品</text>
+        </view>
+      </view>
+    </view>
+    <nav></nav>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import Nav from '@/components/common/nav'
+  export default class Me extends wepy.page {
+    config = {
+      navigationBarTitleText: "我的",
+    };
+    data = {};
+    components = {
+      nav: Nav,
+    };
+    methods = {};
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {};
+    onShow() {};
+  }
+</script>
+
+<style lang='less'>
+  .me {
+    .info {
+      height: 500rpx;
+      background: #D0B485;
+      flex-flow: column;
+      font-size: 14px;
+      justify-content: flex-start;
+      .icon {
+        margin-top: 0.5rem;
+        width: 110px;
+        height: 110px;
+        border-radius: 55px;
+        background: #fff;
+        margin-bottom: 0.5rem;
+      }
+      .username{
+        font-size: 24px;
+      }
+    }
+    .infoBox {
+      margin-top: -130rpx;
+      .userItem {
+        .itemBox {
+          height: 240rpx;
+          flex: 1;
+          margin: 0 1rem;
+          background: #fff;
+          border-radius: 5px;
+          box-shadow: 0 0 2px #9D9DA7;
+          padding: 1rem;
+          position: relative;
+          display: flex;
+          flex-flow: column;
+          align-items: flex-start;
+          justify-content: space-between;
+          .title {
+            font-size: 16px;
+            color: #353535;
+          }
+          .count {
+            align-self: center;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            color: #D0B485;
+            font-size: 12px;
+            .number {
+              font-size: 32px;
+            }
+            .line{
+              margin: 0 0.3rem;
+            }
+          }
+          .tips {
+            font-size: 10px;
+            color: #999;
+          }
+        }
+        .first {
+          margin-right: 0;
+        }
+      }
+      .bot {
+        margin-top: 1rem;
+      }
+    }
+  }
+</style>

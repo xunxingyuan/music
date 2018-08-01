@@ -1,38 +1,68 @@
 <!--  -->
 <template>
   <view class="navBot">
-    <text class='nav'>学习</text>
-    <text class='nav'>资源</text>
-    <text class="nav">我的</text>
+    <repeat  for="{{menu}}" key="index" index="index" item="item">
+        <view @tap="toPath({{item}})" class='navItem'>
+          <text :class="{'active':checkLocation === item.url}">{{item.name}}</text>
+        </view>
+    </repeat>
   </view>
 </template>
 <script>
   import wepy from 'wepy';
   export default class Nav extends wepy.component {
-    props = {};
-    data = {};
+    props = {
+      activeMenu: String
+    };
+    data = {
+      menu:[{
+        name: '学习',
+        url: '/pages/learn'
+      },{
+        name: '资源',
+        url: '/pages/resource'
+      },{
+        name: '我的',
+        url: '/pages/me'
+      }]
+    };
     components = {};
-    methods = {};
+    methods = {
+      toPath(item){
+        wepy.navigateTo({ url: item.url });
+      },
+    };
     events = {};
     watch = {};
-    computed = {};
-    onLoad() {};
+    computed = {
+      checkLocation(){
+        let url = '/'+ this.$wxpage.route
+        return url
+      }
+    };
+    onLoad() {
+      
+    };
     onShow() {};
   }
 </script>
 <style lang='less'>
   .navBot {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
-    height: 100rpx;
+    height: 120rpx;
     display: flex;
     width: 100%;
-    .nav {
+    background: #fff;
+    .navItem {
       flex: 1;
       text-align: center;
-      line-height: 100rpx;
-      border: solid 1px #ddd;
+      line-height: 120rpx;
+      font-size: 15px;
+      .active{
+        color: #D0B485;
+      }
     }
   }
 </style>

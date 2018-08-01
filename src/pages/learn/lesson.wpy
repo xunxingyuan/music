@@ -1,0 +1,137 @@
+<!--  -->
+<template>
+  <view class='lesson'>
+    <view class='block'>
+      <view><text class='time'>07-02</text>/周一</view>
+      <view class='flex msg'>
+        <text class='name'>松江VIP集中特训班</text>
+        <text class='teacher'>张三老师 2018-07-04 更新</text>
+      </view>
+    </view>
+    <view class='block'>
+      <text class='title'>知识点</text>
+      <text class='point'>右手手指序号 T 1234</text>
+      <text class='point'>拨片弹拨 Pick</text>
+      <text class='point'>右手手指序号 T 1234</text>
+    </view>
+    <view class='block'>
+      <text class='title'>曲谱</text>
+      <view class='imgBox flex'>
+        <view class='img'>
+          <image src="{{imgSrc}}" ></image>
+          <span>第一段</span>
+        </view>
+        <view  class='img'>
+          <image src="{{imgSrc}}"></image>
+          <span>第二段</span>
+        </view>
+        <view  class='img'>
+          <image src="{{imgSrc}}"></image>
+          <span>第三段</span>
+        </view>
+      </view>
+    </view>
+    <view class='block last'>
+      <text class='title'>音频</text>
+      <view class='flex musicItem'>
+        <text>希望的田野上</text>
+        <view>
+          <text>播放</text>
+        </view>
+      </view>
+      <view class='flex musicItem'>
+        <text>希望的田野上</text>
+        <view>
+          <text>播放</text>
+        </view>
+      </view>
+      <view class='flex musicItem'>
+        <text>希望的田野上</text>
+        <view>
+          <text>播放</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+
+<script>
+  import wepy from 'wepy';
+  export default class Lesson extends wepy.page {
+    config = {
+      navigationBarTitleText: "详情",
+    };
+    data = {
+      imgSrc: "../../resource/pu.png"
+    };
+    components = {};
+    methods = {};
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {};
+    onShow() {};
+  }
+</script>
+
+<style lang='less'>
+  .lesson {
+    .block {
+      margin-bottom: 10px;
+      background: #f9f9f9;
+      padding: 1rem;
+      font-size: 15px;
+      .imgBox{
+        overflow-y: hidden;
+        overflow-x: auto;
+        justify-content: flex-start;
+        .img{
+          flex: 1;
+          display: inline-block;
+          min-width: 200px;
+          margin-right: 1rem;
+          image{
+            width: 200px;
+            height: 150px;
+            margin: 1rem 0;
+          }
+        }
+      }
+      .title {
+        color: #888;
+        font-size: 13px;
+        display: block;
+      }
+      .time {
+        font-size: 24px;
+      }
+      .point {
+        display: block;
+        color: #353535;
+        margin: 0.5rem 0;
+      }
+      .msg {
+        justify-content: space-between;
+        margin-top: 10px;
+        .name {
+          font-size: 1rem;
+        }
+        .teacher {
+          font-size: 12px;
+          color: #a9a9a9;
+        }
+      }
+      .musicItem{
+        width: 100%;
+        justify-content: space-between;
+        height: 80rpx;
+        line-height: 80rpx;
+        border-bottom: solid 1px #ddd;
+      }
+    }
+    .last{
+      margin-bottom: 0;
+    }
+  }
+</style>

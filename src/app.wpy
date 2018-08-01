@@ -4,6 +4,9 @@
   export default class extends wepy.app {
     config = {
       pages: [
+        'pages/me',
+        'pages/resource',
+        'pages/learn/lesson',
         'pages/learn',        
         'pages/index',
       ],
@@ -52,6 +55,7 @@
 <style lang="less">
   page {
     height: 100%;
+    background: rgba(227, 227, 230,1);
   }
   .container {
     height: 100%;
@@ -60,5 +64,10 @@
     align-items: center;
     justify-content: space-between;
     box-sizing: border-box;
+  }
+  .flex{
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>
