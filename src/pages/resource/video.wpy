@@ -1,0 +1,35 @@
+<!--  -->
+<template>
+  <view class='video'>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class Video extends wepy.page {
+    config = {
+      navigationBarTitleText: "视频",
+    };
+
+    data = {};
+
+    components = {};
+
+    methods = {};
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad() { };
+
+    onShow() { };
+  }
+</script>
+
+<style lang='less'>
+
+</style>

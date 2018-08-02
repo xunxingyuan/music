@@ -3,7 +3,7 @@
   <view class='login'>
     <view>
       <button @tap="login" open-type="getUserInfo">VIP登录</button>
-      <text @tap="login">游客登录</text>
+      <button @tap="login" open-type="getUserInfo">游客登录</button>
     </view>
     <view class='coverBox' wx:if="{{showLogin}}">
       <view class='loginCheck'>
@@ -36,7 +36,7 @@
         this.num++
       },
       auth(){
-        wepy.navigateTo({ url: '/pages/learn' });
+        wepy.redirectTo({ url: '/pages/home' });
       }
     };
     events = {};

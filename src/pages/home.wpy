@@ -1,0 +1,58 @@
+<!--  -->
+<template>
+  <view class='container'>
+    <learn hidden="{{activeTabNum != 1}}"></learn>
+    <resource hidden="{{activeTabNum != 2}}"></resource>
+    <me hidden="{{activeTabNum != 3}}"></me>
+    <nav :activeTab.sync='activeTabNum' @changeTab.user='changeTabCtrl'></nav>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import Nav from '@/components/common/nav'
+  import Learn from '@/components/learn'
+  import Resource from '@/components/resource'
+  import Me from '@/components/me'
+  export default class Example extends wepy.page {
+    config = {
+      navigationBarTitleText: "学习",
+    };
+    data = {
+      activeTabNum: 1
+    };
+    components = {
+      nav: Nav,
+      learn: Learn,
+      resource: Resource,
+      me: Me
+    };
+    methods = {
+      changeTabCtrl(num, evt) {
+        this.activeTabNum = num
+        if (num === 1) {
+          wx.setNavigationBarTitle({
+            title: '学习'
+          })
+        } else if (num === 2) {
+          wx.setNavigationBarTitle({
+            title: '资源'
+          })
+        } else if (num === 3) {
+          wx.setNavigationBarTitle({
+            title: '我的'
+          })
+        }
+      }
+    };
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {};
+    onShow() {};
+  }
+</script>
+
+<style lang='less'>
+
+</style>

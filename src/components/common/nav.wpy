@@ -1,10 +1,10 @@
 <!--  -->
 <template>
   <view class="navBot">
-    <repeat  for="{{menu}}" key="index" index="index" item="item">
-        <view @tap="toPath({{item}})" class='navItem'>
-          <text :class="{'active':checkLocation === item.url}">{{item.name}}</text>
-        </view>
+    <repeat for="{{menu}}" key="index" index="index" item="item">
+      <view @tap="toPath({{index}})" class='navItem'>
+        <text :class="{'active':activeTab === index+1}">{{item.name}}</text>
+      </view>
     </repeat>
   </view>
 </template>
@@ -12,37 +12,30 @@
   import wepy from 'wepy';
   export default class Nav extends wepy.component {
     props = {
-      activeMenu: String
+      activeTab: Number
     };
     data = {
-      menu:[{
+      menu: [{
         name: '学习',
-        url: '/pages/learn'
-      },{
+        id: 1
+      }, {
         name: '资源',
-        url: '/pages/resource'
-      },{
+        id: 2
+      }, {
         name: '我的',
-        url: '/pages/me'
+        id: 3
       }]
     };
     components = {};
     methods = {
-      toPath(item){
-        wepy.navigateTo({ url: item.url });
+      toPath(index) {        
+        this.$emit('changeTab',index+1)
       },
     };
     events = {};
     watch = {};
-    computed = {
-      checkLocation(){
-        let url = '/'+ this.$wxpage.route
-        return url
-      }
-    };
-    onLoad() {
-      
-    };
+    computed = {};
+    onLoad() {};
     onShow() {};
   }
 </script>
@@ -60,7 +53,7 @@
       text-align: center;
       line-height: 120rpx;
       font-size: 15px;
-      .active{
+      .active {
         color: #D0B485;
       }
     }

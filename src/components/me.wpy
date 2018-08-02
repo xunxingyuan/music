@@ -2,12 +2,15 @@
 <template>
   <view class='me'>
     <view class='info flex'>
-      <text class='icon'></text>
-      <span><text class='username'>欧阳成双</text> / 老师</span>
+      <view class='icon'>
+        <open-data class='iconInner' type="userAvatarUrl"></open-data>
+      </view>
+      <view>
+        <open-data class='username' type="userNickName"></open-data> / 老师</view>
     </view>
     <view class='infoBox'>
       <view class='userItem flex'>
-        <view class='itemBox first'>
+        <view class='itemBox first' @tap="viewItem('student')">
           <text class='title'>我的学生</text>
           <view class='count flex'>
             <text class='number'>30</text>
@@ -16,7 +19,7 @@
           </view>
           <text class='tips'>共3个班级</text>
         </view>
-        <view class='itemBox'>
+        <view class='itemBox' @tap="viewItem('download')">
           <text class='title'>我的下载</text>
           <view class='count flex'>
             <text class='number'>40</text>
@@ -27,17 +30,16 @@
         </view>
       </view>
       <view class='userItem flex bot'>
-        <view class='itemBox first'>
+        <view class='itemBox first' @tap="viewItem('collection')">
           <text class='title'>我的收藏</text>
           <view class='count flex'>
             <text class='number'>30</text>
             <text class='line'>/</text>
-                        <text>个</text>
-
+            <text>个</text>
           </view>
           <text class='tips'>2个音频，4个视频，2个曲集</text>
         </view>
-        <view class='itemBox'>
+        <view class='itemBox' @tap="viewItem('comment')">
           <text class='title'>我的评论</text>
           <view class='count flex'>
             <text class='number'>60</text>
@@ -48,22 +50,38 @@
         </view>
       </view>
     </view>
-    <nav></nav>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
-  import Nav from '@/components/common/nav'
-  export default class Me extends wepy.page {
+  export default class Me extends wepy.component {
     config = {
       navigationBarTitleText: "我的",
     };
     data = {};
-    components = {
-      nav: Nav,
+    components = {};
+    methods = {
+      viewItem(item) {
+        if (item === 'student') {
+          wepy.navigateTo({
+            url: '/pages/me/myStudent'
+          });
+        } else if (item === 'download') {
+          wepy.navigateTo({
+            url: '/pages/me/download'
+          });
+        } else if (item === 'collection') {
+          wepy.navigateTo({
+            url: '/pages/me/collection'
+          });
+        } else if (item === 'comment') {
+          wepy.navigateTo({
+            url: '/pages/me/comment'
+          });
+        }
+      }
     };
-    methods = {};
     events = {};
     watch = {};
     computed = {};
@@ -74,6 +92,8 @@
 
 <style lang='less'>
   .me {
+    width: 100%;
+    height: 100%;
     .info {
       height: 500rpx;
       background: #D0B485;
@@ -87,8 +107,13 @@
         border-radius: 55px;
         background: #fff;
         margin-bottom: 0.5rem;
+        overflow: hidden;
+        .iconInner {
+          width: 110px;
+          height: 110px;
+        }
       }
-      .username{
+      .username {
         font-size: 24px;
       }
     }
@@ -122,7 +147,7 @@
             .number {
               font-size: 32px;
             }
-            .line{
+            .line {
               margin: 0 0.3rem;
             }
           }

@@ -4,11 +4,21 @@
   export default class extends wepy.app {
     config = {
       pages: [
-        'pages/me',
-        'pages/resource',
-        'pages/learn/lesson',
-        'pages/learn',        
+        'pages/home',
         'pages/index',
+        'pages/search',
+        'pages/learn/lesson',
+        'pages/resource/music',
+        'pages/resource/score',
+        'pages/resource/video',
+        'pages/resource/player/videoPlay',
+        'pages/resource/player/scoreView',
+        'pages/me/collection',
+        'pages/me/comment',
+        'pages/me/download',
+        'pages/me/myStudent',
+        'pages/me/mySkill',
+        'pages/me/skill/skill',
       ],
       window: {
         "backgroundTextStyle": "light",
@@ -24,7 +34,6 @@
       super()
       this.use('requestfix')
     }
-    
     async onLaunch() {
       await wepy.login({
         success: function(res) {
@@ -55,7 +64,7 @@
 <style lang="less">
   page {
     height: 100%;
-    background: rgba(227, 227, 230,1);
+    background: rgba(227, 227, 230, 1);
   }
   .container {
     height: 100%;
@@ -65,7 +74,7 @@
     justify-content: space-between;
     box-sizing: border-box;
   }
-  .flex{
+  .flex {
     display: flex;
     align-items: center;
     justify-content: center;

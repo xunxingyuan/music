@@ -1,9 +1,7 @@
 <!--  -->
 <template>
   <view class='listContain'>
-
-
-    <view class="listItem" wx:for="{{listData}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+    <view class="listItem" @tap='toLesson({{item}})' wx:for="{{listData}}" wx:for-index="index" wx:for-item="item" wx:key="index">
       <view class='msgTop'>
         <text>{{item.time}}</text>
         <text>{{item.name}}</text>
@@ -25,8 +23,8 @@
     data = {};
     components = {};
     methods = {
-      check(){
-        console.log(this.listData);
+      toLesson(){
+        wepy.navigateTo({ url: '/pages/learn/lesson' });
       }
     };
     events = {};
@@ -38,9 +36,9 @@
 </script>
 
 <style lang='less'>
-  .listContain{
+  .listContain {
     width: 100%;
-    .listItem{
+    .listItem {
       border: solid 1px #ddd;
       margin: 0.5rem 1rem;
     }

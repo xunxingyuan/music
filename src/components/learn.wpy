@@ -1,17 +1,15 @@
 <!--  -->
 <template>
-  <view class='container'>
+  <view class='learn'>
     <list :listData.sync="lists"></list>
-    <nav></nav>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
-  import Nav from '@/components/common/nav'
   import LearnList from '@/components/learn/list'
 
-  export default class Learn extends wepy.page {
+  export default class Learn extends wepy.component {
     config = {
       navigationBarTitleText: "学习",
     };
@@ -44,7 +42,6 @@
     };
     
     components = {
-      nav: Nav,
       list: LearnList
     };
     methods = {};
@@ -58,5 +55,8 @@
 </script>
 
 <style lang='less'>
-
+  .learn{
+    width: 100%;
+    height: 100%;
+  }
 </style>
