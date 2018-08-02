@@ -3,7 +3,7 @@
   <view class='video'>
     <search></search>
     <view class='top'>
-      <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
+      <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap='viewVideo'>
       </image>
       <view class='detail'>
         <text>2</text>
@@ -67,7 +67,13 @@
     components = {
       search: Search
     };
-    methods = {};
+    methods = {
+      viewVideo() {
+        wepy.navigateTo({
+          url: '/pages/resource/player/videoPlay'
+        });
+      }
+    };
     events = {};
     watch = {};
     computed = {};

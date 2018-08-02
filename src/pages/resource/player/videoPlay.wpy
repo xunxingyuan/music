@@ -1,32 +1,120 @@
 <!--  -->
 <template>
-  <view class='container'></view>
+  <view class='videoPlay'>
+    <video class='show' src="{{videoSrc}}" controls="true"  objectFit="contain">
+        </video>
+    <view class='ctrl'>
+      <text>2</text>
+      <text>6</text>
+      <text>8</text>
+      <text>6</text>
+    </view>
+    <scroll-view class='comment'>
+      <view class='title'>
+        评论
+      </view>
+      <repeat for="{{commentList}}" key="index" index="index" item="item">
+        <view class='commentItem'>
+          <view class='top flex'>
+            <view class='user flex'>
+              <image class='userIcon' src="{{icon}}" mode="aspectFill" lazy-load="false">
+              </image>
+              <view>
+                <view class='name'>用户1</view>
+                <view class='time'>12:22 <text>2018-3-22</text></view>
+              </view>
+            </view>
+            <view>4</view>
+          </view>
+          <view class='bot'>
+            很好看的视频,很好看的视频,很好看的视频,很好看的视频,很好看的视频,很好看的视频，很好看的视频，很好看的视频，很好看的视频
+          </view>
+        </view>
+      </repeat>
+    </scroll-view>
+  </view>
 </template>
 
 <script>
   import wepy from 'wepy';
   export default class VideoPlay extends wepy.page {
     config = {
-      navigationBarTitleText: "曲谱",
+      navigationBarTitleText: "返回",
     };
-
-    data = {};
-
+    data = {
+      videoSrc: 'http://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f0201690402534804102ca905ce620b1241b726bc41dcff44e00204012882540400&bizid=1023&hy=SH&fileparam=302c020101042530230204136ffd93020457e3c4ff02024ef202031e8d7f02030f42400204045a320a0201000400',
+      icon: '../../../resource/images.png',
+      commentList: [1, 2, 3, 4, 5, 6]
+    };
     components = {};
-
     methods = {};
-
     events = {};
-
     watch = {};
-
     computed = {};
-
-    onLoad() { };
-
-    onShow() { };
+    onLoad() {};
+    onShow() {};
   }
 </script>
 
 <style lang='less'>
+  .videoPlay {
+    display: flex;
+    flex-flow: column;
+    .show {
+      width: 100%;
+    }
+    .ctrl {
+      width: 100%;
+      height: 80rpx;
+      min-height: 80rpx;
+      background: #fff;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      text {
+        margin-right: 1.5rem;
+        color: #666;
+      }
+    }
+    .comment {
+      flex: 1;
+      color: #888;
+      font-size: 16px;
+      .title {
+        height: 100rpx;
+        line-height: 100rpx;
+        padding-left: 1rem;
+      }
+      .commentItem {
+        padding: 0 1rem;
+        padding-bottom: 1rem;
+        border-bottom: solid 1px #DEDEE1;
+        .top {
+          justify-content: space-between;
+          .user {
+            .userIcon {
+              width: 60px;
+              height: 60px;
+              border-radius: 30px;
+              margin-right: 1rem;
+            }
+            .name {
+              color: #666;
+              font-size: 14px;
+              margin-bottom: 0.5rem;
+            }
+            .time {
+              color: #bbb;
+              font-size: 12px;
+            }
+          }
+        }
+        .bot {
+          color: #353535;
+          margin-top: 8px;
+        }
+      }
+    }
+  }
 </style>

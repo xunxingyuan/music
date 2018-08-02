@@ -1,6 +1,8 @@
 <!--  -->
 <template>
-  <view class='container'></view>
+  <view class='container'>
+    comment
+  </view>
 </template>
 
 <script>
@@ -9,24 +11,17 @@
     config = {
       navigationBarTitleText: "我的评论",
     };
-
     data = {};
-
     components = {};
-
     methods = {};
-
     events = {};
-
     watch = {};
-
     computed = {};
-
-    onLoad() { };
-
-    onShow() { };
+    onLoad() {};
+    onShow() {};
   }
 </script>
 
 <style lang='less'>
+
 </style>

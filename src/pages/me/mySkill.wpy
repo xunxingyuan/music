@@ -1,6 +1,8 @@
 <!--  -->
 <template>
-  <view class='container'></view>
+  <view class='container'>
+    skill
+  </view>
 </template>
 
 <script>

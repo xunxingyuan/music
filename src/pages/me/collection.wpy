@@ -1,6 +1,8 @@
 <!--  -->
 <template>
-  <view class='container'></view>
+  <view class='container'>
+    Collection
+  </view>
 </template>
 
 <script>
