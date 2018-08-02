@@ -3,7 +3,7 @@
   <view class='login'>
     <view>
       <button @tap="login" open-type="getUserInfo">VIP登录</button>
-      <button @tap="login" open-type="getUserInfo">游客登录</button>
+      <view class='normal' @tap="login" open-type="getUserInfo">游客登录</view>
     </view>
     <view class='coverBox' wx:if="{{showLogin}}">
       <view class='loginCheck'>
@@ -35,16 +35,16 @@
         this.showLogin = true
         this.num++
       },
-      auth(){
-        wepy.redirectTo({ url: '/pages/home' });
+      auth() {
+        wepy.redirectTo({
+          url: '/pages/home'
+        });
       }
     };
     events = {};
     watch = {};
     computed = {};
-    onLoad() {
-      
-    }
+    onLoad() {}
     onShow() {}
   }
 </script>
@@ -99,6 +99,12 @@
           }
         }
       }
+    }
+    .normal {
+      margin-top: 1rem;
+      color: #666;
+      text-align: center;
+      font-size: 14px;
     }
   }
 </style>
