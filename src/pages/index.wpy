@@ -9,9 +9,9 @@
       <view class='loginCheck'>
         <text>加入律声云课堂</text>
         <view class='msg'>
-          <input placeholder='输入VIP手机号码'>
+          <input placeholder='输入VIP手机号码' />
           <view class='authCode'>
-            <input class='authInput' placeholder='输入验证码'>
+            <input class='authInput' placeholder='输入验证码' />
             <button class='getCode'>获取验证码</button>
           </view>
         </view>

@@ -2,13 +2,19 @@
 <template>
   <view class='listContain'>
     <view class="listItem" @tap='toLesson({{item}})' wx:for="{{listData}}" wx:for-index="index" wx:for-item="item" wx:key="index">
-      <view class='msgTop'>
-        <text>{{item.time}}</text>
-        <text>{{item.name}}</text>
+      <view class='msgTop flex'>
+        <view class='time'>
+          <text class='date'>{{item.time}}</text>/{{item.week}}
+        </view>
+        <view class='count'>
+          <text>曲谱 2</text>
+          <text>音频 1</text>
+        </view>
       </view>
-      <view class='msgBot'>
+      <view class='msgBot flex'>
         <text>{{item.location}}</text>
-        <text>{{item.author}}</text>
+        <text class='line'>|</text>
+        <text>{{item.author}}更新</text>
       </view>
     </view>
   </view>
@@ -23,8 +29,10 @@
     data = {};
     components = {};
     methods = {
-      toLesson(){
-        wepy.navigateTo({ url: '/pages/learn/lesson' });
+      toLesson() {
+        wepy.navigateTo({
+          url: '/pages/learn/lesson'
+        });
       }
     };
     events = {};
@@ -38,9 +46,44 @@
 <style lang='less'>
   .listContain {
     width: 100%;
+    margin-top: -130rpx;
     .listItem {
-      border: solid 1px #ddd;
       margin: 0.5rem 1rem;
+      padding: 1rem 0 0 0;
+      background: #fff;
+      border-radius: 3px;
+      box-shadow: 0 0 2px #9D9DA7;
+      .msgTop {
+        padding: 0 1rem;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        .time {
+          font-size: 12px;
+          color: #666;
+          .date {
+            font-size: 18px;
+            color: #000;
+          }
+        }
+        .count {
+          font-size: 14px;
+          text {
+            margin-left: 0.5rem;
+          }
+        }
+      }
+      .msgBot {
+        height: 70rpx;
+        border-top: solid 1px #ddd;
+        font-size: 12px;
+        color: #999;
+        width: 100%;
+        justify-content: flex-start;
+        padding: 0 1rem;
+        .line {
+          margin: 0 0.5rem;
+        }
+      }
     }
   }
 </style>

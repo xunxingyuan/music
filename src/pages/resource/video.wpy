@@ -1,35 +1,141 @@
 <!--  -->
 <template>
   <view class='video'>
-
+    <search></search>
+    <view class='top'>
+      <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
+      </image>
+      <view class='detail'>
+        <text>2</text>
+        <text>2</text>
+        <text>2</text>
+        <text>2</text>
+      </view>
+      <text class='type'>FREE</text>
+    </view>
+    <view class='all'>
+      <div class='videoItem'>
+        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
+        </image>
+        <view class='intro'>
+          <text>吉他基本教学</text>
+          <text>3</text>
+        </view>
+        <text class='type'>FREE</text>
+      </div>
+      <div class='videoItem'>
+        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
+        </image>
+        <view class='intro'>
+          <text>吉他基本教学</text>
+          <text>3</text>
+        </view>
+        <text class='type'>FREE</text>
+      </div>
+      <div class='videoItem'>
+        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
+        </image>
+        <view class='intro'>
+          <text>吉他基本教学</text>
+          <text>3</text>
+        </view>
+        <text class='type'>FREE</text>
+      </div>
+      <div class='videoItem'>
+        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
+        </image>
+        <view class='intro'>
+          <text>吉他基本教学</text>
+          <text>3</text>
+        </view>
+        <text class='type'>FREE</text>
+      </div>
+    </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
+  import Search from '@/components/common/search'
   export default class Video extends wepy.page {
     config = {
       navigationBarTitleText: "视频",
     };
-
-    data = {};
-
-    components = {};
-
+    data = {
+      imgSrc: '../../resource/duzou.jpg'
+    };
+    components = {
+      search: Search
+    };
     methods = {};
-
     events = {};
-
     watch = {};
-
     computed = {};
-
-    onLoad() { };
-
-    onShow() { };
+    onLoad() {};
+    onShow() {};
   }
 </script>
 
 <style lang='less'>
-
+  .video {
+    .type {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 2px 4px;
+      font-size: 10px;
+      background: #f9f9f9;
+      border-radius: 2px;
+      color: #040817;
+    }
+    .top {
+      width: 100%;
+      height: 530rpx;
+      display: flex;
+      flex-flow: column;
+      position: relative;
+      .topImg {
+        width: 100%;
+        height: 450rpx;
+      }
+      .detail {
+        flex: 1;
+        background: #fff;
+        text-align: left;
+        display: flex;
+        justify-content: flex-end;
+        padding: 0 1rem;
+        align-items: center;
+        text {
+          margin-left: 1rem;
+        }
+      }
+    }
+    .all {
+      margin-top: 0.5rem;
+      background: #fff;
+      display: flex;
+      flex-wrap: wrap;
+      .videoItem {
+        width: 50%;
+        position: relative;
+        box-sizing: border-box;
+        padding: 8px 5px;
+        .botImg {
+          width: 100%;
+          height: 120px;
+          border-top-left-radius: 3px;
+          border-top-right-radius: 3px;
+        }
+        .intro {
+          display: flex;
+          padding: 0 10px;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 14px;
+          color: #353535;
+        }
+      }
+    }
+  }
 </style>

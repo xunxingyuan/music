@@ -1,0 +1,26 @@
+<!--  -->
+<template>
+    <view class='container'>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    export default class MusicShow extends wepy.page {
+        config = {
+            navigationBarTitleText: "show",
+        };
+        data = {};
+        components = {};
+        methods = {};
+        events = {};
+        watch = {};
+        computed = {};
+        onLoad() {};
+        onShow() {};
+    }
+</script>
+
+<style lang='less'>
+
+</style>

@@ -1,32 +1,285 @@
 <!--  -->
 <template>
-  <view class='container'></view>
+  <view class='music'>
+    <search></search>
+    <view class='searchFilter'>
+      <text>节拍器</text>
+      <text>人声</text>
+      <text>吉他</text>
+      <text>钢琴</text>
+      <text>鼓</text>
+      <text>...</text>
+    </view>
+    <repeat for="{{musicList}}" key="index" index="index" item="item">
+      <view class='musicItem'>
+        <view class='musicShow flex' @tap='showDetail({{item}})'>
+          <view class='left'>
+            <view class='flex'>
+              <view class='name'>{{item.name}}</view>
+              <text class='free' hidden="{{item.type != 0}}">FREE</text>
+              <text class='vip' hidden="{{item.type != 1}}">VIP</text>
+            </view>
+            <view>
+              <text class='count'>{{item.video}}</text>
+              <text class='count'>{{item.music}}</text>
+              <text class='count'>{{item.score}}</text>
+            </view>
+          </view>
+          <view class='right' @tap.stop='showMusicCtrl({{item}})'><text></text><text></text><text></text></view>
+        </view>
+        <view class='detail' hidden="{{item.show === 1}}">
+          <repeat for="{{item.child}}" key="index" index="index" item="detail">
+            <view class='detailBox flex'>
+              <view class='detailContent'>
+                <text class='title'>{{detail.name}}</text>
+                <view class='info'>
+                  <text>{{detail.music}}</text>
+                  <text>{{detail.score}}</text>
+                </view>
+              </view>
+              <view class='right'><text></text><text></text><text></text></view>
+            </view>
+          </repeat>
+        </view>
+      </view>
+    </repeat>
+    <view class='musicCtrl' hidden="{{showCtrl === 1}}">
+      <view class='flex'>
+        <view class='ctrl vip'>VIP-下载歌曲</view>
+        <view class='ctrl vip'>VIP-收藏歌曲</view>
+        <view class='ctrl'>歌曲简介</view>
+        <view class='ctrl cancel' @tap='cancelShowMusicCtrl'>取消</view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
   import wepy from 'wepy';
+  import Search from '@/components/common/search'
   export default class Music extends wepy.page {
     config = {
       navigationBarTitleText: "音频",
     };
-
-    data = {};
-
-    components = {};
-
-    methods = {};
-
+    data = {
+      showCtrl: 1,
+      musicList: [{
+        id: 1,
+        name: '故乡的原风景',
+        type: 0,
+        video: 5,
+        music: 2,
+        score: 7,
+        show: 0,
+        child: [{
+          name: '整章',
+          music: 2,
+          score: 7
+        }, {
+          name: '片段-第二乐章 第一部分',
+          music: 2,
+          score: 7
+        }, {
+          name: '片段-第二乐章 第一部分',
+          music: 2,
+          score: 7
+        }]
+      }, {
+        id: 2,
+        name: 'HOMETOWN',
+        type: 0,
+        video: 5,
+        music: 2,
+        score: 7,
+        show: 1,
+        child: [{
+          name: '整章',
+          music: 2,
+          score: 7
+        }, {
+          name: '片段-第二乐章 第一部分',
+          music: 2,
+          score: 7
+        }, {
+          name: '片段-第二乐章 第一部分',
+          music: 2,
+          score: 7
+        }]
+      }, {
+        id: 3,
+        name: 'GOODBYE MY LOVE',
+        type: 1,
+        video: 5,
+        music: 2,
+        score: 7,
+        show: 1,
+        child: [{
+          name: '整章',
+          music: 2,
+          score: 7
+        }, {
+          name: '片段-第二乐章 第一部分',
+          music: 2,
+          score: 7
+        }, {
+          name: '片段-第二乐章 第一部分',
+          music: 2,
+          score: 7
+        }]
+      }]
+    };
+    components = {
+      search: Search
+    };
+    methods = {
+      showDetail(item) {
+        this.musicList.forEach(element => {
+          if (element.id === item.id) {
+            if (element.show == 0) {
+              element.show = 1
+            } else {
+              element.show = 0
+            }
+          }
+        });
+      },
+      showMusicCtrl(item) {
+        this.showCtrl = 0
+      },
+      cancelShowMusicCtrl() {
+        this.showCtrl = 1
+      }
+    };
     events = {};
-
     watch = {};
-
     computed = {};
-
-    onLoad() { };
-
-    onShow() { };
+    onLoad() {};
+    onShow() {};
   }
 </script>
 
 <style lang='less'>
+  .music {
+    display: flex;
+    flex-flow: column;
+    .searchFilter {
+      display: flex;
+      flex-wrap: wrap;
+      background: #D0B485;
+      padding: 0 1rem;
+      text {
+        padding: 2px 10px;
+        display: block;
+        border: solid 1px #ECECEC;
+        color: #fff;
+        margin: 0 0.5rem 0.5rem 0.5rem;
+        font-size: 13px;
+        border-radius: 13px;
+      }
+    }
+    .musicItem {
+      background: #fff;
+      border-bottom: solid 1px #ddd;
+      padding: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      .musicShow {
+        justify-content: space-between;
+        .left {
+          .name {
+            font-size: 18px;
+          }
+          .free,
+          .vip {
+            font-size: 12px;
+            padding: 2px 4px;
+            border-radius: 2px;
+            margin-left: 0.5rem;
+          }
+          .free {
+            background: #F0FCF4;
+            color: #67A677;
+          }
+          .vip {
+            background: #D0B485;
+            color: #fff;
+          }
+          .count {
+            font-size: 12px;
+            color: #a9a9a9;
+            margin-right: 1rem;
+          }
+        }
+      }
+      .right {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 30rpx;
+        min-height: 60rpx;
+        text {
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #A9A9A9;
+          margin: 2px 0;
+        }
+      }
+      .detail {
+        width: 100%;
+        .detailBox {
+          justify-content: space-between;
+          margin-top: 0.5rem;
+          .detailContent {
+            font-size: 14px;
+            padding-left: 1rem;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .title {
+              color: #000;
+            }
+            .info {
+              font-size: 12px;
+              text {
+                margin-right: 0.5rem;
+                color: #c1c1c1;
+              }
+            }
+          }
+        }
+      }
+    }
+    .musicCtrl {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      bottom: 0;
+      left: 0;
+      background: rgba(0, 0, 0, 0.7);
+      .flex {
+        height: 100%;
+        display: flex;
+        flex-flow: column;
+        justify-content: flex-end;
+        .ctrl {
+          height: 100rpx;
+          background: #fff;
+          width: 100%;
+          line-height: 100rpx;
+          text-align: center;
+          font-size: 14px;
+          border-bottom: solid 1px #ddd;
+        }
+        .vip {
+          color: #D0B485;
+        }
+        .cancel {
+          color: #999;
+        }
+      }
+    }
+  }
 </style>
