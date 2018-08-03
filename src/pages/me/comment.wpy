@@ -1,7 +1,18 @@
 <!--  -->
 <template>
-  <view class='container'>
-    comment
+  <view class='comment'>
+    <repeat for="{{list}}" key="index" index="index" item="item">
+      <view class='blockItem'>
+        <view class='top'>
+          <text class='title'>双胞胎表演</text>
+          <text class='type'>视频</text>
+        </view>
+        <view class='botCol'>
+          <view>这首奏鸣曲以精练的钢琴写法，澎湃着阴暗的热情，可以窥见到贝多芬日后强烈的、自成一体的乐调作风。这首作品的节奏较为单调，小节间的</view>
+          <view>2018-06-12 12:21</view>
+        </view>
+      </view>
+    </repeat>
   </view>
 </template>
 
@@ -11,7 +22,9 @@
     config = {
       navigationBarTitleText: "我的评论",
     };
-    data = {};
+    data = {
+      list: [1, 2, 3, 4]
+    };
     components = {};
     methods = {};
     events = {};

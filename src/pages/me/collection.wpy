@@ -1,7 +1,18 @@
 <!--  -->
 <template>
-  <view class='container'>
-    Collection
+  <view class='collection'>
+    <repeat for="{{list}}" key="index" index="index" item="item">
+      <view class='blockItem'>
+        <view class='top'>
+          <text class='title'>双胞胎表演</text>
+          <text class='type'>视频</text>
+        </view>
+        <view class='bot'>
+          <text>56.3 MB</text>
+          <text>2018-06-12 12:21</text>
+        </view>
+      </view>
+    </repeat>
   </view>
 </template>
 
@@ -12,7 +23,9 @@
       navigationBarTitleText: "我的收藏",
     };
 
-    data = {};
+    data = {
+      list:[1,2,3,4,5]
+    };
 
     components = {};
 

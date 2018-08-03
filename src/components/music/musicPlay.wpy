@@ -1,0 +1,159 @@
+<!--  -->
+<template>
+  <view class='musciPlay'>
+    <view class='playCtrl'>
+      <view class='btn' @tap='playAudio'>播放</view>
+      <image class='img' src="{{current.poster}}" mode="aspectFit" lazy-load="false">
+      </image>
+      <view class='ctrl'>
+        <view class='intro'>{{current.name}}--{{current.author}}</view>
+        <view class='slide'>
+          <view class="inner" style="width:{{(now/total)*100}}%">
+          </view>
+          <view class="icon">
+          </view>
+        </view>
+      </view>
+      <text>
+                        {{nowTime}}--{{totalTime}}
+                      </text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class MusicPlay extends wepy.component {
+    config = {
+      navigationBarTitleText: "",
+    };
+    data = {
+      current: {
+        poster: 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000',
+        name: '此时此刻',
+        author: '许巍',
+        src: 'http://ws.stream.qqmusic.qq.com/M500001VfvsJ21xFqb.mp3?guid=ffffffff82def4af4b12b3cd9337d5e7&uin=346897220&vkey=6292F51E1E384E06DCBDC9AB7C49FD713D632D313AC4858BACB8DDD29067D3C601481D36E62053BF8DFEAF74C0A5CCFADD6471160CAF3E6A&fromtag=46',
+      },
+      audioAction: {
+        method: 'pause'
+      },
+      innerAudioContext: '',
+      //当前播放时间
+      now: 1,
+      //总时长
+      total: 100
+    };
+    components = {};
+    methods = {
+      audioPlayed(e) {
+        console.log('audio is played')
+      },
+      playAudio() {
+        this.innerAudioContext.play()
+      },
+      pauseAudio() {},
+      sliderChange() {}
+    };
+    events = {};
+    watch = {};
+    computed = {
+      nowTime: function() {
+        let min = Math.floor(this.now / 60)
+        let left = this.now % 60
+        if (left < 10) {
+          left = '0' + left
+        }
+        if (min < 10) {
+          min = '0' + min
+        }
+        let time = min + ':' + left
+        return time
+      },
+      totalTime: function() {
+        let min = Math.floor(this.total / 60)
+        let left = this.total % 60
+        if (left < 10) {
+          left = '0' + left
+        }
+        if (min < 10) {
+          min = '0' + min
+        }
+        let time = min + ':' + left
+        return time
+      }
+    };
+    onLoad() {
+      let _self = this
+      this.innerAudioContext = wx.createInnerAudioContext()
+      // this.innerAudioContext.autoplay = true
+      this.innerAudioContext.src = 'http://ws.stream.qqmusic.qq.com/M500001VfvsJ21xFqb.mp3?guid=ffffffff82def4af4b12b3cd9337d5e7&uin=346897220&vkey=6292F51E1E384E061FF02C31F716658E5C81F5594D561F2E88B854E81CAAB7806D5E4F103E55D33C16F3FAC506D1AB172DE8600B37E43FAD&fromtag=46'
+      this.innerAudioContext.onPlay((res) => {
+        console.log('开始播放')
+      })
+      this.innerAudioContext.onTimeUpdate(() => {
+        _self.now = Number(_self.innerAudioContext.currentTime.toFixed(0))
+        _self.total = Number(_self.innerAudioContext.duration.toFixed(0))
+        this.$apply()
+      })
+      // this.innerAudioContext.onError((res) => {
+      //   console.log(res.errMsg)
+      //   console.log(res.errCode)
+      // })
+    };
+    onShow() {};
+  }
+</script>
+
+<style lang='less'>
+  .musciPlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 130rpx;
+    width: 100%;
+    display: flex;
+    .playCtrl {
+      flex: 1;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      background: #fff;
+      .btn {
+        width: 2rem;
+        font-size: 14px;
+        text-align: center;
+      }
+      .img {
+        height: 130rpx;
+        width: 130rpx;
+      }
+      .ctrl {
+        flex: 1;
+        .intro {
+          font-size: 14px;
+          padding: 0 1rem;
+          margin-bottom: 1rem;
+        }
+        .slide {
+          width: 100%;
+          height: 4px;
+          background: #ddd;
+          display: flex;
+          align-items: center;
+          .inner {
+            height: 4px;
+            background: green;
+          }
+          .icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 6px;
+            background: gray;
+          }
+        }
+      }
+    }
+  }
+</style>

@@ -1,7 +1,23 @@
 <!--  -->
 <template>
-  <view class='container'>
-    student
+  <view class='myStudent'>
+    <view class='classList'>
+      <repeat for="{{classListData}}" key="index" index="index" item="item">
+        <view class='msg' :class="{'acitve':active=== index }" @tap='choseClass({{index}})'>
+          1709班
+          <view class='lineBox'>
+            <view class='line'></view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <repeat for="{{studentList}}" key="index" index="index" item="item">
+      <view class='student flex' @tap='viewStudent'>
+        <image class='userIcon' src="{{imgSrc}}" mode="scaleToFill" lazy-load="false">
+        </image>
+        <text>BABE</text>
+      </view>
+    </repeat>
   </view>
 </template>
 
@@ -11,24 +27,89 @@
     config = {
       navigationBarTitleText: "我的学生",
     };
-
-    data = {};
-
+    data = {
+      classListData: [1, 2, 3],
+      active: 0,
+      studentList: [1, 2, 3, 4, 5],
+      imgSrc: '../../resource/images.png'
+    };
     components = {};
-
-    methods = {};
-
+    methods = {
+      choseClass(index) {
+        this.active = index
+      },
+      viewStudent() {
+        wepy.navigateTo({
+          url: '/pages/me/skill/skill'
+        });
+      }
+    };
     events = {};
-
     watch = {};
-
     computed = {};
-
-    onLoad() { };
-
-    onShow() { };
+    onLoad() {};
+    onShow() {};
   }
 </script>
 
 <style lang='less'>
+  .myStudent {
+    width: 100%;
+    height: 100%;
+    .classList {
+      height: 130rpx;
+      background: #F9F5ED;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 10%;
+      overflow-x: auto;
+      .msg {
+        min-width: 100px;
+        height: 130rpx;
+        position: relative;
+        text-align: center;
+        color: #C0BDB7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .lineBox {
+          position: absolute;
+          display: none;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          bottom: 0;
+          left: 0;
+          .line {
+            width: 40px;
+            height: 2px;
+            background: #D0B485;
+          }
+        }
+      }
+      .acitve {
+        color: #353535;
+        .lineBox {
+          display: flex;
+        }
+      }
+    }
+    .student {
+      height: 130rpx;
+      background: #fff;
+      border-bottom: solid 1px #E5E5E5;
+      justify-content: flex-start;
+      padding-left: 1rem;
+      .userIcon {
+        width: 80rpx;
+        height: 80rpx;
+        border-radius: 40rpx;
+      }
+      text {
+        margin-left: 0.5rem;
+        color: #353535;
+      }
+    }
+  }
 </style>

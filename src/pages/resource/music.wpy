@@ -29,7 +29,7 @@
         </view>
         <view class='detail' hidden="{{item.show === 1}}">
           <repeat for="{{item.child}}" key="index" index="index" item="detail">
-            <view class='detailBox flex'>
+            <view class='detailBox flex' @tap.stop='audioPlay'>
               <view class='detailContent'>
                 <text class='title'>{{detail.name}}</text>
                 <view class='info'>
@@ -43,7 +43,7 @@
         </view>
       </view>
     </repeat>
-    <view class='musicCtrl' hidden="{{showCtrl === 1}}">
+    <view class='musicCtrlBox' hidden="{{showCtrl === 1}}">
       <view class='flex'>
         <view class='ctrl vip'>VIP-下载歌曲</view>
         <view class='ctrl vip'>VIP-收藏歌曲</view>
@@ -51,17 +51,20 @@
         <view class='ctrl cancel' @tap='cancelShowMusicCtrl'>取消</view>
       </view>
     </view>
+    <musicPlay wx:if="{{playState == 'show'}}"></musicPlay>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
   import Search from '@/components/common/search'
+  import MusicPlay from '@/components/music/musicPlay'
   export default class Music extends wepy.page {
     config = {
       navigationBarTitleText: "音频",
     };
     data = {
+      playState: 'hidden',
       showCtrl: 1,
       musicList: [{
         id: 1,
@@ -129,7 +132,8 @@
       }]
     };
     components = {
-      search: Search
+      search: Search,
+      musicPlay: MusicPlay
     };
     methods = {
       showDetail(item) {
@@ -148,6 +152,9 @@
       },
       cancelShowMusicCtrl() {
         this.showCtrl = 1
+      },
+      audioPlay(){
+        this.playState = 'show'
       }
     };
     events = {};
@@ -162,6 +169,7 @@
   .music {
     display: flex;
     flex-flow: column;
+    padding-bottom: 130rpx;
     .searchFilter {
       display: flex;
       flex-wrap: wrap;
@@ -252,8 +260,9 @@
         }
       }
     }
-    .musicCtrl {
+    .musicCtrlBox {
       position: fixed;
+      z-index: 100;
       width: 100%;
       height: 100%;
       bottom: 0;

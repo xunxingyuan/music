@@ -1,18 +1,26 @@
 <!--  -->
 <template>
-  <view class='container'></view>
+  <view class='skill'>
+    <userHeader :imgSrcData='imgSrc'></userHeader>
+  </view>
 </template>
 
 <script>
   import wepy from 'wepy';
+  import UserHeader from '@/components/common/userHeader'
+
   export default class Skill extends wepy.page {
     config = {
-      navigationBarTitleText: "技能",
+      navigationBarTitleText: "学生",
     };
 
-    data = {};
+    data = {
+      imgSrc: '../../../resource/images.png'
+    };
 
-    components = {};
+    components = {
+      userHeader: UserHeader
+    };
 
     methods = {};
 

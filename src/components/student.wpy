@@ -1,0 +1,24 @@
+<!--  -->
+<template>
+    <view class='student'>
+        学生</view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    export default class Student extends wepy.component {
+        props = {};
+        data = {};
+        components = {};
+        methods = {};
+        events = {};
+        watch = {};
+        computed = {};
+        onLoad() {};
+        onShow() {};
+    }
+</script>
+
+<style lang='less'>
+
+</style>

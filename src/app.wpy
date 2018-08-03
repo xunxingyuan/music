@@ -4,21 +4,21 @@
   export default class extends wepy.app {
     config = {
       pages: [
+        'pages/resource/music',
         'pages/index',
         'pages/home',
         'pages/search',
         'pages/learn/lesson',
         'pages/resource/video',
-        'pages/resource/music',
         'pages/resource/score',
         'pages/resource/player/videoPlay',
         'pages/resource/player/scoreView',
         'pages/resource/player/musicShow',
         'pages/me/collection',
-        'pages/me/comment',
         'pages/me/download',
-        'pages/me/myStudent',
         'pages/me/mySkill',
+        'pages/me/comment',
+        'pages/me/myStudent',
         'pages/me/skill/skill',
       ],
       window: {
@@ -79,5 +79,38 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .blockItem {
+    padding: 0.8rem 1rem;
+    background: #fff;
+    border-bottom: solid 1px #e5e5e5;
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .title {
+        font-size: 18px;
+        color: #000;
+      }
+      .type {
+        font-size: 14px;
+        color: #353535;
+      }
+    }
+    .bot {
+      display: flex;
+      margin-top: 5px;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #a9a9a9;
+    }
+    .botCol {
+      display: block;
+      font-size: 12px;
+      color: #a9a9a9;
+      view {
+        margin-top: 5px;
+      }
+    }
   }
 </style>

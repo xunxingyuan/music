@@ -1,10 +1,12 @@
 <!--  -->
 <template>
   <view class='container'>
-    <learn hidden="{{activeTabNum != 1}}"></learn>
-    <resource hidden="{{activeTabNum != 2}}"></resource>
-    <me hidden="{{activeTabNum != 3}}"></me>
-    <nav :activeTab.sync='activeTabNum' @changeTab.user='changeTabCtrl'></nav>
+    <learn hidden="{{activeTab != 'learn'}}"></learn>
+    <resource hidden="{{activeTab != 'resource'}}"></resource>
+    <me hidden="{{activeTab != 'me'||role!=='teacher'}}"></me>
+    <student hidden="{{activeTab != 'me'||role!=='student'}}"></student>
+    <vistor hidden="{{activeTab != 'me'||role!=='vistor'}}"></vistor>
+    <nav :activeTab.sync='activeTab' @changeTab.user='changeTabCtrl'></nav>
   </view>
 </template>
 
@@ -14,31 +16,36 @@
   import Learn from '@/components/learn'
   import Resource from '@/components/resource'
   import Me from '@/components/me'
+  import Student from '@/components/student'
+  import Vistor from '@/components/vistor'
   export default class Example extends wepy.page {
     config = {
       navigationBarTitleText: "学习",
     };
     data = {
-      activeTabNum: 1
+      activeTab: '',
+      role: 'vistor'
     };
     components = {
       nav: Nav,
       learn: Learn,
       resource: Resource,
-      me: Me
+      me: Me,
+      student: Student,
+      vistor: Vistor
     };
     methods = {
-      changeTabCtrl(num, evt) {
-        this.activeTabNum = num
-        if (num === 1) {
+      changeTabCtrl(name, evt) {
+        this.activeTab = name
+        if (name === 'learn') {
           wx.setNavigationBarTitle({
             title: '学习'
           })
-        } else if (num === 2) {
+        } else if (name === 'resource') {
           wx.setNavigationBarTitle({
             title: '资源'
           })
-        } else if (num === 3) {
+        } else if (name === 'me') {
           wx.setNavigationBarTitle({
             title: '我的'
           })
@@ -48,7 +55,28 @@
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    async onLoad() {
+      let role = await wepy.getStorageSync('role');
+      switch (role) {
+        case 'vistor':
+          this.activeTab = 'resource'
+          this.role = 'vistor'
+          this.$apply()
+          break;
+        case 'teacher':
+          this.activeTab = 'learn'
+          this.role = 'teacher'
+          this.$apply()
+          break;
+        case 'student':
+          this.activeTab = 'learn'
+          this.role = 'student'
+          this.$apply()
+          break;
+        default:
+          break;
+      }
+    };
     onShow() {};
   }
 </script>

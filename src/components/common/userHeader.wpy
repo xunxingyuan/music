@@ -1,0 +1,63 @@
+<!--  -->
+<template>
+  <view class='userHeader'>
+    <image class='back' src="{{imgSrcData}}" mode="aspectFill"
+      lazy-load="false">
+    </image>
+    <view class='top'>
+      <image class='icon' src="{{imgSrcData}}" mode="scaleToFill"
+        lazy-load="false">
+      </image>
+      <text>NANA</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class UserHeader extends wepy.component {
+    props = {
+      imgSrcData: String
+    };
+    data = {};
+    components = {};
+    methods = {};
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {};
+    onShow() {};
+  }
+</script>
+
+<style lang='less'>
+  .userHeader {
+    height: 350rpx;
+    width: 100%;
+    .back{
+      width: 100%;
+      height: 100%;
+      filter: blur(10px);
+    }
+    .top{
+      position: absolute;
+      height: 350rpx;
+      width: 100%;
+      top: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-flow: column;
+      .icon{
+        width: 80px;
+        height: 80px;
+        border-radius: 40px;
+      }
+      text{
+        margin-top: 5px;
+        color: #fff;
+      }
+    }
+  }
+</style>

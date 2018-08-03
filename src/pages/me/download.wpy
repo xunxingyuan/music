@@ -1,7 +1,18 @@
 <!--  -->
 <template>
-  <view class='container'>
-    download
+  <view class='download'>
+    <repeat for="{{downloadList}}" key="index" index="index" item="item">
+      <view class='blockItem'>
+        <view class='top'>
+          <text class='title'>双胞胎表演</text>
+          <text class='type'>视频</text>
+        </view>
+        <view class='bot'>
+          <text>56.3 MB</text>
+          <text>下载中</text>
+        </view>
+      </view>
+    </repeat>
   </view>
 </template>
 
@@ -11,7 +22,9 @@
     config = {
       navigationBarTitleText: "我的下载",
     };
-    data = {};
+    data = {
+      downloadList: [1, 2, 3, 4, 5]
+    };
     components = {};
     methods = {};
     events = {};

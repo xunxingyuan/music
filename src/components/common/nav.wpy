@@ -2,8 +2,8 @@
 <template>
   <view class="navBot">
     <repeat for="{{menu}}" key="index" index="index" item="item">
-      <view @tap="toPath({{index}})" class='navItem'>
-        <text :class="{'active':activeTab === index+1}">{{item.name}}</text>
+      <view @tap="toPath({{item.id}})" class='navItem'>
+        <text :class="{'active':activeTab === item.id}">{{item.name}}</text>
       </view>
     </repeat>
   </view>
@@ -12,30 +12,63 @@
   import wepy from 'wepy';
   export default class Nav extends wepy.component {
     props = {
-      activeTab: Number
+      activeTab: Number,
     };
     data = {
-      menu: [{
-        name: '学习',
-        id: 1
-      }, {
-        name: '资源',
-        id: 2
-      }, {
-        name: '我的',
-        id: 3
-      }]
+      menu: []
     };
     components = {};
     methods = {
-      toPath(index) {        
-        this.$emit('changeTab',index+1)
+      toPath(name) {
+        this.$emit('changeTab', name)
       },
     };
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    async onLoad() {
+      let role = await wepy.getStorageSync('role');
+      switch (role) {
+        case 'vistor':
+          this.menu = [{
+            name: '资源',
+            id: 'resource'
+          }, {
+            name: '我的',
+            id: 'me'
+          }]
+          this.$apply()
+          break;
+        case 'teacher':
+          this.menu = [{
+            name: '学习',
+            id: 'learn'
+          }, {
+            name: '资源',
+            id: 'resource'
+          }, {
+            name: '我的',
+            id: 'me'
+          }]
+          this.$apply()
+          break;
+        case 'student':
+          this.menu = [{
+            name: '学习',
+            id: 'learn'
+          }, {
+            name: '资源',
+            id: 'resource'
+          }, {
+            name: '我的',
+            id: 'me'
+          }]
+          this.$apply()
+          break;
+        default:
+          break;
+      }
+    };
     onShow() {};
   }
 </script>

@@ -3,7 +3,7 @@
   <view class='login'>
     <view>
       <button @tap="login" open-type="getUserInfo">VIP登录</button>
-      <view class='normal' @tap="login" open-type="getUserInfo">游客登录</view>
+      <view class='normal' @tap="auth(3)" open-type="getUserInfo">游客登录</view>
     </view>
     <view class='coverBox' wx:if="{{showLogin}}">
       <view class='loginCheck'>
@@ -15,7 +15,8 @@
             <button class='getCode'>获取验证码</button>
           </view>
         </view>
-        <button class='auth' @tap="auth">验证VIP</button>
+        <button class='auth' @tap="auth(1)">老师</button>
+        <button class='auth' @tap="auth(2)">学生</button>
       </view>
     </view>
   </view>
@@ -35,7 +36,20 @@
         this.showLogin = true
         this.num++
       },
-      auth() {
+      auth(num) {
+        switch (num) {
+          case '3':
+            wepy.setStorageSync('role', 'vistor')
+            break;
+          case '1':
+            wepy.setStorageSync('role', 'teacher')
+            break;
+          case '2':
+            wepy.setStorageSync('role', 'student')
+            break;
+          default:
+            break;
+        }
         wepy.redirectTo({
           url: '/pages/home'
         });
