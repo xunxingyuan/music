@@ -2,7 +2,7 @@
 <template>
   <view class='container'>
     <learn hidden="{{activeTab != 'learn'}}"></learn>
-    <resource hidden="{{activeTab != 'resource'}}"></resource>
+    <resource :resData.sync="resourceData" hidden="{{activeTab != 'resource'}}"></resource>
     <me hidden="{{activeTab != 'me'||role!=='teacher'}}"></me>
     <student hidden="{{activeTab != 'me'||role!=='student'}}"></student>
     <vistor hidden="{{activeTab != 'me'||role!=='vistor'}}"></vistor>
@@ -18,13 +18,15 @@
   import Me from '@/components/me'
   import Student from '@/components/student'
   import Vistor from '@/components/vistor'
+  import api from '@/tools/api.js'
   export default class Example extends wepy.page {
     config = {
-      navigationBarTitleText: "学习",
+      navigationBarTitleText: "",
     };
     data = {
       activeTab: '',
-      role: 'vistor'
+      role: 'vistor',
+      resourceData: []
     };
     components = {
       nav: Nav,
@@ -38,19 +40,27 @@
       changeTabCtrl(name, evt) {
         this.activeTab = name
         if (name === 'learn') {
-          wx.setNavigationBarTitle({
+          wepy.setNavigationBarTitle({
             title: '学习'
           })
         } else if (name === 'resource') {
-          wx.setNavigationBarTitle({
+          this.getResource()
+          wepy.setNavigationBarTitle({
             title: '资源'
           })
         } else if (name === 'me') {
-          wx.setNavigationBarTitle({
+          wepy.setNavigationBarTitle({
             title: '我的'
           })
         }
-      }
+      },
+    }
+    getResource() {
+      api.video.getAllVideo().then((res) => {
+        console.log(res)
+        this.resourceData = res.data
+        this.$apply()
+      })
     };
     events = {};
     watch = {};
@@ -61,16 +71,26 @@
         case 'vistor':
           this.activeTab = 'resource'
           this.role = 'vistor'
+          wepy.setNavigationBarTitle({
+            title: '资源'
+          })
+          this.getResource()
           this.$apply()
           break;
         case 'teacher':
           this.activeTab = 'learn'
           this.role = 'teacher'
+          wepy.setNavigationBarTitle({
+            title: '学习'
+          })
           this.$apply()
           break;
         case 'student':
           this.activeTab = 'learn'
           this.role = 'student'
+          wepy.setNavigationBarTitle({
+            title: '学习'
+          })
           this.$apply()
           break;
         default:

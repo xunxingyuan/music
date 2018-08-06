@@ -12,42 +12,30 @@
       </view>
     </view>
     <view class='content'>
-      <view class='item flex'>
-        <text class='name'>故乡的原风景</text>
-        <view class='detail'>
-          <text>5</text>
-          <text>2</text>
-          <text>7</text>
+      <repeat for="{{resData}}" key="index" index="index" item="item">
+        <view class='item flex'>
+          <text class='name'>{{item.title}}</text>
+          <view class='detail'>
+            <text>5</text>
+            <text>2</text>
+            <text>7</text>
+          </view>
         </view>
-      </view>
-      <view class='item flex'>
-        <text class='name'>故乡的原风景</text>
-        <view class='detail'>
-          <text>5</text>
-          <text>2</text>
-          <text>7</text>
-        </view>
-      </view>
-      <view class='item flex'>
-        <text class='name'>故乡的原风景</text>
-        <view class='detail'>
-          <text>5</text>
-          <text>2</text>
-          <text>7</text>
-        </view>
-      </view>
+      </repeat>
     </view>
   </scroll-view>
 </template>
 
 <script>
   import wepy from 'wepy';
-    import Search from '@/components/common/search'
-
+  import Search from '@/components/common/search'
   export default class Resource extends wepy.component {
     config = {
       navigationBarTitleText: "资源",
     };
+    props = {
+      resData: Array
+    }
     data = {};
     components = {
       search: Search
@@ -72,7 +60,8 @@
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    onLoad() {
+    };
     onShow() {};
   }
 </script>
@@ -80,7 +69,7 @@
 <style lang='less'>
   .resource {
     width: 100%;
-    height: 100%;
+    overflow: auto;
     .searchItem {
       background: #D0B485;
       padding: 0 1rem;

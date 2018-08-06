@@ -57,6 +57,8 @@
 <script>
   import wepy from 'wepy';
   import Search from '@/components/common/search'
+  import api from '@/tools/api.js'
+
   export default class Video extends wepy.page {
     config = {
       navigationBarTitleText: "视频",
@@ -77,7 +79,9 @@
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    onLoad() {
+      
+    };
     onShow() {};
   }
 </script>

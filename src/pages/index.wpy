@@ -9,14 +9,20 @@
       <view class='loginCheck'>
         <text>加入律声云课堂</text>
         <view class='msg'>
-          <input placeholder='输入VIP手机号码' />
+          <input bindinput='setPhone' placeholder='输入VIP手机号码' />
           <view class='authCode'>
-            <input class='authInput' placeholder='输入验证码' />
-            <button class='getCode'>获取验证码</button>
+            <input bindinput='setAuthCode' class='authInput' placeholder='输入验证码' />
+            <button class='getCode' wx:if="{{!showTimeCount}}" @tap='getAuthCode'>获取验证码</button>
+            <button class='getCode' wx:if="{{showTimeCount}}">再次发送({{timeLeft}}s)</button>
           </view>
         </view>
-        <button class='auth' @tap="auth(1)">老师</button>
-        <button class='auth' @tap="auth(2)">学生</button>
+        <button class='auth' @tap="auth(1)">VIP登录</button>
+      </view>
+    </view>
+    <view class='coverBox' wx:if="{{showAuth}}">
+      <view class='loginCheck'>
+        <text class='tips'>为提供更优质的服务，小程序需要您的授权</text>
+        <button open-type="getUserInfo" bindgetuserinfo="getAuth">授权</button>
       </view>
     </view>
   </view>
@@ -24,11 +30,18 @@
 
 <script>
   import wepy from 'wepy';
+  import api from '../tools/api.js'
   export default class Index extends wepy.page {
     props = {};
     data = {
       showLogin: false,
-      num: 20
+      num: 20,
+      showAuth: false,
+      phoneNumber: '',
+      authCode: '',
+      showTimeCount: false,
+      timeLeft: 60,
+      countUtil: ''
     };
     components = {};
     methods = {
@@ -39,26 +52,135 @@
       auth(num) {
         switch (num) {
           case '3':
-            wepy.setStorageSync('role', 'vistor')
+            //游客登录
+            api.login.vistorLogin({
+              avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
+              nickname: this.$parent.globalData.userInfo.nickName,
+              openid: this.$parent.globalData.openId,
+            }).then((res) => {
+              if (res.data.code == 200) {
+                wepy.setStorageSync('role', 'vistor')
+                wepy.setStorageSync('token', res.data.data.token)
+                wepy.redirectTo({
+                  url: '/pages/home'
+                });
+              } else {
+                wepy.showToast({
+                  title: res.data.message,
+                  icon: 'none',
+                  duration: 1000
+                })
+              }
+            })
             break;
           case '1':
-            wepy.setStorageSync('role', 'teacher')
+            api.login.vipLogin({
+              avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
+              nickname: this.$parent.globalData.userInfo.nickName,
+              openid: this.$parent.globalData.openId,
+              phone: this.phoneNumber,
+              verificationCode: this.authCode
+            }).then((res) => {
+              if (res.data.code == 200) {
+                clearInterval(this.countUtil)
+                wepy.setStorageSync('role', 'teacher')
+                wepy.redirectTo({
+                  url: '/pages/home'
+                });
+              } else {
+                wepy.showToast({
+                  title: res.data.message,
+                  icon: 'none',
+                  duration: 1000
+                })
+              }
+            })
             break;
           case '2':
             wepy.setStorageSync('role', 'student')
+            wepy.redirectTo({
+              url: '/pages/home'
+            });
             break;
           default:
             break;
         }
-        wepy.redirectTo({
-          url: '/pages/home'
-        });
+      },
+      //获取鉴权
+      getAuth(e) {
+        if (e.detail.userInfo) {
+          this.$parent.globalData.userInfo = e.detail.userInfo
+          this.showAuth = false
+        }
+      },
+      setPhone(e) {
+        this.phoneNumber = e.detail.value
+      },
+      setAuthCode(e) {
+        this.authCode = e.detail.value
+      },
+      //获取验证码
+      async getAuthCode() {
+        let result = await api.login.getCode({
+          phone: this.phoneNumber
+        })
+        if (result.data.code == 200) {
+          wepy.showToast({
+            title: result.data.message,
+            icon: 'success',
+            duration: 2000
+          })
+          this.showTimeCount = true
+          this.timeLeft = 60
+          this.countLeft()
+          this.$apply()
+        } else {
+          wepy.showToast({
+            title: result.data.message,
+            icon: 'none',
+            duration: 2000
+          })
+          this.showLogin = false
+          this.$apply()
+        }
       }
     };
+    countLeft() {
+      let _self = this
+      _self.countUtil = setInterval(() => {
+        if (_self.timeLeft > 1) {
+          _self.timeLeft -= 1
+          this.$apply()
+        } else {
+          clearInterval(_self.countUtil)
+          this.showTimeCount = false
+          this.$apply()
+        }
+      }, 1000)
+      this.$apply()
+    }
     events = {};
     watch = {};
     computed = {};
-    onLoad() {}
+    async onLoad() {
+      let _self = this
+      await wx.getSetting({
+        success: (res) => {
+          if (res.authSetting['scope.userInfo']) {
+            _self.showAuth = false
+          } else {
+            _self.showAuth = true
+          }
+          this.$apply()
+          /*
+           * res.authSetting = {
+           *   "scope.userInfo": true,
+           *   "scope.userLocation": true
+           * }
+           */
+        }
+      })
+    }
     onShow() {}
   }
 </script>
@@ -111,6 +233,11 @@
               height: 2rem;
             }
           }
+        }
+        .tips {
+          padding: 1rem;
+          font-size: 14px;
+          color: #353535;
         }
       }
     }

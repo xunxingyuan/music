@@ -1,16 +1,17 @@
 <script>
   import wepy from 'wepy'
+  import api from './tools/api.js'
   import 'wepy-async-function'
   export default class extends wepy.app {
     config = {
       pages: [
-        'pages/resource/music',
         'pages/index',
         'pages/home',
         'pages/search',
         'pages/learn/lesson',
         'pages/resource/video',
         'pages/resource/score',
+        'pages/resource/music',
         'pages/resource/player/videoPlay',
         'pages/resource/player/scoreView',
         'pages/resource/player/musicShow',
@@ -29,23 +30,40 @@
       }
     }
     globalData = {
-      userInfo: null
+      userInfo: null,
+      openId: null
     }
     constructor() {
       super()
       this.use('requestfix')
     }
     async onLaunch() {
+      let _self = this
       await wepy.login({
         success: function(res) {
           if (res.code) {
             //发起网络请求
             console.log(res.code)
+            api.auth({
+              code: res.code
+            }).then((res) => {
+              if (res.data.code == 200) {
+                let data = JSON.parse(res.data.data)                
+                _self.globalData.openId = data.openid
+              }
+            })
           } else {
             console.log('登录失败！' + res.errMsg)
           }
         }
       });
+      await wx.getSetting({
+        success: (res) => {
+          if (res.authSetting['scope.userInfo']) {
+            this.getUserInfo()
+          }
+        }
+      })
     }
     getUserInfo(cb) {
       const that = this
@@ -55,6 +73,7 @@
       wepy.getUserInfo({
         success(res) {
           that.globalData.userInfo = res.userInfo
+          console.log(res)
           cb && cb(res.userInfo)
         }
       })
