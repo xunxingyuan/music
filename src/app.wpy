@@ -43,13 +43,11 @@
         success: function(res) {
           if (res.code) {
             //发起网络请求
-            console.log(res.code)
             api.auth({
               code: res.code
             }).then((res) => {
               if (res.data.code == 200) {
-                let data = JSON.parse(res.data.data)                
-                _self.globalData.openId = data.openid
+                _self.globalData.openId = res.data.openid
               }
             })
           } else {
@@ -73,7 +71,7 @@
       wepy.getUserInfo({
         success(res) {
           that.globalData.userInfo = res.userInfo
-          console.log(res)
+          console.log(that.globalData.userInfo);
           cb && cb(res.userInfo)
         }
       })

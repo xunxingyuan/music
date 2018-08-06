@@ -7,7 +7,7 @@
     </view>
     <view class='coverBox' wx:if="{{showLogin}}">
       <view class='loginCheck'>
-        <text>加入律声云课堂</text>
+        <text>律声云课堂</text>
         <view class='msg'>
           <input bindinput='setPhone' placeholder='输入VIP手机号码' />
           <view class='authCode'>
@@ -61,6 +61,7 @@
               if (res.data.code == 200) {
                 wepy.setStorageSync('role', 'vistor')
                 wepy.setStorageSync('token', res.data.data.token)
+                wepy.setStorageSync('userId', res.data.data.appUser.id)
                 wepy.redirectTo({
                   url: '/pages/home'
                 });
@@ -84,6 +85,9 @@
               if (res.data.code == 200) {
                 clearInterval(this.countUtil)
                 wepy.setStorageSync('role', 'teacher')
+                wepy.setStorageSync('token', res.data.data.token)
+                wepy.setStorageSync('userId', res.data.data.appUser.id)
+                wepy.setStorageSync('vipId', res.data.data.appUser.vipUserId)
                 wepy.redirectTo({
                   url: '/pages/home'
                 });
