@@ -6,50 +6,25 @@
       <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap='viewVideo'>
       </image>
       <view class='detail'>
-        <text>2</text>
-        <text>2</text>
-        <text>2</text>
-        <text>2</text>
+        <view class='number'><i class='iconfont icon-download'></i> 2</view>
+        <view class='number'><i class='iconfont icon-collect'></i> 2</view>
+        <view class='number'><i class='iconfont icon-dyncomments'></i> 2</view>
+        <view class='number'><i class='iconfont icon-heart'></i> 2</view>
       </view>
       <text class='type'>FREE</text>
     </view>
     <view class='all'>
-      <div class='videoItem'>
-        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
-        </image>
-        <view class='intro'>
-          <text>吉他基本教学</text>
-          <text>3</text>
-        </view>
-        <text class='type'>FREE</text>
-      </div>
-      <div class='videoItem'>
-        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
-        </image>
-        <view class='intro'>
-          <text>吉他基本教学</text>
-          <text>3</text>
-        </view>
-        <text class='type'>FREE</text>
-      </div>
-      <div class='videoItem'>
-        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
-        </image>
-        <view class='intro'>
-          <text>吉他基本教学</text>
-          <text>3</text>
-        </view>
-        <text class='type'>FREE</text>
-      </div>
-      <div class='videoItem'>
-        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
-        </image>
-        <view class='intro'>
-          <text>吉他基本教学</text>
-          <text>3</text>
-        </view>
-        <text class='type'>FREE</text>
-      </div>
+      <repeat for="{{list}}" key="index" index="index" item="item">
+        <div class='videoItem'>
+          <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
+          </image>
+          <view class='intro'>
+            <text>吉他基本教学</text>
+            <view><i class='iconfont icon-heart'></i> 3</view>
+          </view>
+          <text class='type'>FREE</text>
+        </div>
+      </repeat>
     </view>
   </view>
 </template>
@@ -58,13 +33,13 @@
   import wepy from 'wepy';
   import Search from '@/components/common/search'
   import api from '@/tools/api.js'
-
   export default class Video extends wepy.page {
     config = {
       navigationBarTitleText: "视频",
     };
     data = {
-      imgSrc: '../../resource/duzou.jpg'
+      imgSrc: '../../resource/duzou.jpg',
+      list: [1, 2, 3, 4, 5, 6]
     };
     components = {
       search: Search
@@ -80,7 +55,6 @@
     watch = {};
     computed = {};
     onLoad() {
-      
     };
     onShow() {};
   }
@@ -116,8 +90,9 @@
         justify-content: flex-end;
         padding: 0 1rem;
         align-items: center;
-        text {
+        .number {
           margin-left: 1rem;
+          color: #353535;
         }
       }
     }

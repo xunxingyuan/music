@@ -4,11 +4,11 @@
     <search></search>
     <view class='searchItem'>
       <view class='flex type'>
-        <text @tap="viewData('video')">视频</text>
+        <view @tap="viewData('video')"><i class='iconfont icon-video'></i> 视频</view>
         <text>/</text>
-        <text @tap="viewData('music')">音频</text>
+        <view @tap="viewData('music')"><i class='iconfont icon-voice'></i> 音频</view>
         <text>/</text>
-        <text @tap="viewData('score')">曲谱</text>
+        <view @tap="viewData('score')"><i class='iconfont icon-score'></i> 曲谱</view>
       </view>
     </view>
     <view class='content'>
@@ -16,9 +16,9 @@
         <view class='item flex'>
           <text class='name'>{{item.title}}</text>
           <view class='detail'>
-            <text>5</text>
-            <text>2</text>
-            <text>7</text>
+            <view class='number'><i class='iconfont icon-video'></i> 5</view>
+            <view class='number'><i class='iconfont icon-voice'></i> 2</view>
+            <view class='number'><i class='iconfont icon-score'></i> 7</view>
           </view>
         </view>
       </repeat>
@@ -103,8 +103,11 @@
         }
         .detail {
           color: #C1C1C1;
-          text {
+          display: flex;
+          align-items: center;
+          .number{
             margin-left: 1rem;
+            font-size: 12px;
           }
         }
       }

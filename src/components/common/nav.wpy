@@ -2,8 +2,9 @@
 <template>
   <view class="navBot">
     <repeat for="{{menu}}" key="index" index="index" item="item">
-      <view @tap="toPath({{item.id}})" class='navItem'>
-        <text :class="{'active':activeTab === item.id}">{{item.name}}</text>
+      <view @tap="toPath({{item.id}})" class='navItem' :class="{'active':activeTab === item.id}">
+        <i class="iconfont {{item.icon}}"></i>
+        <text>{{item.name}}</text>
       </view>
     </repeat>
   </view>
@@ -32,9 +33,11 @@
         case 'vistor':
           this.menu = [{
             name: '资源',
+            icon: 'icon-play',
             id: 'resource'
           }, {
             name: '我的',
+            icon: 'icon-person',
             id: 'me'
           }]
           this.$apply()
@@ -42,12 +45,15 @@
         case 'teacher':
           this.menu = [{
             name: '学习',
+            icon: 'icon-home',
             id: 'learn'
           }, {
             name: '资源',
+            icon: 'icon-play',
             id: 'resource'
           }, {
             name: '我的',
+            icon: 'icon-person',
             id: 'me'
           }]
           this.$apply()
@@ -55,12 +61,15 @@
         case 'student':
           this.menu = [{
             name: '学习',
+            icon: 'icon-home',
             id: 'learn'
           }, {
             name: '资源',
+            icon: 'icon-play',
             id: 'resource'
           }, {
             name: '我的',
+            icon: 'icon-person',
             id: 'me'
           }]
           this.$apply()
@@ -84,9 +93,22 @@
     .navItem {
       flex: 1;
       text-align: center;
-      line-height: 120rpx;
       font-size: 15px;
-      .active {
+      display: flex;
+      flex-flow: column;
+      align-items: center;
+      justify-content: center;
+      .iconfont {
+        font-size: 24px;
+        display: block;
+        color: #353535;
+      }
+    }
+    .active {
+      color: #D0B485;
+      .iconfont {
+        font-size: 24px;
+        display: block;
         color: #D0B485;
       }
     }

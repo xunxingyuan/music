@@ -36,7 +36,13 @@ export default {
   music: {
     searchMusic: (data) => {
       let reqUrl = url + '/api/search/album'
-      return requestData(reqUrl,data,'GET')
+      return requestData(reqUrl, data, 'GET')
+    }
+  },
+  user: {
+    getStudents: (data) => {
+      let reqUrl = url + '/api/user/getMyStudents'
+      return requestData(reqUrl, data, 'GET')
     }
   }
 }

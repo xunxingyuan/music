@@ -47,7 +47,7 @@
               code: res.code
             }).then((res) => {
               if (res.data.code == 200) {
-                _self.globalData.openId = res.data.openid
+                _self.globalData.openId = res.data.data.openid
               }
             })
           } else {
@@ -80,6 +80,7 @@
 </script>
 
 <style lang="less">
+  @import "./styles/icons.less";
   page {
     height: 100%;
     background: rgba(227, 227, 230, 1);
