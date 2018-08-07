@@ -9,9 +9,9 @@
       <view class='loginCheck'>
         <text>律声云课堂</text>
         <view class='msg'>
-          <input bindinput='setPhone' placeholder='输入VIP手机号码' />
+          <input type='number' bindinput='setPhone' placeholder='输入VIP手机号码' />
           <view class='authCode'>
-            <input bindinput='setAuthCode' class='authInput' placeholder='输入验证码' />
+            <input type='number' bindinput='setAuthCode' class='authInput' placeholder='输入验证码' />
             <button class='getCode' wx:if="{{!showTimeCount}}" @tap='getAuthCode'>获取验证码</button>
             <button class='getCode' wx:if="{{showTimeCount}}">再次发送({{timeLeft}}s)</button>
           </view>
@@ -75,6 +75,7 @@
             })
             break;
           case '1':
+            //VIP登录
             api.login.vipLogin({
               avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
               nickname: this.$parent.globalData.userInfo.nickName,
