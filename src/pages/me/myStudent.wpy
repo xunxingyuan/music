@@ -55,7 +55,6 @@
         id: id
       })
       console.log(studentList);
-      
     };
     onShow() {};
   }

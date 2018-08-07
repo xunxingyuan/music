@@ -18,30 +18,30 @@
 
 <script>
   import wepy from 'wepy';
+  import api from '@/tools/api.js'
   export default class Collection extends wepy.page {
     config = {
       navigationBarTitleText: "我的收藏",
     };
-
     data = {
-      list:[1,2,3,4,5]
+      list: [1, 2, 3, 4, 5]
     };
-
     components = {};
-
     methods = {};
-
     events = {};
-
     watch = {};
-
     computed = {};
-
-    onLoad() { };
-
-    onShow() { };
+    async onLoad() {
+      let id = await wepy.getStorageSync('userId');
+      let result = await api.collect.getUserCollect({
+        id: id
+      })
+      console.log(result);
+    };
+    onShow() {};
   }
 </script>
 
 <style lang='less'>
+
 </style>

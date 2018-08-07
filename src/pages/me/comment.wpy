@@ -18,6 +18,7 @@
 
 <script>
   import wepy from 'wepy';
+  import api from '@/tools/api.js'
   export default class Comment extends wepy.page {
     config = {
       navigationBarTitleText: "我的评论",
@@ -30,7 +31,13 @@
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    async onLoad() {
+      let id = await wepy.getStorageSync('userId');
+      let result = await api.comment.getUserComment({
+        id: id
+      })
+      console.log(result);
+    };
     onShow() {};
   }
 </script>
