@@ -14,7 +14,7 @@
     <view class='content'>
       <repeat for="{{resData}}" key="index" index="index" item="item">
         <view class='item flex'>
-          <text class='name'>{{item.title}}</text>
+          <text class='name' @tap='viewVideo({{item}})'>{{item.title}}</text>
           <view class='detail'>
             <view class='number'><i class='iconfont icon-video'></i> 5</view>
             <view class='number'><i class='iconfont icon-voice'></i> 2</view>
@@ -55,6 +55,12 @@
             url: '/pages/resource/score'
           });
         }
+      },
+      viewVideo(item){
+        let url = '/pages/resource/player/videoPlay?url='+ item.url+'&id='+ item.id
+        wepy.navigateTo({
+          url: url
+        })
       }
     };
     events = {};

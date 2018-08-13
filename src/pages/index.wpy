@@ -131,7 +131,7 @@
         })
         if (result.data.code == 200) {
           wepy.showToast({
-            title: result.data.message,
+            title: '发送成功',
             icon: 'success',
             duration: 2000
           })

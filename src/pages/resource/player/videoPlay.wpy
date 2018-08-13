@@ -1,15 +1,28 @@
 <!--  -->
 <template>
   <view class='videoPlay'>
-    <video class='show' src="{{videoSrc}}" controls="true"  objectFit="contain">
-        </video>
-    <view class='ctrl'>
-      <text>2</text>
-      <text>6</text>
-      <text>8</text>
-      <text>6</text>
+    <video hidden="{{showInput}}" class='show' src="{{videoSrc}}" controls="true" objectFit="contain">
+                                            </video>
+    <view hidden="{{showInput}}" class='ctrl'>
+      <view class='item' @tap="downloadSrc">
+        <i class='iconfont icon-download'></i> {{videoMsg.downloadCount}}
+      </view>
+      <view class='item'>
+        <i @tap="collectVideo" wx:if="{{!videoMsg.isUserCollect}}" class='iconfont icon-collect1'></i><i wx:if="{{videoMsg.isUserCollect}}" class='iconfont icon-collect'></i> {{videoMsg.collectCount}}
+      </view>
+      <view class='item' @tap="addComment">
+        <i class='iconfont icon-dyncomments'></i> {{videoMsg.commentCount}}
+      </view>
+      <view class='item'>
+        <i @tap="likeVideo" wx:if="{{!videoMsg.isUserLike}}" class='iconfont icon-heart'></i><i wx:if="{{videoMsg.isUserLike}}" class='iconfont icon-heart-fill'></i> {{videoMsg.likeCount}}
+      </view>
     </view>
-    <scroll-view class='comment'>
+    <view class='submitComments' wx:if="{{showInput}}">
+      <textarea bindinput='setComment' value="{{commentText}}" placeholder="输入评论内容" />
+      <button @tap="submit" classs="submit" type="primary">提交</button>
+      <button @tap="cancel" class="cancel" type="defult">取消</button>
+    </view>
+    <scroll-view class='comment' hidden="{{showInput}}">
       <view class='title'>
         评论
       </view>
@@ -24,7 +37,7 @@
                 <view class='time'>12:22 <text>2018-3-22</text></view>
               </view>
             </view>
-            <view>4</view>
+            <view><i class='iconfont icon-heart'></i> 4</view>
           </view>
           <view class='bot'>
             很好看的视频,很好看的视频,很好看的视频,很好看的视频,很好看的视频,很好看的视频，很好看的视频，很好看的视频，很好看的视频
@@ -37,22 +50,149 @@
 
 <script>
   import wepy from 'wepy';
+  import api from '@/tools/api.js'
   export default class VideoPlay extends wepy.page {
     config = {
       navigationBarTitleText: "返回",
     };
     data = {
+      videoId: '',
+      videoTitle: '',
       videoSrc: 'http://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f0201690402534804102ca905ce620b1241b726bc41dcff44e00204012882540400&bizid=1023&hy=SH&fileparam=302c020101042530230204136ffd93020457e3c4ff02024ef202031e8d7f02030f42400204045a320a0201000400',
       icon: '../../../resource/images.png',
-      commentList: [1, 2, 3, 4, 5, 6]
+      commentList: [],
+      showInput: false,
+      commentText: '',
+      videoMsg: {
+        collectCount: 0,
+        commentCount: 0,
+        downloadCount: 0,
+        isUserCollect: false,
+        isUserLike: false,
+        likeCount: 0,
+      }
     };
     components = {};
-    methods = {};
+    methods = {
+      addComment() {
+        this.showInput = true
+      },
+      cancel() {
+        this.showInput = false
+      },
+      async submit() {
+        let _self = this
+        let userId = await wepy.getStorageSync('userId');
+        api.comment.addComment({
+          content: _self.commentText,
+          userId: userId,
+          videoId: _self.videoId,
+          videoTitle: _self.videoTitle
+        }).then((res) => {
+          if (res.data.code === 200) {
+            _self.showInput = false
+            wepy.showToast({
+              title: '发表评论成功',
+              icon: 'none',
+              duration: 1000
+            })
+            _self.videoMsg.commentCount+=1
+            _self.$apply()
+          }
+        })
+      },
+      setComment(e) {
+        this.commentText = e.detail.value
+      },
+      downloadSrc() {
+        let _self = this
+        console.log('add download')
+        // const downloadTask = wepy.downloadFile({
+        //   url: _self.videoSrc, // 下载资源的 url
+        //   success: res => {
+        //     console.log(res)
+        //   },
+        //   fail: () => {},
+        //   complete: () => {
+        //   }
+        // });
+        // downloadTask.onProgressUpdate((res) => {
+        //   console.log('下载进度', res.progress)
+        //   console.log('已经下载的数据长度', res.totalBytesWritten)
+        //   console.log('预期需要下载的数据总长度', res.totalBytesExpectedToWrite)
+        // })
+      },
+      async collectVideo() {
+        let _self = this
+        let userId = await wepy.getStorageSync('userId');
+        api.collect.collectVideo({
+          userId: userId,
+          videoId: this.videoId
+        }).then((res) => {
+          if (res.data.code === 200) {
+            _self.videoMsg.isUserCollect = true
+            _self.videoMsg.collectCount += 1
+            _self.$apply()
+          }
+        })
+      },
+      async likeVideo() {
+        let _self = this
+        let userId = await wepy.getStorageSync('userId');
+        api.video.likeVideo({
+          userId: userId,
+          videoId: this.videoId
+        }).then((res) => {
+          if (res.data.code === 200) {
+            _self.videoMsg.isUserLike = true
+            _self.videoMsg.likeCount += 1
+            _self.$apply()
+          }
+        })
+      }
+    };
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    async onLoad(options) {
+      console.log(options);
+      this.videoId = options.id
+      let userId = await wepy.getStorageSync('userId');
+      this.videoSrc = 'http://192.168.100.246:9501' + options.url
+      this.getVideoComment(options.id)
+      this.getVideoDetail(options.id, userId)
+      this.$apply()
+    };
     onShow() {};
+    getVideoComment(id) {
+      let _self = this
+      api.comment.getVideoComment({
+        videoId: id
+      }).then((res) => {
+        console.log(res);
+        if(res.data.code === 200){
+          _self.commentList = res.data.data
+        }
+      })
+    }
+    getVideoDetail(id, userId) {
+      let _self = this
+      api.video.getVideoByID({
+        userId: userId,
+        videoId: id
+      }).then((res) => {
+        if (res.statusCode === 200) {
+          _self.videoMsg.collectCount = res.data.collectCount
+          _self.videoMsg.commentCount = res.data.commentCount
+          _self.videoMsg.downloadCount = res.data.downloadCount
+          _self.videoMsg.isUserCollect = res.data.isUserCollect
+          _self.videoMsg.isUserLike = res.data.isUserLike
+          _self.videoMsg.likeCount = res.data.likeCount
+          _self.videoTitle = res.data.video.title
+          _self.$apply()
+        }
+      })
+    }
   }
 </script>
 
@@ -72,9 +212,13 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      text {
+      .item {
         margin-right: 1.5rem;
         color: #666;
+        .icon-collect,
+        .icon-heart-fill {
+          color: #D0B485;
+        }
       }
     }
     .comment {
@@ -114,6 +258,29 @@
           color: #353535;
           margin-top: 8px;
         }
+      }
+    }
+    .submitComments {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: #f9f9f9;
+      z-index: 1000;
+      padding: 1rem;
+      box-sizing: border-box;
+      textarea {
+        border: solid 1px #ddd;
+        width: auto;
+        background: #fff;
+        height: 8.5rem;
+        padding: 0.7rem;
+        font-size: 16px;
+        color: #353535;
+      }
+      button {
+        margin: 1rem 0;
       }
     }
   }

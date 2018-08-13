@@ -43,6 +43,10 @@ export default {
     likeVideoComments: (data) =>{
       let reqUrl = url + '/api/like/likeComment'
       return requestData(reqUrl, data, 'GET')
+    },
+    getVideoByID: (data) =>{
+      let reqUrl = url + '/api/video/getById'
+      return requestData(reqUrl, data, 'GET')
     }
   },
   //音频
