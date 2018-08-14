@@ -2,36 +2,36 @@
 <template>
   <view class='music'>
     <search></search>
-    <view class='searchFilter'>
+    <!-- <view class='searchFilter'>
       <text>节拍器</text>
       <text>人声</text>
       <text>吉他</text>
       <text>钢琴</text>
       <text>鼓</text>
       <text>...</text>
-    </view>
+    </view> -->
     <repeat for="{{musicList}}" key="index" index="index" item="item">
       <view class='musicItem'>
         <view class='musicShow flex' @tap='showDetail({{item}})'>
           <view class='left'>
             <view class='flex'>
-              <view class='name'>{{item.name}}</view>
-              <text class='free' hidden="{{item.type != 0}}">FREE</text>
-              <text class='vip' hidden="{{item.type != 1}}">VIP</text>
+              <view class='name'>{{item.title}}</view>
+              <text class='free' hidden="{{item.isFree != 1}}">FREE</text>
+              <text class='vip' hidden="{{item.isFree != 0}}">VIP</text>
             </view>
             <view>
-              <text class='count'>{{item.video}}</text>
-              <text class='count'>{{item.music}}</text>
-              <text class='count'>{{item.score}}</text>
+              <text class='count'>1</text>
+              <text class='count'>{{item.musicCount}}</text>
+              <text class='count'>{{item.notationCount}}</text>
             </view>
           </view>
           <view class='right' @tap.stop='showMusicCtrl({{item}})'><text></text><text></text><text></text></view>
         </view>
         <view class='detail' hidden="{{item.show === 1}}">
-          <repeat for="{{item.child}}" key="index" index="index" item="detail">
+          <repeat for="{{item.musicList}}" key="index" index="index" item="detail">
             <view class='detailBox flex' @tap.stop='audioPlay'>
               <view class='detailContent'>
-                <text class='title'>{{detail.name}}</text>
+                <text class='title'>{{detail.title}}</text>
                 <view class='info'>
                   <text>{{detail.music}}</text>
                   <text>{{detail.score}}</text>
@@ -59,6 +59,7 @@
   import wepy from 'wepy';
   import Search from '@/components/common/search'
   import MusicPlay from '@/components/music/musicPlay'
+  import api from '@/tools/api.js'
   export default class Music extends wepy.page {
     config = {
       navigationBarTitleText: "音频",
@@ -153,14 +154,37 @@
       cancelShowMusicCtrl() {
         this.showCtrl = 1
       },
-      audioPlay(){
+      audioPlay() {
         this.playState = 'show'
       }
     };
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    onLoad() {
+      let _self = this
+      api.music.searchMusic({
+        pageNumber: 1
+      }).then((res) => {
+        if (res.data.code === 200) {
+          _self.musicList = res.data.data
+          _self.musicList.forEach((e, index) => {
+            if (index === 0) {
+              e.show = 0
+            } else {
+              e.show = 1
+            }
+          })
+          _self.$apply()
+        } else {
+          wepy.showToast({
+            title: res.data.message,
+            icon: 'none',
+            duration: 1000
+          })
+        }
+      })
+    };
     onShow() {};
   }
 </script>

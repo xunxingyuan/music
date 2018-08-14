@@ -2,7 +2,7 @@
 <template>
   <view class='videoPlay'>
     <video hidden="{{showInput}}" class='show' src="{{videoSrc}}" controls="true" objectFit="contain">
-                                            </video>
+                                                  </video>
     <view hidden="{{showInput}}" class='ctrl'>
       <view class='item' @tap="downloadSrc">
         <i class='iconfont icon-download'></i> {{videoMsg.downloadCount}}
@@ -26,22 +26,21 @@
       <view class='title'>
         评论
       </view>
+      <view class='tips' wx:if="{{commentList.length == 0}}">暂无评论</view>
       <repeat for="{{commentList}}" key="index" index="index" item="item">
         <view class='commentItem'>
           <view class='top flex'>
             <view class='user flex'>
-              <image class='userIcon' src="{{icon}}" mode="aspectFill" lazy-load="false">
+              <image class='userIcon' src="{{item.appUser.avatarUrl}}" mode="aspectFill" lazy-load="false">
               </image>
               <view>
-                <view class='name'>用户1</view>
-                <view class='time'>12:22 <text>2018-3-22</text></view>
+                <view class='name'>{{item.appUser.nickname}}</view>
+                <view class='time'>{{item.createTime}}</view>
               </view>
             </view>
-            <view><i class='iconfont icon-heart'></i> 4</view>
+            <view><i class='iconfont icon-heart' @tap="likeComment({{item}})"></i> {{item.likeCount}}</view>
           </view>
-          <view class='bot'>
-            很好看的视频,很好看的视频,很好看的视频,很好看的视频,很好看的视频,很好看的视频，很好看的视频，很好看的视频，很好看的视频
-          </view>
+          <view class='bot'>{{item.content}}</view>
         </view>
       </repeat>
     </scroll-view>
@@ -93,10 +92,11 @@
             _self.showInput = false
             wepy.showToast({
               title: '发表评论成功',
-              icon: 'none',
+              icon: 'success',
               duration: 1000
             })
-            _self.videoMsg.commentCount+=1
+            _self.videoMsg.commentCount += 1
+            _self.getVideoComment(_self.videoId)
             _self.$apply()
           }
         })
@@ -104,9 +104,14 @@
       setComment(e) {
         this.commentText = e.detail.value
       },
-      downloadSrc() {
+      async downloadSrc() {
         let _self = this
+        let userId = await wepy.getStorageSync('userId');
         console.log('add download')
+        api.video.saveDownload({
+          userId: userId,
+          videoId: this.videoId
+        })
         // const downloadTask = wepy.downloadFile({
         //   url: _self.videoSrc, // 下载资源的 url
         //   success: res => {
@@ -149,6 +154,29 @@
             _self.$apply()
           }
         })
+      },
+      async likeComment(item) {
+        let _self = this
+        let userId = await wepy.getStorageSync('userId');
+        api.video.likeVideoComments({
+          userId: userId,
+          commentId: item.id
+        }).then((res) => {
+          if (res.data.code === 200) {
+            _self.getVideoComment(_self.videoId)
+            wepy.showToast({
+              title: '点赞成功',
+              icon: 'success',
+              duration: 1000
+            })
+          } else {
+            wepy.showToast({
+              title: res.data.message,
+              icon: 'none',
+              duration: 1000
+            })
+          }
+        })
       }
     };
     events = {};
@@ -170,9 +198,10 @@
         videoId: id
       }).then((res) => {
         console.log(res);
-        if(res.data.code === 200){
+        if (res.data.code === 200) {
           _self.commentList = res.data.data
         }
+        _self.$apply()
       })
     }
     getVideoDetail(id, userId) {
@@ -230,9 +259,14 @@
         line-height: 100rpx;
         padding-left: 1rem;
       }
+      .tips {
+        text-align: center;
+        margin-top: 2rem;
+      }
       .commentItem {
         padding: 0 1rem;
         padding-bottom: 1rem;
+        padding-top: 0.5rem;
         border-bottom: solid 1px #DEDEE1;
         .top {
           justify-content: space-between;

@@ -47,12 +47,28 @@ export default {
     getVideoByID: (data) =>{
       let reqUrl = url + '/api/video/getById'
       return requestData(reqUrl, data, 'GET')
+    },
+    //保存下载记录
+    saveDownload: (data) => {
+      let reqUrl = url + '/api/video/download'
+      return requestData(reqUrl, data, 'GET')
     }
   },
   //音频
   music: {
     searchMusic: (data) => {
-      let reqUrl = url + '/api/search/album'
+      let reqUrl = url + '/api/album/getByPage'
+      return requestData(reqUrl, data, 'GET')
+    },
+    saveDownload: (data) => {
+      let reqUrl = url + '/api/music/download'
+      return requestData(reqUrl, data, 'GET')
+    }
+  },
+  //曲谱
+  score: {
+    searchScore: (data) =>{
+      let reqUrl = url + '/api/notation/getByPage'
       return requestData(reqUrl, data, 'GET')
     }
   },

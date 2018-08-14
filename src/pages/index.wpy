@@ -62,6 +62,7 @@
                 wepy.setStorageSync('role', 'vistor')
                 wepy.setStorageSync('token', res.data.data.token)
                 wepy.setStorageSync('userId', res.data.data.appUser.id)
+                wepy.setStorageSync('userInfo', JSON.stringify(res.data.data))
                 wepy.redirectTo({
                   url: '/pages/home'
                 });
@@ -89,6 +90,7 @@
                 wepy.setStorageSync('token', res.data.data.token)
                 wepy.setStorageSync('userId', res.data.data.appUser.id)
                 wepy.setStorageSync('vipId', res.data.data.appUser.vipUserId)
+                wepy.setStorageSync('userInfo', JSON.stringify(res.data.data))
                 wepy.redirectTo({
                   url: '/pages/home'
                 });

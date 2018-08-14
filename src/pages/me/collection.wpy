@@ -4,12 +4,13 @@
     <repeat for="{{list}}" key="index" index="index" item="item">
       <view class='blockItem'>
         <view class='top'>
-          <text class='title'>双胞胎表演</text>
-          <text class='type'>视频</text>
+          <text class='title'>{{item.title}}</text>
+          <text wx:if="{{item.type === 0}}" class='type'>视频</text>
+          <text wx:if="{{item.type === 1}}" class='type'>音频</text>
         </view>
         <view class='bot'>
-          <text>56.3 MB</text>
-          <text>2018-06-12 12:21</text>
+          <text></text>
+          <text>{{item.editTime}}</text>
         </view>
       </view>
     </repeat>
@@ -24,7 +25,7 @@
       navigationBarTitleText: "我的收藏",
     };
     data = {
-      list: [1, 2, 3, 4, 5]
+      list: []
     };
     components = {};
     methods = {};
@@ -32,10 +33,20 @@
     watch = {};
     computed = {};
     async onLoad() {
+      let _self = this
       let id = await wepy.getStorageSync('userId');
       let result = await api.collect.getUserCollect({
         id: id
       })
+      result.data.video.forEach(element => {
+        element.type = 0
+        _self.list.push(element)
+      });
+      result.data.music.forEach(element => {
+        element.type = 1
+        _self.list.push(element)
+      });
+      _self.$apply()
       console.log(result);
     };
     onShow() {};

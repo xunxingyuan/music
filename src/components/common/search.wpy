@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <view class='search'>
-    <view class='searchBox flex'>
+    <view class='searchBox flex' @tap="searchData">
       <icon class='icon'  type="search" size="16">
       </icon>
     </view>
@@ -14,7 +14,13 @@
     props = {};
     data = {};
     components = {};
-    methods = {};
+    methods = {
+      searchData(){
+        wepy.navigateTo({
+            url: '/pages/search'
+          });
+      }
+    };
     events = {};
     watch = {};
     computed = {};

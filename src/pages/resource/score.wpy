@@ -6,10 +6,10 @@
       <repeat for="{{imgList}}" key="index" index="index" item="item">
         <view class='scoreItem'>
           <view class='inner'>
-            <image class='img' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
+            <image class='img' src="{{item.url}}" mode="aspectFill" lazy-load="false">
             </image>
             <view class='msg'>
-              <text>That Girl 吉他谱</text>
+              <text>{{item.title}}</text>
             </view>
           </view>
         </view>
@@ -21,13 +21,14 @@
 <script>
   import wepy from 'wepy';
   import Search from '@/components/common/search'
+  import api from '@/tools/api.js'
   export default class Score extends wepy.page {
     config = {
       navigationBarTitleText: "曲谱",
     };
     data = {
-      imgSrc: '../../resource/pu.png',
-      imgList: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      imgSrc: 'http://192.168.100.246:9501/static/notation/qxlsflkjasdgfldasgkldjasogifu.jpg',
+      imgList: []
     };
     components = {
       search: Search
@@ -36,7 +37,18 @@
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    onLoad() {
+      let _self = this
+      api.score.searchScore({
+        pageNumber: '1'
+      }).then((res) => {
+        _self.imgList = res.data
+        _self.imgList.forEach(element => {
+          element.url = 'http://'+ element.url
+        });
+        _self.$apply()
+      })
+    };
     onShow() {};
   }
 </script>

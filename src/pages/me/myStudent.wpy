@@ -24,7 +24,6 @@
 <script>
   import wepy from 'wepy';
   import api from '@/tools/api.js'
-
   export default class Student extends wepy.page {
     config = {
       navigationBarTitleText: "我的学生",
@@ -50,11 +49,11 @@
     watch = {};
     computed = {};
     async onLoad() {
-      let id = await wepy.getStorageSync('userId');
-      let studentList = await api.user.getStudents({
-        id: id
+      let userInfo = await wepy.getStorageSync('userInfo');
+      api.user.getStudents({
+        code: 3
+        // code: userInfo.vipUser.code
       })
-      console.log(studentList);
     };
     onShow() {};
   }
