@@ -1,0 +1,75 @@
+<!--  -->
+<template>
+  <view class='videoList'>
+    <repeat for="{{list}}" key="index" index="index" item="item">
+      <div class='videoItem'>
+        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
+        </image>
+        <view class='intro'>
+          <text>吉他基本教学</text>
+          <view><i class='iconfont icon-heart'></i> 3</view>
+        </view>
+        <text class='type'>FREE</text>
+      </div>
+    </repeat>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class videoList extends wepy.component {
+    props = {
+      list: Array
+    };
+    data = {
+      imgSrc: '../../resource/duzou.jpg',
+    };
+    components = {};
+    methods = {};
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {};
+    onShow() {};
+  }
+</script>
+
+<style lang='less'>
+  .videoList {
+    margin-top: 0.5rem;
+    background: #fff;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    .videoItem {
+      width: 50%;
+      position: relative;
+      box-sizing: border-box;
+      padding: 8px 5px;
+      .botImg {
+        width: 100%;
+        height: 120px;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+      }
+      .intro {
+        display: flex;
+        padding: 0 10px;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        color: #353535;
+      }
+    }
+    .type {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 2px 4px;
+      font-size: 10px;
+      background: #f9f9f9;
+      border-radius: 2px;
+      color: #040817;
+    }
+  }
+</style>

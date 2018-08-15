@@ -28,7 +28,11 @@ export default {
     getAllCourse: (data) => {
       let reqUrl = url + '/api/course/getById'
       return requestData(reqUrl, data, 'GET')
-    }
+    },
+    searchCourse: (data) => {
+      let reqUrl = url + '/api/course/getByPage'
+      return requestData(reqUrl, data, 'GET')
+    },
   },
   //视频
   video: {
@@ -52,7 +56,12 @@ export default {
     saveDownload: (data) => {
       let reqUrl = url + '/api/video/download'
       return requestData(reqUrl, data, 'GET')
-    }
+    },
+    //搜索视频
+    searchVideo: (data) => {
+      let reqUrl = url + '/api/video/getByPage'
+      return requestData(reqUrl, data, 'GET')
+    },
   },
   //音频
   music: {

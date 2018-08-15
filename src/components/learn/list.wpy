@@ -1,22 +1,24 @@
 <!--  -->
 <template>
   <view class='listContain'>
-    <view class="listItem" @tap='toLesson({{item}})' wx:for="{{listData}}" wx:for-index="index" wx:for-item="item" wx:key="index">
-      <view class='msgTop flex'>
-        <view class='time'>
-          <text class='date'>{{item.time}}</text>/{{item.week}}
+    <repeat for="{{listData}}" key="index" index="index" item="item">
+      <view class="listItem" @tap='toLesson({{item}})'>
+        <view class='msgTop flex'>
+          <view class='time'>
+            <text class='date'>{{item.schedule}}</text>
+          </view>
+          <view class='count'>
+            <text>曲谱 {{item.notationCount}}</text>
+            <text>音频 {{item.musicCount}}</text>
+          </view>
         </view>
-        <view class='count'>
-          <text>曲谱 2</text>
-          <text>音频 1</text>
+        <view class='msgBot flex'>
+          <text>{{item.className}}</text>
+          <text class='line'>|</text>
+          <text>{{item.teacherName}}更新</text>
         </view>
       </view>
-      <view class='msgBot flex'>
-        <text>{{item.location}}</text>
-        <text class='line'>|</text>
-        <text>{{item.author}}更新</text>
-      </view>
-    </view>
+    </repeat>
   </view>
 </template>
 
@@ -46,7 +48,6 @@
 <style lang='less'>
   .listContain {
     width: 100%;
-    margin-top: -130rpx;
     .listItem {
       margin: 0.5rem 1rem;
       padding: 1rem 0 0 0;

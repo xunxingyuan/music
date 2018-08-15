@@ -2,7 +2,7 @@
 <template>
   <view class='search'>
     <view class='searchBox flex' @tap="searchData">
-      <icon class='icon'  type="search" size="16">
+      <icon class='icon' type="search" size="16">
       </icon>
     </view>
   </view>
@@ -10,15 +10,15 @@
 
 <script>
   import wepy from 'wepy';
-  export default class Search extends wepy.component  {
+  export default class Search extends wepy.component {
     props = {};
     data = {};
     components = {};
     methods = {
-      searchData(){
+      searchData() {
         wepy.navigateTo({
-            url: '/pages/search'
-          });
+          url: '/pages/search'
+        });
       }
     };
     events = {};
@@ -46,7 +46,7 @@
       background: #E5E5E5;
       border-radius: 14px;
       align-items: center;
-      .icon{
+      .icon {
         margin-top: 8px;
         color: #fff;
         margin-left: 10px;

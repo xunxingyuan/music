@@ -1,32 +1,222 @@
 <!--  -->
 <template>
-  <view class='container'></view>
+  <view class='searchBox'>
+    <view class='search'>
+      <input bindfocus="bindfocus" bindinput="bindKeyInput" class='searchBox' type="text" placeholder="输入搜索内容" confirm-type="search" bindconfirm="searchData"> </input>
+      <!-- <view class='searchBox flex' @tap="searchData">
+                            <icon class='icon' type="search" size="16">
+                            </icon>
+                          </view> -->
+    </view>
+    <view wx:if="{{showSearch}}" class="searchType flex">
+      <view class='typeContain'>
+        <radio @tap="setType('video')" checked="{{selectType === 'video'}}" name="id" /> 视频
+      </view>
+      <view class='typeContain mid'>
+        <radio @tap="setType('music')" checked="{{selectType === 'music'}}" name="id" /> 音频
+        <!-- <view>
+                          <view>
+                            <checkbox-group @change="checkboxChange">
+                              <label wx:for="{{musicType}}">
+                                <checkbox value="{{item.name}}" checked="{{item.checked}}" name="id" /> {{item.value}}
+                              </label>
+                            </checkbox-group>
+                          </view>
+                        </view> -->
+      </view>
+      <view class='typeContain'>
+        <radio @tap="setType('score')" checked="{{selectType === 'score'}}" name="id" /> 图谱
+      </view>
+      <view class='typeContain'>
+        <radio @tap="setType('learn')" checked="{{selectType === 'learn'}}" name="id" /> 课程
+      </view>
+    </view>
+    <view class='searchTips' wx:if="{{!showSearch}}">
+      <view class='content'>搜索 <text>{{searchValue}}</text> 的结果如下</view>
+    </view>
+    <learnlist wx:if="{{!showSearch&&selectType === 'learn'}}" :listData.sync="searchResult"></learnlist>
+    <musiclist wx:if="{{!showSearch&&selectType === 'music'}}" :musicList.sync="searchResult"></musiclist>
+    <videolist wx:if="{{!showSearch&&selectType === 'video'}}" :list.sync="searchResult"></videolist>
+    <scorelist wx:if="{{!showSearch&&selectType === 'score'}}" :imgList.sync="searchResult"></scorelist>
+  </view>
 </template>
 
 <script>
   import wepy from 'wepy';
+  import api from '@/tools/api.js'
+  import LearnList from '@/components/learn/list'
+  import MusicList from '@/components/music/list'
+  import VideoList from '@/components/video/list'
+    import ScoreList from '@/components/score/list'
+
   export default class Search extends wepy.page {
     config = {
       navigationBarTitleText: "搜索",
     };
-
-    data = {};
-
-    components = {};
-
-    methods = {};
-
+    data = {
+      musicType: [{
+        name: '节拍器',
+        value: '节拍器'
+      }, {
+        name: '吉他',
+        value: '吉他'
+      }, {
+        name: '人声',
+        value: '人声'
+      }, {
+        name: '钢琴',
+        value: '钢琴'
+      }, {
+        name: '鼓',
+        value: '鼓'
+      }, {
+        name: '其他',
+        value: '其他'
+      }],
+      selectType: 'video',
+      searchResult: [],
+      showSearch: true,
+      searchValue: ''
+    };
+    components = {
+      learnlist: LearnList,
+      musiclist: MusicList,
+      videolist: VideoList,
+      scorelist: ScoreList
+    };
+    methods = {
+      bindKeyInput(e) {
+        this.searchValue = e.detail.value
+      },
+      bindfocus() {
+        this.showSearch = true
+      },
+      checkboxChange(e) {
+        console.log(e.detail.value);
+      },
+      setType(val) {
+        this.selectType = val
+      },
+      searchData() {
+        this.showSearch = false
+        switch (this.selectType) {
+          case 'video':
+            api.video.searchVideo({
+              pageNumber: 1,
+              title: this.searchValue
+            }).then((res) => {
+              this.searchResult = res.data
+              this.$apply()
+            })
+            break;
+          case 'music':
+            api.music.searchMusic({
+              pageNumber: 1,
+              title: this.searchValue
+            }).then((res) => {
+              if (res.data.code === 200) {
+                this.searchResult = res.data.data
+                this.$apply()
+              }
+            })
+            break;
+          case 'learn':
+            api.course.searchCourse({
+              pageNumber: 1,
+              title: this.searchValue
+            }).then((res) => {
+              if (res.data.code === 200) {
+                this.searchResult = res.data.data
+                this.$apply()
+              }
+            })
+            break;
+          case 'score':
+            api.score.searchScore({
+              pageNumber: 1,
+              title: this.searchValue
+            }).then((res) => {
+              this.searchResult = res.data
+              this.$apply()
+              
+            })
+            break;
+          default:
+            break;
+        }
+      }
+    };
     events = {};
-
     watch = {};
-
     computed = {};
-
-    onLoad() { };
-
-    onShow() { };
+    onLoad() {};
+    onShow() {};
   }
 </script>
 
 <style lang='less'>
+  .searchBox {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    width: 100%;
+    .search {
+      width: 100%;
+      margin-top: 1rpx;
+      height: 100rpx;
+      background: #D0B485;
+      box-sizing: border-box;
+      display: flex;
+      padding: 0 1rem;
+      align-items: center;
+      justify-content: center;
+      .searchBox {
+        display: block;
+        width: 100%;
+        height: 60rpx;
+        background: #E5E5E5;
+        border-radius: 14px;
+        align-items: center;
+        font-size: 14px;
+        padding: 0 0.5rem;
+        .icon {
+          margin-top: 8px;
+          color: #fff;
+          margin-left: 10px;
+        }
+      }
+    }
+    .searchType {
+      width: 100%;
+      font-size: 12px;
+      .typeContain {
+        flex: 1;
+        text-align: center;
+        padding: 1rem 0;
+        .small {
+          width: 10px;
+          height: 10px;
+        }
+      }
+      .mid {
+        border-left: solid 1px #ddd;
+        border-right: solid 1px #ddd;
+      }
+    }
+    .searchTips {
+      height: 100rpx;
+      background: #f0eff3;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      width: 100%;
+      text {
+        color: #D0B485;
+      }
+      .content {
+        padding-left: 1rem;
+      }
+    }
+  }
 </style>

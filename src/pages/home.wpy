@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <view class='container'>
-    <learn hidden="{{activeTab != 'learn'}}"></learn>
+    <learn :learnData.sync="courseData" hidden="{{activeTab != 'learn'}}"></learn>
     <resource :resData.sync="resourceData" hidden="{{activeTab != 'resource'}}"></resource>
     <me hidden="{{activeTab != 'me'||role!=='teacher'}}"></me>
     <student hidden="{{activeTab != 'me'||role!=='student'}}"></student>
@@ -26,7 +26,7 @@
     data = {
       activeTab: '',
       role: 'vistor',
-      resourceData: []
+      resourceData: [],
     };
     components = {
       nav: Nav,
@@ -40,7 +40,7 @@
       changeTabCtrl(name, evt) {
         this.activeTab = name
         if (name === 'learn') {
-          this.getLearn()
+          // this.getLearn()
           wepy.setNavigationBarTitle({
             title: '学习'
           })
@@ -60,14 +60,6 @@
       api.video.getAllVideo().then((res) => {
         this.resourceData = res.data
         this.$apply()
-      })
-    }
-    async getLearn(){
-      let id = await wepy.getStorageSync('userId');
-      api.course.getAllCourse({
-        id: id
-      }).then((res)=>{
-        console.log(res);
       })
     }
     events = {};

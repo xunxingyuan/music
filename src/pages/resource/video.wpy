@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <view class='video'>
-    <search></search>
+    <search :type="video"></search>
     <view class='top'>
       <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap='viewVideo'>
       </image>
@@ -13,25 +13,15 @@
       </view>
       <text class='type'>FREE</text>
     </view>
-    <view class='all'>
-      <repeat for="{{list}}" key="index" index="index" item="item">
-        <div class='videoItem'>
-          <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
-          </image>
-          <view class='intro'>
-            <text>吉他基本教学</text>
-            <view><i class='iconfont icon-heart'></i> 3</view>
-          </view>
-          <text class='type'>FREE</text>
-        </div>
-      </repeat>
-    </view>
+    <list :list.sync="listdata"></list>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
   import Search from '@/components/common/search'
+    import List from '@/components/video/list'
+
   import api from '@/tools/api.js'
   export default class Video extends wepy.page {
     config = {
@@ -39,10 +29,11 @@
     };
     data = {
       imgSrc: '../../resource/duzou.jpg',
-      list: [1, 2, 3, 4, 5, 6]
+      listdata: [1, 2, 3, 4, 5, 6]
     };
     components = {
-      search: Search
+      search: Search,
+      list: List
     };
     methods = {
       viewVideo() {
@@ -92,32 +83,6 @@
         align-items: center;
         .number {
           margin-left: 1rem;
-          color: #353535;
-        }
-      }
-    }
-    .all {
-      margin-top: 0.5rem;
-      background: #fff;
-      display: flex;
-      flex-wrap: wrap;
-      .videoItem {
-        width: 50%;
-        position: relative;
-        box-sizing: border-box;
-        padding: 8px 5px;
-        .botImg {
-          width: 100%;
-          height: 120px;
-          border-top-left-radius: 3px;
-          border-top-right-radius: 3px;
-        }
-        .intro {
-          display: flex;
-          padding: 0 10px;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 14px;
           color: #353535;
         }
       }

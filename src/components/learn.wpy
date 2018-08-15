@@ -1,9 +1,9 @@
 <!--  -->
 <template>
   <view class='learn'>
-    <search></search>
+    <search :type="learn"></search>
     <view class='back'></view>
-    <list :listData.sync="lists"></list>
+    <list :listData.sync="lists" class='uptop'></list>
   </view>
 </template>
 
@@ -11,10 +11,12 @@
   import wepy from 'wepy';
   import Search from '@/components/common/search'
   import LearnList from '@/components/learn/list'
+  import api from '@/tools/api.js'
   export default class Learn extends wepy.component {
     config = {
       navigationBarTitleText: "学习",
     };
+    props = {};
     data = {
       lists: [{
         name: '曲谱2',
@@ -47,7 +49,20 @@
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    async onLoad() {
+      this.getLearn()
+    };
+    async getLearn(){
+      let id = await wepy.getStorageSync('userId');
+      api.course.searchCourse({
+        pageNumber: 1
+      }).then((res)=>{
+        if(res.data.code === 200){
+          this.lists = res.data.data
+          this.$apply()
+        }
+      })
+    };
     onShow() {};
   }
 </script>
@@ -60,6 +75,9 @@
       height: 120rpx;
       width: 100%;
       background: #D0B485;
+    }
+    .uptop {
+      margin-top: -130rpx;
     }
   }
 </style>

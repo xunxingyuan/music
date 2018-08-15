@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <scroll-view class='resource'>
-    <search></search>
+    <search :type="video"></search>
     <view class='searchItem'>
       <view class='flex type'>
         <view @tap="viewData('video')"><i class='iconfont icon-video'></i> 视频</view>
