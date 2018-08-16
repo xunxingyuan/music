@@ -62,6 +62,11 @@ export default {
       let reqUrl = url + '/api/video/getByPage'
       return requestData(reqUrl, data, 'GET')
     },
+    //推荐视频
+    recommendVideo: (data) => {
+      let reqUrl = url + '/api/video/slideshow'
+      return requestData(reqUrl, data, 'GET')
+    },
   },
   //音频
   music: {

@@ -183,7 +183,6 @@
     watch = {};
     computed = {};
     async onLoad(options) {
-      console.log(options);
       this.videoId = options.id
       let userId = await wepy.getStorageSync('userId');
       this.videoSrc = 'http://192.168.100.246:9501' + options.url
@@ -197,7 +196,6 @@
       api.comment.getVideoComment({
         videoId: id
       }).then((res) => {
-        console.log(res);
         if (res.data.code === 200) {
           _self.commentList = res.data.data
         }

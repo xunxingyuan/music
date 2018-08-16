@@ -3,10 +3,6 @@
   <view class='searchBox'>
     <view class='search'>
       <input bindfocus="bindfocus" bindinput="bindKeyInput" class='searchBox' type="text" placeholder="输入搜索内容" confirm-type="search" bindconfirm="searchData"> </input>
-      <!-- <view class='searchBox flex' @tap="searchData">
-                            <icon class='icon' type="search" size="16">
-                            </icon>
-                          </view> -->
     </view>
     <view wx:if="{{showSearch}}" class="searchType flex">
       <view class='typeContain'>
@@ -15,14 +11,14 @@
       <view class='typeContain mid'>
         <radio @tap="setType('music')" checked="{{selectType === 'music'}}" name="id" /> 音频
         <!-- <view>
-                          <view>
-                            <checkbox-group @change="checkboxChange">
-                              <label wx:for="{{musicType}}">
-                                <checkbox value="{{item.name}}" checked="{{item.checked}}" name="id" /> {{item.value}}
-                              </label>
-                            </checkbox-group>
-                          </view>
-                        </view> -->
+                              <view>
+                                <checkbox-group @change="checkboxChange">
+                                  <label wx:for="{{musicType}}">
+                                    <checkbox value="{{item.name}}" checked="{{item.checked}}" name="id" /> {{item.value}}
+                                  </label>
+                                </checkbox-group>
+                              </view>
+                            </view> -->
       </view>
       <view class='typeContain'>
         <radio @tap="setType('score')" checked="{{selectType === 'score'}}" name="id" /> 图谱
@@ -47,8 +43,7 @@
   import LearnList from '@/components/learn/list'
   import MusicList from '@/components/music/list'
   import VideoList from '@/components/video/list'
-    import ScoreList from '@/components/score/list'
-
+  import ScoreList from '@/components/score/list'
   export default class Search extends wepy.page {
     config = {
       navigationBarTitleText: "搜索",
@@ -76,7 +71,8 @@
       selectType: 'video',
       searchResult: [],
       showSearch: true,
-      searchValue: ''
+      searchValue: '',
+      pageNumber: 1
     };
     components = {
       learnlist: LearnList,
@@ -84,6 +80,73 @@
       videolist: VideoList,
       scorelist: ScoreList
     };
+    onReachBottom() {
+      console.log('bottom');
+      this.loadMore()
+    };
+    loadMore() {
+      this.pageNumber += 1
+      this.searchData('add')
+    };
+    searchData(val) {
+      if(val !== 'add'){
+        this.pageNumber = 1
+        this.searchResult = []
+      }
+      this.showSearch = false
+      switch (this.selectType) {
+        case 'video':
+          api.video.searchVideo({
+            pageNumber: this.pageNumber,
+            title: this.searchValue
+          }).then((res) => {
+            res.data.forEach(element => {
+              this.searchResult.push(element)
+            });
+            this.$apply()
+          })
+          break;
+        case 'music':
+          api.music.searchMusic({
+            pageNumber: this.pageNumber,
+            title: this.searchValue
+          }).then((res) => {
+            if (res.data.code === 200) {
+              res.data.data.forEach(element => {
+                this.searchResult.push(element)
+              });
+              this.$apply()
+            }
+          })
+          break;
+        case 'learn':
+          api.course.searchCourse({
+            pageNumber: this.pageNumber,
+            title: this.searchValue
+          }).then((res) => {
+            if (res.data.code === 200) {
+              res.data.data.forEach(element => {
+                this.searchResult.push(element)
+              });
+              this.$apply()
+            }
+          })
+          break;
+        case 'score':
+          api.score.searchScore({
+            pageNumber: this.pageNumber,
+            title: this.searchValue
+          }).then((res) => {
+            res.data.forEach(element => {
+              this.searchResult.push(element)
+            });
+            this.$apply()
+          })
+          break;
+        default:
+          break;
+      }
+    }
     methods = {
       bindKeyInput(e) {
         this.searchValue = e.detail.value
@@ -97,54 +160,6 @@
       setType(val) {
         this.selectType = val
       },
-      searchData() {
-        this.showSearch = false
-        switch (this.selectType) {
-          case 'video':
-            api.video.searchVideo({
-              pageNumber: 1,
-              title: this.searchValue
-            }).then((res) => {
-              this.searchResult = res.data
-              this.$apply()
-            })
-            break;
-          case 'music':
-            api.music.searchMusic({
-              pageNumber: 1,
-              title: this.searchValue
-            }).then((res) => {
-              if (res.data.code === 200) {
-                this.searchResult = res.data.data
-                this.$apply()
-              }
-            })
-            break;
-          case 'learn':
-            api.course.searchCourse({
-              pageNumber: 1,
-              title: this.searchValue
-            }).then((res) => {
-              if (res.data.code === 200) {
-                this.searchResult = res.data.data
-                this.$apply()
-              }
-            })
-            break;
-          case 'score':
-            api.score.searchScore({
-              pageNumber: 1,
-              title: this.searchValue
-            }).then((res) => {
-              this.searchResult = res.data
-              this.$apply()
-              
-            })
-            break;
-          default:
-            break;
-        }
-      }
     };
     events = {};
     watch = {};

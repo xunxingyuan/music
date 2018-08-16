@@ -3,13 +3,14 @@
   <view class='videoList'>
     <repeat for="{{list}}" key="index" index="index" item="item">
       <div class='videoItem'>
-        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false">
+        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo({{item}})">
         </image>
         <view class='intro'>
-          <text>吉他基本教学</text>
-          <view><i class='iconfont icon-heart'></i> 3</view>
+          <text>{{item.title}}</text>
+          <view><i class='iconfont icon-heart' @tap="likeVideo({{item}})"></i> {{item.likeCount}}</view>
         </view>
-        <text class='type'>FREE</text>
+        <text wx:if="{{item.isFree===1}}" class='type'>FREE</text>
+        <text wx:if="{{item.isFree===0}}" class='vip'>VIP</text>
       </div>
     </repeat>
   </view>
@@ -17,6 +18,7 @@
 
 <script>
   import wepy from 'wepy';
+  import api from '@/tools/api.js'
   export default class videoList extends wepy.component {
     props = {
       list: Array
@@ -25,7 +27,43 @@
       imgSrc: '../../resource/duzou.jpg',
     };
     components = {};
-    methods = {};
+    methods = {
+      viewVideo(item) {
+        console.log(item);
+        let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
+        wepy.navigateTo({
+          url: url
+        })
+      },
+      async likeVideo(item) {
+        let _self = this
+        let userId = await wepy.getStorageSync('userId');
+        api.video.likeVideo({
+          userId: userId,
+          videoId: item.id
+        }).then((res) => {
+          if (res.data.code === 200) {
+            wepy.showToast({
+              title: res.data.message,
+              icon: 'success',
+              duration: 1000
+            })
+            _self.list.forEach(element => {
+              if(element.id === item.id){
+                element.likeCount+=1
+              }
+            });
+            _self.$apply()
+          } else {
+            wepy.showToast({
+              title: res.data.message,
+              icon: 'none',
+              duration: 1000
+            })
+          }
+        })
+      },
+    };
     events = {};
     watch = {};
     computed = {};
@@ -60,6 +98,16 @@
         font-size: 14px;
         color: #353535;
       }
+    }
+    .vip {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 2px 4px;
+      font-size: 10px;
+      border-radius: 2px;
+      background: #D0B485;
+      color: #fff;
     }
     .type {
       position: absolute;

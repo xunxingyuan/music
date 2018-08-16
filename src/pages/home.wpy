@@ -83,7 +83,7 @@
           wepy.setNavigationBarTitle({
             title: '学习'
           })
-          this.getLearn()
+          // this.getLearn()
           this.$apply()
           break;
         case 'student':
@@ -92,7 +92,7 @@
           wepy.setNavigationBarTitle({
             title: '学习'
           })
-          this.getLearn()
+          // this.getLearn()
           this.$apply()
           break;
         default:

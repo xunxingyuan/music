@@ -2,6 +2,9 @@
 <template>
   <view class='skill'>
     <userHeader :imgSrcData='imgSrc'></userHeader>
+    <repeat for="{{skillList}}" key="index" index="index" item="item">
+        <view></view>
+    </repeat>
   </view>
 </template>
 
@@ -15,7 +18,8 @@
     };
 
     data = {
-      imgSrc: '../../../resource/images.png'
+      imgSrc: '../../../resource/images.png',
+      skillList: []
     };
 
     components = {

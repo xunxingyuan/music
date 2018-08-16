@@ -20,8 +20,7 @@
 <script>
   import wepy from 'wepy';
   import Search from '@/components/common/search'
-    import List from '@/components/video/list'
-
+  import List from '@/components/video/list'
   import api from '@/tools/api.js'
   export default class Video extends wepy.page {
     config = {
@@ -42,10 +41,20 @@
         });
       }
     };
+    onReachBottom() {
+      console.log('bottom');
+    };
     events = {};
     watch = {};
     computed = {};
     onLoad() {
+      api.video.getAllVideo().then((res)=>{
+        this.listdata = res.data
+        this.$apply()
+      })
+      api.video.recommendVideo().then((res)=>{
+        console.log(res);
+      })
     };
     onShow() {};
   }
