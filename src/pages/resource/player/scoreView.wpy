@@ -1,6 +1,12 @@
 <!--  -->
 <template>
-  <view class='container'></view>
+  <view class='container'>
+    <!-- <image class='image' src="{{imgSrc}}" mode="aspectFit" lazy-load="false">
+    </image> -->
+    <view class='intro'>
+      <text>{{intro}}</text>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -9,24 +15,47 @@
     config = {
       navigationBarTitleText: "视频",
     };
-
-    data = {};
-
+    data = {
+      imgSrc: '',
+      intro: ''
+    };
     components = {};
-
     methods = {};
-
     events = {};
-
     watch = {};
-
     computed = {};
-
-    onLoad() { };
-
-    onShow() { };
+    onLoad(options) {
+      this.imgSrc = options.url
+      this.intro = options.title
+      let arr = []
+      arr.push(this.imgSrc)
+      wepy.previewImage({
+        urls: arr //需要预览的图片链接列表,
+      });
+      
+      this.$apply()
+    };
+    onShow() {};
   }
 </script>
 
 <style lang='less'>
+  .container{
+    justify-content: center;
+    background: #000;
+    .image{
+      width: 100%;
+    }
+    .intro{
+      position: absolute;
+      padding: 0 1rem;
+      bottom: 0;
+      left: 0;
+      height: 100rpx;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      font-size: 14px;
+    }
+  }
+
 </style>

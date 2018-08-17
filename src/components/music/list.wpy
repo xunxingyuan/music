@@ -11,24 +11,25 @@
               <text class='vip' hidden="{{item.isFree != 0}}">VIP</text>
             </view>
             <view>
-              <text class='count'>1</text>
+              <!-- <text class='count'>1</text> -->
               <text class='count'>{{item.musicCount}}</text>
               <text class='count'>{{item.notationCount}}</text>
             </view>
           </view>
-          <view class='right' @tap.stop='showMusicCtrl({{item}})'><text></text><text></text><text></text></view>
+          <view class='right'></view>
         </view>
         <view class='detail' hidden="{{item.show === 1}}">
           <repeat for="{{item.musicList}}" key="index" index="index" item="detail">
-            <view class='detailBox flex' @tap.stop='audioPlay'>
+            <view class='detailBox flex' @tap.stop='audioPlay({{detail}})'>
               <view class='detailContent'>
-                <text class='title'>{{detail.title}}</text>
+                <view class='title'><i class="iconfont icon-MusicAcc"></i> {{detail.title}}</view>
                 <view class='info'>
-                  <text>{{detail.music}}</text>
-                  <text>{{detail.score}}</text>
+                  <!-- <text>{{detail.music}}</text> -->
+                  <i class='iconfont icon-download'></i> 
+                  <text>{{detail.downloadTime}}</text>
                 </view>
               </view>
-              <view class='right'><text></text><text></text><text></text></view>
+              <view class='right' @tap.stop='showMusicCtrl({{detail}})'><text></text><text></text><text></text></view>
             </view>
           </repeat>
         </view>
@@ -38,19 +39,17 @@
       <view class='flex'>
         <view class='ctrl vip'>VIP-下载歌曲</view>
         <view class='ctrl vip'>VIP-收藏歌曲</view>
-        <view class='ctrl'>歌曲简介</view>
+        <view class='ctrl' @tap="showIntro">歌曲简介</view>
         <view class='ctrl cancel' @tap='cancelShowMusicCtrl'>取消</view>
       </view>
     </view>
-    <musicPlay wx:if="{{playState == 'show'}}"></musicPlay>
+    <musicPlay :musicSrc.sync="selectMusic" wx:if="{{playState == 'show'}}"></musicPlay>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
-
-    import MusicPlay from '@/components/music/musicPlay'
-
+  import MusicPlay from '@/components/music/musicPlay'
   export default class musicList extends wepy.component {
     props = {
       musicList: Array
@@ -58,6 +57,8 @@
     data = {
       playState: 'hidden',
       showCtrl: 1,
+      selectMusic: '',
+      selectItem: ''
     };
     components = {
       musicPlay: MusicPlay
@@ -76,12 +77,31 @@
       },
       showMusicCtrl(item) {
         this.showCtrl = 0
+        this.selectItem = item
       },
       cancelShowMusicCtrl() {
         this.showCtrl = 1
       },
-      audioPlay() {
-        this.playState = 'show'
+      audioPlay(item) {
+        this.selectMusic = 'http://192.168.100.246:9501' + item.url
+        // this.$broadcast('srcChange', {
+        //   name: item.title,
+        //   url: this.selectMusic
+        // })
+        const backgroundAudioManager = wx.getBackgroundAudioManager()
+        backgroundAudioManager.title = item.title
+        // backgroundAudioManager.epname = '此时此刻'
+        // backgroundAudioManager.singer = '许巍'
+        // backgroundAudioManager.coverImgUrl = 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000'
+        backgroundAudioManager.src = this.selectMusic // 设置了 src 之后会自动播放
+        // this.playState = 'show'
+      },
+      showIntro() {
+        wepy.showModal({
+          title: '歌曲简介',
+          content: this.selectItem.introduction,
+          showCancel: false
+        })
       }
     };
     events = {};
@@ -93,7 +113,7 @@
 </script>
 
 <style lang='less'>
-  .musicList{
+  .musicList {
     width: 100%;
     height: auto;
     .musicItem {
@@ -158,7 +178,7 @@
             align-items: center;
             justify-content: space-between;
             .title {
-              color: #000;
+              color: green;
             }
             .info {
               font-size: 12px;

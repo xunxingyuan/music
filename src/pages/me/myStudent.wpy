@@ -51,8 +51,8 @@
     async onLoad() {
       let userInfo = await wepy.getStorageSync('userInfo');
       api.user.getStudents({
-        code: 3
-        // code: userInfo.vipUser.code
+        // code: 3
+        code: userInfo.vipUser.code
       })
     };
     onShow() {};

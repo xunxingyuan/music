@@ -6,7 +6,7 @@
         <view class='inner'>
           <image class='img' src="{{item.url}}" mode="aspectFill" lazy-load="false">
           </image>
-          <view class='msg'>
+          <view class='msg' @tap="viewScore({{item}})">
             <text>{{item.title}}</text>
           </view>
         </view>
@@ -23,7 +23,23 @@
     };
     data = {};
     components = {};
-    methods = {};
+    methods = {
+      viewScore(item) {
+        // let url = '/pages/resource/player/scoreView?url=' + item.url + '&title=' + item.title
+        let current = item.url
+        let arr = []
+        this.imgList.forEach(element => {
+          arr.push(element.url)
+        });
+        wepy.previewImage({
+          current: current, // 当前显示图片的http链接
+          urls: arr //需要预览的图片链接列表,
+        });
+        // wepy.navigateTo({
+        //   url: url
+        // })
+      }
+    };
     events = {};
     watch = {};
     computed = {};
@@ -67,7 +83,7 @@
           justify-content: center;
           color: #353535;
           font-size: 18px;
-          text{
+          text {
             width: 80%;
             overflow: hidden;
             text-align: center;

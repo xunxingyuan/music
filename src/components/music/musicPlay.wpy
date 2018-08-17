@@ -2,21 +2,20 @@
 <template>
   <view class='musciPlay'>
     <view class='playCtrl'>
-      <view class='btn' @tap='playAudio'>播放</view>
-      <image class='img' src="{{current.poster}}" mode="aspectFit" lazy-load="false">
+      <view wx:if="{{!playState}}" class='btn' @tap='playAudio'><i class="iconfont icon-play1"></i></view>
+      <view wx:if="{{playState}}" class='btn' @tap='pauseAudio'><i class="iconfont icon-pause"></i></view>
+      <view class="img"><i class="iconfont icon-MusicAcc"></i></view>
       </image>
       <view class='ctrl'>
-        <view class='intro'>{{current.name}}--{{current.author}}</view>
-        <view class='slide'>
-          <view class="inner" style="width:{{(now/total)*100}}%">
-          </view>
-          <view class="icon">
-          </view>
-        </view>
+        <view class='intro'><view class='introText'>{{current.name}}</view> <text wx:if="{{showTime}}">{{nowTime}}—{{totalTime}}</text></view>
+        <slider @change="sliderChange" value="{{(now/total)*100}}" min="0" max="100" block-size='14' />
+        <!-- <view class='slide' @tap='jump'>
+            <view class="inner" style="width:{{(now/total)*100}}%">
+            </view>
+            <view class="icon">
+            </view>
+          </view> -->
       </view>
-      <text>
-                        {{nowTime}}--{{totalTime}}
-                      </text>
     </view>
   </view>
 </template>
@@ -26,6 +25,9 @@
   export default class MusicPlay extends wepy.component {
     config = {
       navigationBarTitleText: "",
+    };
+    props = {
+      musicSrc: String
     };
     data = {
       current: {
@@ -38,6 +40,10 @@
         method: 'pause'
       },
       innerAudioContext: '',
+      //播放状态
+      playState: false,
+      //播放时间显示
+      showTime: false,
       //当前播放时间
       now: 1,
       //总时长
@@ -50,11 +56,30 @@
       },
       playAudio() {
         this.innerAudioContext.play()
+        this.playState = true
       },
-      pauseAudio() {},
-      sliderChange() {}
+      pauseAudio() {
+        this.innerAudioContext.pause()
+        this.playState = false
+        this.showTime = true
+        this.$apply()
+      },
+      sliderChange(e) {
+        let jump = (e.detail.value / 100) * this.total
+        this.innerAudioContext.seek(Math.floor(jump))
+        this.now = Math.floor(jump)
+      }
     };
-    events = {};
+    events = {
+      'srcChange': (val) => {
+        this.innerAudioContext.pause()
+        this.innerAudioContext.src = val.url
+        this.now = 0
+        this.current.name = val.name
+        this.playState = false
+        this.showTime = false
+      }
+    };
     watch = {};
     computed = {
       nowTime: function() {
@@ -82,25 +107,26 @@
         return time
       }
     };
-    onLoad() {
+    async onLoad() {
       let _self = this
+      if(this.innerAudioContext!==''){
+        this.innerAudioContext.destroy()
+      }
       this.innerAudioContext = wx.createInnerAudioContext()
-      // this.innerAudioContext.autoplay = true
-      this.innerAudioContext.src = 'http://ws.stream.qqmusic.qq.com/M500001VfvsJ21xFqb.mp3?guid=ffffffff82def4af4b12b3cd9337d5e7&uin=346897220&vkey=6292F51E1E384E061FF02C31F716658E5C81F5594D561F2E88B854E81CAAB7806D5E4F103E55D33C16F3FAC506D1AB172DE8600B37E43FAD&fromtag=46'
       this.innerAudioContext.onPlay((res) => {
         console.log('开始播放')
+        _self.showTime = true
       })
       this.innerAudioContext.onTimeUpdate(() => {
         _self.now = Number(_self.innerAudioContext.currentTime.toFixed(0))
         _self.total = Number(_self.innerAudioContext.duration.toFixed(0))
         this.$apply()
       })
-      // this.innerAudioContext.onError((res) => {
-      //   console.log(res.errMsg)
-      //   console.log(res.errCode)
-      // })
     };
     onShow() {};
+    onUnload () {
+      // this.innerAudioContext.destroy()
+    };
   }
 </script>
 
@@ -119,22 +145,50 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      background: #fff;
+      background: #333;
+      color: #fff;
+      box-sizing: border-box;
+      padding: 5px 10px;
       .btn {
         width: 2rem;
         font-size: 14px;
         text-align: center;
+        margin-right: 5px;
+        i {
+          font-size: 28px;
+        }
       }
       .img {
-        height: 130rpx;
-        width: 130rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff; // border: solid 1px rgb(202, 185, 185);
+        padding: 2px;
+        i {
+          font-size: 46px;
+          color: rgb(49, 170, 226);
+        }
       }
       .ctrl {
         flex: 1;
+        position: relative;
         .intro {
           font-size: 14px;
           padding: 0 1rem;
-          margin-bottom: 1rem;
+          margin-bottom: 0.5rem;
+          color: #D0B485;
+          display: flex;
+          align-items: center;
+          .introText{
+            max-width: 60%;
+            overflow: hidden;
+            height: 1rem;
+          }
+          text {
+            margin-left: 10px;
+            color: #fff;
+            font-size: 12px;
+          }
         }
         .slide {
           width: 100%;
@@ -142,6 +196,7 @@
           background: #ddd;
           display: flex;
           align-items: center;
+          position: relative;
           .inner {
             height: 4px;
             background: green;
@@ -153,6 +208,9 @@
             background: gray;
           }
         }
+      }
+      .showtime {
+        font-size: 12px;
       }
     }
   }
