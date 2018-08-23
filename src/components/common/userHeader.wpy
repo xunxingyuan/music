@@ -8,7 +8,7 @@
       <image class='icon' src="{{imgSrcData}}" mode="scaleToFill"
         lazy-load="false">
       </image>
-      <text>NANA</text>
+      <text>{{userName}}</text>
     </view>
   </view>
 </template>
@@ -17,7 +17,8 @@
   import wepy from 'wepy';
   export default class UserHeader extends wepy.component {
     props = {
-      imgSrcData: String
+      imgSrcData: String,
+      userName: String
     };
     data = {};
     components = {};

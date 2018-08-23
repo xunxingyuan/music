@@ -1,11 +1,11 @@
 <!--  -->
 <template>
   <view class='container'>
-    <learn :learnData.sync="courseData" hidden="{{activeTab != 'learn'}}"></learn>
-    <resource :resData.sync="resourceData" hidden="{{activeTab != 'resource'}}"></resource>
-    <me hidden="{{activeTab != 'me'||role!=='teacher'}}"></me>
-    <student hidden="{{activeTab != 'me'||role!=='student'}}"></student>
-    <vistor hidden="{{activeTab != 'me'||role!=='vistor'}}"></vistor>
+    <learn :learnData.sync="courseData" wx:if="{{activeTab == 'learn'}}"></learn>
+    <resource :resData.sync="resourceData" wx:if="{{activeTab == 'resource'}}"></resource>
+    <me wx:if="{{activeTab == 'me'&&role==='teacher'}}"></me>
+    <student wx:if="{{activeTab == 'me'&&role==='student'}}"></student>
+    <vistor wx:if="{{activeTab == 'me'&&role==='vistor'}}"></vistor>
     <nav :activeTab.sync='activeTab' @changeTab.user='changeTabCtrl'></nav>
   </view>
 </template>

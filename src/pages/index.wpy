@@ -5,8 +5,8 @@
       <button @tap="login" open-type="getUserInfo">VIP登录</button>
       <view class='normal' @tap="auth(3)" open-type="getUserInfo">游客登录</view>
     </view>
-    <view class='coverBox' wx:if="{{showLogin}}">
-      <view class='loginCheck'>
+    <view class='coverBox' wx:if="{{showLogin}}" @tap="hide">
+      <view class='loginCheck' @tap.stop="show">
         <text>律声云课堂</text>
         <view class='msg'>
           <input type='number' bindinput='setPhone' placeholder='输入VIP手机号码' />
@@ -16,13 +16,13 @@
             <button class='getCode' wx:if="{{showTimeCount}}">再次发送({{timeLeft}}s)</button>
           </view>
         </view>
-        <button class='auth' @tap="auth(1)">VIP登录</button>
+        <button type="primary" class='auth' @tap="auth(1)">VIP登录</button>
       </view>
     </view>
-    <view class='coverBox' wx:if="{{showAuth}}">
+    <view class='coverBox second' wx:if="{{showAuth}}">
       <view class='loginCheck'>
         <text class='tips'>为提供更优质的服务，小程序需要您的授权</text>
-        <button open-type="getUserInfo" bindgetuserinfo="getAuth">授权</button>
+        <button type="primary" open-type="getUserInfo" bindgetuserinfo="getAuth">授权</button>
       </view>
     </view>
   </view>
@@ -45,6 +45,12 @@
     };
     components = {};
     methods = {
+      show() {
+        this.showLogin = true
+      },
+      hide() {
+        this.showLogin = false
+      },
       login() {
         this.showLogin = true
         this.num++
@@ -253,6 +259,13 @@
       color: #666;
       text-align: center;
       font-size: 14px;
+    }
+    .second {
+      .loginCheck {
+        width: 68%;
+        height: 400rpx;
+        border-radius: 4px;
+      }
     }
   }
 </style>

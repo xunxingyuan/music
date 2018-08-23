@@ -25,7 +25,7 @@ export default {
   },
   //课程
   course: {
-    getAllCourse: (data) => {
+    getCourse: (data) => {
       let reqUrl = url + '/api/course/getById'
       return requestData(reqUrl, data, 'GET')
     },
@@ -89,7 +89,19 @@ export default {
   //用户
   user: {
     getStudents: (data) => {
-      let reqUrl = url + '/api/user/getMyStudents'
+      let reqUrl = url + '/api/user/getStudents'
+      return requestData(reqUrl, data, 'GET')
+    },
+    getTeacherInfo: (data)=>{
+      let reqUrl = url + '/api/user/getTeacherData'
+      return requestData(reqUrl, data, 'GET')
+    },
+    getDownload: (data)=>{
+      let reqUrl = url + '/api/user/downLoadList'
+      return requestData(reqUrl, data, 'GET')
+    },
+    getSkill: (data)=>{
+      let reqUrl = url + '/api/user/skillTree'
       return requestData(reqUrl, data, 'GET')
     }
   },

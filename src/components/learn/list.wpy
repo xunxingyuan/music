@@ -31,9 +31,10 @@
     data = {};
     components = {};
     methods = {
-      toLesson() {
+      toLesson(item) {
+        let url = '/pages/learn/lesson?id='+ item.id
         wepy.navigateTo({
-          url: '/pages/learn/lesson'
+          url: url
         });
       }
     };

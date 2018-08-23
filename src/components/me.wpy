@@ -13,40 +13,40 @@
         <view class='itemBox first' @tap="viewItem('student')">
           <text class='title'>我的学生</text>
           <view class='count flex'>
-            <text class='number'>30</text>
+            <text class='number'>{{userMsg.studentCount}}</text>
             <text class='line'>/</text>
             <text>人</text>
           </view>
-          <text class='tips'>共3个班级</text>
+          <text class='tips'></text>
         </view>
         <view class='itemBox' @tap="viewItem('download')">
           <text class='title'>我的下载</text>
           <view class='count flex'>
-            <text class='number'>40</text>
+            <text class='number'>{{userMsg.downloadCount}}</text>
             <text class='line'>/</text>
             <text>个</text>
           </view>
-          <text class='tips'>3个视频，4个音频</text>
+          <text class='tips'></text>
         </view>
       </view>
       <view class='userItem flex bot'>
         <view class='itemBox first' @tap="viewItem('collection')">
           <text class='title'>我的收藏</text>
           <view class='count flex'>
-            <text class='number'>30</text>
+            <text class='number'>{{userMsg.collectCount}}</text>
             <text class='line'>/</text>
             <text>个</text>
           </view>
-          <text class='tips'>2个音频，4个视频，2个曲集</text>
+          <text class='tips'></text>
         </view>
         <view class='itemBox' @tap="viewItem('comment')">
           <text class='title'>我的评论</text>
           <view class='count flex'>
-            <text class='number'>60</text>
+            <text class='number'>{{userMsg.commentCount}}</text>
             <text class='line'>/</text>
             <text>条</text>
           </view>
-          <text class='tips'>已评论50个作品</text>
+          <text class='tips'></text>
         </view>
       </view>
     </view>
@@ -55,11 +55,14 @@
 
 <script>
   import wepy from 'wepy';
+  import api from '@/tools/api.js'
   export default class Me extends wepy.component {
     config = {
       navigationBarTitleText: "我的",
     };
-    data = {};
+    data = {
+      userMsg:''
+    };
     components = {};
     methods = {
       viewItem(item) {
@@ -85,7 +88,20 @@
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    async onLoad() {
+      let userInfo = await wepy.getStorageSync('userInfo');
+      let userData = JSON.parse(userInfo)
+      console.log(userData);
+      api.user.getTeacherInfo({
+        code: userData.vipUser.code,
+        id: userData.vipUser.id
+      }).then((res)=>{
+        if(res.data.code === 200){
+          this.userMsg = res.data.data
+          this.$apply()
+        }
+      })
+    };
     onShow() {};
   }
 </script>

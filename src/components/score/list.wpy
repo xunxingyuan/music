@@ -25,7 +25,6 @@
     components = {};
     methods = {
       viewScore(item) {
-        // let url = '/pages/resource/player/scoreView?url=' + item.url + '&title=' + item.title
         let current = item.url
         let arr = []
         this.imgList.forEach(element => {
@@ -35,9 +34,6 @@
           current: current, // 当前显示图片的http链接
           urls: arr //需要预览的图片链接列表,
         });
-        // wepy.navigateTo({
-        //   url: url
-        // })
       }
     };
     events = {};

@@ -2,7 +2,7 @@
 <template>
   <view class='collection'>
     <repeat for="{{list}}" key="index" index="index" item="item">
-      <view class='blockItem'>
+      <view class='blockItem' @tap="viewVideo({{item}})">
         <view class='top'>
           <text class='title'>{{item.title}}</text>
           <text wx:if="{{item.type === 0}}" class='type'>视频</text>
@@ -28,7 +28,15 @@
       list: []
     };
     components = {};
-    methods = {};
+    methods = {
+      viewVideo(item) {
+        console.log(item);
+        let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
+        wepy.navigateTo({
+          url: url
+        })
+      },
+    };
     events = {};
     watch = {};
     computed = {};

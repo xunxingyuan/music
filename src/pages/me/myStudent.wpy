@@ -3,8 +3,8 @@
   <view class='myStudent'>
     <view class='classList'>
       <repeat for="{{classListData}}" key="index" index="index" item="item">
-        <view class='msg' :class="{'acitve':active=== index }" @tap='choseClass({{index}})'>
-          1709班
+        <view class='msg' :class="{'acitve':active=== index }" @tap='choseClass({{item}},{{index}})'>
+          {{item}}
           <view class='lineBox'>
             <view class='line'></view>
           </view>
@@ -12,10 +12,10 @@
       </repeat>
     </view>
     <repeat for="{{studentList}}" key="index" index="index" item="item">
-      <view class='student flex' @tap='viewStudent'>
-        <image class='userIcon' src="{{imgSrc}}" mode="scaleToFill" lazy-load="false">
+      <view class='student flex' @tap='viewStudent({{item}})'>
+        <image class='userIcon' src="{{item.appUser.avatarUrl}}" mode="scaleToFill" lazy-load="false">
         </image>
-        <text>BABE</text>
+        <text>{{item.name}}</text>
       </view>
     </repeat>
   </view>
@@ -29,19 +29,23 @@
       navigationBarTitleText: "我的学生",
     };
     data = {
-      classListData: [1, 2, 3],
+      classListData: [],
       active: 0,
-      studentList: [1, 2, 3, 4, 5],
-      imgSrc: '../../resource/images.png'
+      studentList: [],
+      imgSrc: '../../resource/images.png',
+      studentData: ''
     };
     components = {};
     methods = {
-      choseClass(index) {
+      choseClass(item,index) {
         this.active = index
+        this.studentList = this.studentData[item]
       },
-      viewStudent() {
+      viewStudent(item) {
+        let url = "/pages/me/skill/skill?id="+ item.id+'&name='+ item.name
+        wepy.setStorageSync('viewUser', item.appUser.avatarUrl)
         wepy.navigateTo({
-          url: '/pages/me/skill/skill'
+          url: url
         });
       }
     };
@@ -49,10 +53,33 @@
     watch = {};
     computed = {};
     async onLoad() {
+      let _self = this
       let userInfo = await wepy.getStorageSync('userInfo');
+      let userData = JSON.parse(userInfo)
       api.user.getStudents({
         // code: 3
-        code: userInfo.vipUser.code
+        code: userData.vipUser.code
+      }).then((res) => {
+        if (res.data.code === 200) {
+          let result = res.data.data
+          _self.studentData = result
+          _self.classListData = []
+          _self.studentList = []
+          Object.keys(result).forEach(function(key,index) {
+            // console.log(key,index, result[key]);
+            _self.classListData.push(key)
+            result[key].forEach((e)=>{
+              if(e.appUser === ''||e.appUser.avatarUrl===''){
+                e.appUser = {}
+                e.appUser['avatarUrl'] = "../../resource/images.png"
+              }
+            })
+            if(index === 0){
+              _self.studentList = result[key]
+            }
+          });
+        }
+        this.$apply()
       })
     };
     onShow() {};

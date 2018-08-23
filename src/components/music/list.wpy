@@ -88,11 +88,12 @@
         //   name: item.title,
         //   url: this.selectMusic
         // })
-        const backgroundAudioManager = wx.getBackgroundAudioManager()
-        backgroundAudioManager.title = item.title
+        
         // backgroundAudioManager.epname = '此时此刻'
         // backgroundAudioManager.singer = '许巍'
         // backgroundAudioManager.coverImgUrl = 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000'
+        const backgroundAudioManager = wx.getBackgroundAudioManager()
+        backgroundAudioManager.title = item.title
         backgroundAudioManager.src = this.selectMusic // 设置了 src 之后会自动播放
         // this.playState = 'show'
       },
