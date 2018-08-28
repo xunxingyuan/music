@@ -14,11 +14,11 @@
     <view class='content'>
       <repeat for="{{resData}}" key="index" index="index" item="item">
         <view class='item flex'>
-          <text class='name' @tap='viewVideo({{item}})'>{{item.title}}</text>
+          <view class='name' @tap='viewDetail({{item}})'>{{item.title}} <text class='vip' wx:if="{{item.isFree==0}}">VIP</text><text class='free' wx:if="{{item.isFree!=0}}">FREE</text></view>
           <view class='detail'>
-            <view class='number'><i class='iconfont icon-video'></i> 5</view>
-            <view class='number'><i class='iconfont icon-voice'></i> 2</view>
-            <view class='number'><i class='iconfont icon-score'></i> 7</view>
+            <view class='number'><i class='iconfont icon-video'></i> {{item.videoList.length}}</view>
+            <view class='number'><i class='iconfont icon-voice'></i> {{item.musicList.length}}</view>
+            <view class='number'><i class='iconfont icon-score'></i> {{item.notationList.length}}</view>
           </view>
         </view>
       </repeat>
@@ -62,13 +62,47 @@
         wepy.navigateTo({
           url: url
         })
+      },
+      async viewDetail(item) {
+        wepy.setStorageSync('selectResource', JSON.stringify(item))
+        let url = '/pages/resource/resource'
+        let userInfo = await wepy.getStorageSync('userInfo');
+        let permission = JSON.parse(userInfo).permission
+        if (item.isFree == 0) {
+          if (permission.playVip == 'yes') {
+            wepy.navigateTo({
+              url: url
+            })
+          } else {
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          }
+        } else {
+          if (permission.playFree == 'yes') {
+            wepy.navigateTo({
+              url: url
+            })
+          } else {
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          }
+        }
       }
     };
     events = {};
     watch = {};
     computed = {};
-    onLoad() {
-    };
+    onLoad() {};
     onShow() {};
   }
 </script>
@@ -96,7 +130,7 @@
       }
     }
     .content {
-      padding-bottom: 120rpx;
+      padding-bottom: 140rpx;
       .item {
         background: #fff;
         margin-bottom: 1px;
@@ -107,6 +141,19 @@
         .name {
           font-size: 16px;
           color: #000;
+          text {
+            padding: 2px 4px;
+            font-size: 12px;
+            border-radius: 2px;
+          }
+          .free {
+            background: #F0FCF4;
+            color: #67A677;
+          }
+          .vip {
+            background: #D0B485;
+            color: #fff;
+          }
         }
         .detail {
           color: #C1C1C1;

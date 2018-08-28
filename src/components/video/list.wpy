@@ -28,12 +28,40 @@
     };
     components = {};
     methods = {
-      viewVideo(item) {
+      async viewVideo(item) {
         console.log(item);
+        let userInfo = await wepy.getStorageSync('userInfo');
+        let permission = JSON.parse(userInfo).permission
         let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
-        wepy.navigateTo({
-          url: url
-        })
+        if (item.isFree == 1) {
+          if (permission.playFree == 'yes') {
+            wepy.navigateTo({
+              url: url
+            })
+          } else {
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          }
+        } else {
+          if (permission.playVip == 'yes') {
+            wepy.navigateTo({
+              url: url
+            })
+          }else{
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          }
+        }
       },
       async likeVideo(item) {
         let _self = this
@@ -49,8 +77,8 @@
               duration: 1000
             })
             _self.list.forEach(element => {
-              if(element.id === item.id){
-                element.likeCount+=1
+              if (element.id === item.id) {
+                element.likeCount += 1
               }
             });
             _self.$apply()

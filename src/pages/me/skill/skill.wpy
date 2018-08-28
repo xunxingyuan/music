@@ -1,9 +1,33 @@
 <!--  -->
 <template>
   <view class='skill'>
-    <userHeader :imgSrcData.sync='imgSrc' :userName.sync="name"></userHeader>
-    <repeat for="{{skillList}}" key="index" index="index" item="item">
-      <view></view>
+    <!-- <userHeader :imgSrcData.sync='imgSrc' :userName.sync="name"></userHeader> -->
+    <view class='info'>
+      <view class='infoBox flex'>
+        <view class='left'>
+          <view class='name'>{{name}}</view>
+          <view class='count'>已学会课程 {{learnList.length}} / {{total}} <text wx:if="{{!delShow}}" class='edit' @tap="showDel">编辑</text><text wx:if="{{delShow}}" class='edit' @tap="showDel">取消编辑</text></view>
+        </view>
+        <image class='icon' src="{{imgSrc}}" mode="scaleToFill" lazy-load="false">
+        </image>
+      </view>
+      <view class='skillBox'>
+        <repeat for="{{learnList}}" key="index" index="index" item="item">
+          <view class='skillItem'>{{item.name}} <text wx:if="{{delShow}}" class='del' @tap="delItem({{item}})">X</text></view>
+        </repeat>
+      </view>
+    </view>
+    <view class='flex main'>
+      <repeat for="{{skillList}}" key="index" index="index" item="item">
+        <view @tap="pushData({{item}},-1,{{index}})" class="mainInner" :class="{'chosed': item.chosed}">{{item.name}}</view>
+      </repeat>
+    </view>
+    <repeat for="{{detailList}}" key="index" index="index" item="item">
+      <view class="flex main">
+        <repeat for="{{item}}" key="id" index="second" item="itemData">
+          <view class="mainInner" :class="{'active': itemData.isCheck,'chosed': itemData.chosed}" @tap="pushData({{itemData}},{{index}},{{second}})">{{itemData.name}}</view>
+        </repeat>
+      </view>
     </repeat>
   </view>
 </template>
@@ -18,30 +42,576 @@
     };
     data = {
       imgSrc: '../../../resource/images.png',
-      skillList: [],
-      name:''
+      skillList: [{
+          "checkedCount": 0,
+          "childCount": 19,
+          "childrenNodeList": [{
+              "checkedCount": 0,
+              "childCount": 14,
+              "childrenNodeList": [{
+                  "checkedCount": 0,
+                  "childCount": 0,
+                  "childrenNodeList": [],
+                  "editTime": "",
+                  "id": 1034,
+                  "isCheck": false,
+                  "isLeaf": true,
+                  "name": "节拍器",
+                  "pid": 8
+                },
+                {
+                  "checkedCount": 0,
+                  "childCount": 0,
+                  "childrenNodeList": [],
+                  "editTime": "",
+                  "id": 1036,
+                  "isCheck": false,
+                  "isLeaf": true,
+                  "name": "肌肉记忆",
+                  "pid": 8
+                },
+                {
+                  "checkedCount": 0,
+                  "childCount": 6,
+                  "childrenNodeList": [{
+                      "checkedCount": 0,
+                      "childCount": 4,
+                      "childrenNodeList": [{
+                          "checkedCount": 0,
+                          "childCount": 0,
+                          "childrenNodeList": [],
+                          "editTime": "",
+                          "id": 1041,
+                          "isCheck": false,
+                          "isLeaf": true,
+                          "name": "高音五线",
+                          "pid": 1039
+                        },
+                        {
+                          "checkedCount": 0,
+                          "childCount": 0,
+                          "childrenNodeList": [],
+                          "editTime": "",
+                          "id": 1042,
+                          "isCheck": false,
+                          "isLeaf": true,
+                          "name": "加线",
+                          "pid": 1039
+                        },
+                        {
+                          "checkedCount": 0,
+                          "childCount": 0,
+                          "childrenNodeList": [],
+                          "editTime": "",
+                          "id": 1043,
+                          "isCheck": false,
+                          "isLeaf": true,
+                          "name": "大谱表",
+                          "pid": 1039
+                        },
+                        {
+                          "checkedCount": 0,
+                          "childCount": 0,
+                          "childrenNodeList": [],
+                          "editTime": "",
+                          "id": 1044,
+                          "isCheck": false,
+                          "isLeaf": true,
+                          "name": "低音五线谱",
+                          "pid": 1039
+                        }
+                      ],
+                      "editTime": "",
+                      "id": 1039,
+                      "isCheck": false,
+                      "isLeaf": false,
+                      "name": "五线谱",
+                      "pid": 1037
+                    },
+                    {
+                      "checkedCount": 0,
+                      "childCount": 0,
+                      "childrenNodeList": [],
+                      "editTime": "",
+                      "id": 1040,
+                      "isCheck": false,
+                      "isLeaf": true,
+                      "name": "小节",
+                      "pid": 1037
+                    }
+                  ],
+                  "editTime": "",
+                  "id": 1037,
+                  "isCheck": false,
+                  "isLeaf": false,
+                  "name": "曲谱",
+                  "pid": 8
+                },
+                {
+                  "checkedCount": 0,
+                  "childCount": 4,
+                  "childrenNodeList": [{
+                      "checkedCount": 0,
+                      "childCount": 0,
+                      "childrenNodeList": [],
+                      "editTime": "",
+                      "id": 1045,
+                      "isCheck": false,
+                      "isLeaf": true,
+                      "name": "播放倍数",
+                      "pid": 1038
+                    },
+                    {
+                      "checkedCount": 0,
+                      "childCount": 0,
+                      "childrenNodeList": [],
+                      "editTime": "",
+                      "id": 1046,
+                      "isCheck": false,
+                      "isLeaf": true,
+                      "name": "变调",
+                      "pid": 1038
+                    },
+                    {
+                      "checkedCount": 0,
+                      "childCount": 0,
+                      "childrenNodeList": [],
+                      "editTime": "",
+                      "id": 1047,
+                      "isCheck": false,
+                      "isLeaf": true,
+                      "name": "音色",
+                      "pid": 1038
+                    },
+                    {
+                      "checkedCount": 0,
+                      "childCount": 0,
+                      "childrenNodeList": [],
+                      "editTime": "",
+                      "id": 1048,
+                      "isCheck": false,
+                      "isLeaf": true,
+                      "name": "效果",
+                      "pid": 1038
+                    }
+                  ],
+                  "editTime": "",
+                  "id": 1038,
+                  "isCheck": false,
+                  "isLeaf": false,
+                  "name": "科技",
+                  "pid": 8
+                }
+              ],
+              "editTime": "",
+              "id": 8,
+              "isCheck": false,
+              "isLeaf": false,
+              "name": "基础",
+              "pid": 3
+            },
+            {
+              "checkedCount": 0,
+              "childCount": 0,
+              "childrenNodeList": [],
+              "editTime": "",
+              "id": 1025,
+              "isCheck": false,
+              "isLeaf": true,
+              "name": "音",
+              "pid": 3
+            },
+            {
+              "checkedCount": 0,
+              "childCount": 0,
+              "childrenNodeList": [],
+              "editTime": "",
+              "id": 1026,
+              "isCheck": false,
+              "isLeaf": true,
+              "name": "节奏",
+              "pid": 3
+            },
+            {
+              "checkedCount": 0,
+              "childCount": 0,
+              "childrenNodeList": [],
+              "editTime": "",
+              "id": 1027,
+              "isCheck": false,
+              "isLeaf": true,
+              "name": "和弦进程",
+              "pid": 3
+            },
+            {
+              "checkedCount": 0,
+              "childCount": 0,
+              "childrenNodeList": [],
+              "editTime": "",
+              "id": 1028,
+              "isCheck": false,
+              "isLeaf": true,
+              "name": "旋律",
+              "pid": 3
+            }
+          ],
+          "editTime": "",
+          "id": 3,
+          "isCheck": false,
+          "isLeaf": false,
+          "name": "乐理",
+          "pid": 1
+        },
+        {
+          "checkedCount": 0,
+          "childCount": 3,
+          "childrenNodeList": [{
+              "checkedCount": 0,
+              "childCount": 0,
+              "childrenNodeList": [],
+              "editTime": "",
+              "id": 1029,
+              "isCheck": false,
+              "isLeaf": true,
+              "name": "乐器",
+              "pid": 4
+            },
+            {
+              "checkedCount": 0,
+              "childCount": 0,
+              "childrenNodeList": [],
+              "editTime": "",
+              "id": 1030,
+              "isCheck": false,
+              "isLeaf": true,
+              "name": "吉他和声",
+              "pid": 4
+            },
+            {
+              "checkedCount": 0,
+              "childCount": 0,
+              "childrenNodeList": [],
+              "editTime": "",
+              "id": 1031,
+              "isCheck": false,
+              "isLeaf": true,
+              "name": "旋律",
+              "pid": 4
+            }
+          ],
+          "editTime": "",
+          "id": 4,
+          "isCheck": false,
+          "isLeaf": false,
+          "name": "吉他",
+          "pid": 1
+        },
+        {
+          "checkedCount": 0,
+          "childCount": 2,
+          "childrenNodeList": [{
+              "checkedCount": 0,
+              "childCount": 0,
+              "childrenNodeList": [],
+              "editTime": "",
+              "id": 1032,
+              "isCheck": false,
+              "isLeaf": true,
+              "name": "键盘",
+              "pid": 5
+            },
+            {
+              "checkedCount": 0,
+              "childCount": 0,
+              "childrenNodeList": [],
+              "editTime": "",
+              "id": 1033,
+              "isCheck": false,
+              "isLeaf": true,
+              "name": "键盘和声",
+              "pid": 5
+            }
+          ],
+          "editTime": "",
+          "id": 5,
+          "isCheck": false,
+          "isLeaf": false,
+          "name": "键盘",
+          "pid": 1
+        },
+        {
+          "checkedCount": 0,
+          "childCount": 1,
+          "childrenNodeList": [{
+            "checkedCount": 0,
+            "childCount": 0,
+            "childrenNodeList": [],
+            "editTime": "",
+            "id": 1035,
+            "isCheck": false,
+            "isLeaf": true,
+            "name": "乐器",
+            "pid": 6
+          }],
+          "editTime": "",
+          "id": 6,
+          "isCheck": false,
+          "isLeaf": false,
+          "name": "鼓",
+          "pid": 1
+        }
+      ],
+      detailList: [],
+      name: '',
+      userId: '',
+      learn: 7,
+      total: 100,
+      learnList: [],
+      idList: [],
+      delShow: false
     };
     components = {
-      userHeader: UserHeader
+      userHeader: UserHeader,
     };
-    methods = {};
+    methods = {
+      showDel() {
+        this.delShow = !this.delShow
+      },
+      delItem(item) {
+        this.ctrlSkill(item)
+      },
+      pushData(item, level, choseIndex) {
+        console.log(item, level);
+        let _self = this
+        let len = this.detailList.length
+        if (item.childrenNodeList.length !== 0) {
+          if (level === '-1') {
+            _self.skillList.forEach((element, index) => {
+              if (index == choseIndex) {
+                element.chosed = true
+              } else {
+                element.chosed = false
+              }
+            });
+            _self.$apply()
+            _self.detailList = []
+            _self.detailList.push(item.childrenNodeList)
+          } else {
+            this.detailList.splice(level + 1, len - level - 1)
+            this.detailList.push(item.childrenNodeList)
+            
+            this.detailList[level].forEach((ele, index) => {
+              if (index == choseIndex) {
+                ele.chosed = true
+              } else {
+                ele.chosed = false
+              }
+            });
+            _self.$apply()
+          }
+        } else {
+          this.ctrlSkill(item)
+          this.detailList.splice(level + 1, len - level - 1)
+          this.detailList[level].forEach((ele, index) => {
+            ele.chosed = false
+          });
+          _self.$apply()
+        }
+      }
+    };
     events = {};
     watch = {};
-    computed = {};
+    computed = {
+      checkId(id) {
+        return this.idList.indexOf(id) > -1
+      }
+    };
     async onLoad(options) {
+      let _self = this
       let icon = await wepy.getStorageSync('viewUser');
       console.log(icon);
       this.imgSrc = icon
       this.name = options.name
-      api.user.getSkill({
-        id: options.id
-      })
+      this.userId = options.id
       this.$apply()
+      this._initData(options)
     };
     onShow() {};
+    _initData(options) {
+      let _self = this
+      api.user.getSkill({
+        id: _self.userId
+      }).then((res) => {
+        _self.skillList = res.data
+        _self.learnList = []
+        _self.total = 0
+        _self.$apply()
+        _self.checkLearned(res.data)
+      })
+    }
+    checkLearned(item) {
+      item.forEach(element => {
+        this.total += 1
+        if (element.isCheck) {
+          this.learnList.push(element)
+          this.idList.push(element.id)
+          this.$apply()
+        }
+        if (element.childrenNodeList.length !== 0) {
+          this.checkLearned(element.childrenNodeList)
+        }
+      });
+    };
+    checkItem(item, id) {
+      let _self = this
+      item.forEach(element => {
+        if (element.id === id) {
+          element.isCheck = !element.isCheck
+          _self.$apply()
+        } else {
+          if (element.childrenNodeList.length !== 0) {
+            this.checkItem(element.childrenNodeList, id)
+          }
+        }
+      });
+    };
+    //删除增加
+    ctrlSkill(item) {
+      let _self = this
+      if (item.isCheck) {
+        wepy.showModal({
+          title: '提示', //提示的标题,
+          content: '是否取消该学生技能：（' + item.name + '）?', //提示的内容,
+          showCancel: true, //是否显示取消按钮,
+          cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
+          cancelColor: '#000000', //取消按钮的文字颜色,
+          confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
+          confirmColor: '#3CC51F', //确定按钮的文字颜色,
+          success: res => {
+            if (res.confirm) {
+              api.user.setSkill({
+                skillId: item.id,
+                userId: this.userId
+              }).then((res) => {
+                if (res.data.code === 200) {
+                  _self.learnList.forEach((element, index) => {
+                    if (element.id === item.id) {
+                      _self.learnList.splice(index, 1)
+                      _self.idList.splice(index, 1)
+                      _self.detailList.forEach(element => {
+                        _self.checkItem(element, item.id)
+                      });
+                      _self.checkItem(_self.skillList, item.id)
+                      _self.$apply()
+                    }
+                  });
+                  // _self._initCtrl()
+                }
+              })
+            }
+          }
+        });
+      } else {
+        wepy.showModal({
+          title: '提示', //提示的标题,
+          content: '是否将该学生技能：（' + item.name + '）标为已学会？', //提示的内容,
+          showCancel: true, //是否显示取消按钮,
+          cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
+          cancelColor: '#000000', //取消按钮的文字颜色,
+          confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
+          confirmColor: '#3CC51F', //确定按钮的文字颜色,
+          success: res => {
+            if (res.confirm) {
+              api.user.setSkill({
+                skillId: item.id,
+                userId: this.userId
+              }).then((res) => {
+                if (res.data.code === 200) {
+                  _self.learnList.push(item)
+                  _self.detailList.forEach(element => {
+                    _self.checkItem(element, item.id)
+                  });
+                  _self.checkItem(_self.skillList, item.id)
+                  _self.checkItem(_self.learnList, item.id)
+                  _self.$apply()
+                }
+              })
+            }
+          }
+        });
+      }
+    }
   }
 </script>
 
 <style lang='less'>
-
+  .skill {
+    .infoBox {
+      justify-content: space-between;
+      padding: 1rem;
+      .name {
+        color: #353535;
+        font-size: 22px;
+      }
+      .count {
+        color: #a9a9a9;
+        font-size: 14px;
+      }
+      .edit {
+        color: #D0B485;
+        margin-left: 1rem;
+      }
+    }
+    .info {
+      background: #fff;
+      margin-bottom: 1rem;
+      .icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+      }
+      .skillBox {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0 1rem;
+        .del {
+          color: red;
+        }
+        .skillItem {
+          height: 1.5rem;
+          padding: 0 10px;
+          line-height: 1.5rem;
+          font-size: 12px;
+          color: #62B181;
+          border: solid 1px #DEE6E1;
+          border-radius: 14px;
+          margin-right: 10px;
+          margin-bottom: 10px;
+        }
+      }
+    }
+    .main {
+      background: #fff;
+      height: 150rpx;
+      align-items: center;
+      justify-content: flex-start;
+      border-bottom: solid 1px #ddd;
+      font-size: 14px;
+      color: #A9A9A9;
+      overflow: auto;
+      .active {
+        color: #62B181;
+      }
+      .chosed {
+        color: #000;
+      }
+      .mainInner{
+        display: inline-block;
+        text-align: center;
+        margin-left: 1rem;
+        width: auto;
+        min-width: 4rem;
+      }
+    }
+  }
 </style>

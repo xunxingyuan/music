@@ -1,34 +1,133 @@
 <!--  -->
 <template>
-  <view class='container'>
-    skill
+  <view class='Myskill'>
+    <view class='total'>已学会课程 {{geted}} / {{total}}</view>
+    <repeat for="{{list}}" key="index" index="index" item="item">
+      <view class='skillBox'>
+        <view class='skillName'>{{item.name}}</view>
+        <view class='skillDetailBox'>
+          <repeat for="{{item.child}}" index="index1" item="itemData">
+            <view class='skillDetail'>
+              <view class='inner'>
+                <view>{{itemData.name}}</view>
+                <view class='editTime'>{{itemData.editTime}}</view>
+              </view>
+            </view>
+          </repeat>
+        </view>
+      </view>
+    </repeat>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
+  import api from '@/tools/api.js';
   export default class Myskill extends wepy.page {
     config = {
       navigationBarTitleText: "我的技能",
     };
-
-    data = {};
-
+    data = {
+      geted: 0,
+      total: 0,
+      skillList: [],
+      list: []
+    };
     components = {};
-
     methods = {};
-
     events = {};
-
     watch = {};
-
     computed = {};
-
-    onLoad() { };
-
-    onShow() { };
+    async onLoad() {
+      let userInfo = await wepy.getStorageSync('userInfo');
+      let userData = JSON.parse(userInfo)
+      console.log(userData);
+      
+      let _self = this
+      api.user.getSkill({
+        id: userData.appUser.id
+      }).then((res) => {
+        _self.skillList = res.data
+        _self.skillList.forEach(element => {
+          let choseOne = {
+            name: element.name,
+            child: []
+          }
+          _self.checkLearn(element.childrenNodeList, choseOne.child)
+          _self.list.push(choseOne)
+          _self.$apply()
+        });
+        _self.$apply()
+      })
+    };
+    onShow() {};
+    checkLearn(arr, list) {
+      let _self = this
+      arr.forEach(element => {
+        _self.total += 1
+        if (element.isCheck) {
+          _self.geted += 1
+          list.push(element)
+        }
+        if (element.childrenNodeList.length !== 0) {
+          this.checkLearn(element.childrenNodeList, list)
+        }
+      });
+    }
   }
 </script>
 
 <style lang='less'>
+  .Myskill {
+    .total {
+      height: 120rpx;
+      text-align: left;
+      padding-left: 1rem;
+      line-height: 120rpx;
+      color: #353535;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .skillBox {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0 0.7rem;
+      margin-bottom: 0.5rem;
+      .skillName {
+        color: #A9A9A9;
+        font-size: 12px;
+        text-align: left;
+        padding-left: 0.3rem
+      }
+      .skillDetailBox {
+        display: flex;
+        flex-wrap: wrap;
+        box-sizing: border-box;
+        .skillDetail {
+          width: 50%;
+          height: 180rpx;
+          padding: 0.3rem;
+          // margin-bottom: 0.1rem;
+          box-sizing: border-box;
+          position: relative;
+          .inner {
+            background: #62B181;
+            border-radius: 2px;
+            box-sizing: border-box;
+            color: #fff;
+            height: 100%;
+            font-size: 14px;
+            padding: 0.5rem;
+            display: flex;
+            flex-flow: column;
+            justify-content: space-between;
+            .editTime {
+              font-size: 12px;
+              color: #ccc;
+            }
+          }
+        }
+      }
+    }
+  }
 </style>

@@ -5,11 +5,12 @@
       <view class="listItem" @tap='toLesson({{item}})'>
         <view class='msgTop flex'>
           <view class='time'>
-            <text class='date'>{{item.schedule}}</text>
+            <view class='date'>{{item.schedule}} | {{item.day}}</mydate>
+            </view>
           </view>
           <view class='count'>
-            <text>曲谱 {{item.notationCount}}</text>
-            <text>音频 {{item.musicCount}}</text>
+            <text>曲谱 {{item.notationList.length}}</text>
+            <text>音频 {{item.musicList.length}}</text>
           </view>
         </view>
         <view class='msgBot flex'>
@@ -32,7 +33,7 @@
     components = {};
     methods = {
       toLesson(item) {
-        let url = '/pages/learn/lesson?id='+ item.id
+        let url = '/pages/learn/lesson?id=' + item.id
         wepy.navigateTo({
           url: url
         });
@@ -40,7 +41,11 @@
     };
     events = {};
     watch = {};
-    computed = {};
+    computed = {
+      getDay(date) {
+        return date
+      }
+    };
     onLoad() {};
     onShow() {};
   }

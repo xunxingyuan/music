@@ -3,9 +3,7 @@
   <view class='container'>
     <learn :learnData.sync="courseData" wx:if="{{activeTab == 'learn'}}"></learn>
     <resource :resData.sync="resourceData" wx:if="{{activeTab == 'resource'}}"></resource>
-    <me wx:if="{{activeTab == 'me'&&role==='teacher'}}"></me>
-    <student wx:if="{{activeTab == 'me'&&role==='student'}}"></student>
-    <vistor wx:if="{{activeTab == 'me'&&role==='vistor'}}"></vistor>
+    <me wx:if="{{activeTab == 'me'}}"></me>
     <nav :activeTab.sync='activeTab' @changeTab.user='changeTabCtrl'></nav>
   </view>
 </template>
@@ -16,8 +14,6 @@
   import Learn from '@/components/learn'
   import Resource from '@/components/resource'
   import Me from '@/components/me'
-  import Student from '@/components/student'
-  import Vistor from '@/components/vistor'
   import api from '@/tools/api.js'
   export default class Example extends wepy.page {
     config = {
@@ -32,9 +28,7 @@
       nav: Nav,
       learn: Learn,
       resource: Resource,
-      me: Me,
-      student: Student,
-      vistor: Vistor
+      me: Me
     };
     methods = {
       changeTabCtrl(name, evt) {
@@ -57,9 +51,13 @@
       },
     }
     getResource() {
-      api.video.getAllVideo().then((res) => {
-        this.resourceData = res.data
-        this.$apply()
+      api.music.searchMusic({
+        pageNumber: 1
+      }).then((res) => {
+        if (res.data.code === 200) {
+          this.resourceData = res.data.data
+          this.$apply()
+        }
       })
     }
     events = {};

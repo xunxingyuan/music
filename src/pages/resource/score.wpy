@@ -31,7 +31,7 @@
     onLoad() {
       let _self = this
       api.score.searchScore({
-        pageNumber: '1'
+        pageNumber: 1
       }).then((res) => {
         _self.imgList = res.data
         _self.$apply()

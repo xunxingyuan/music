@@ -3,7 +3,7 @@
   <view class='video'>
     <search :type="video"></search>
     <view class='top'>
-      <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap='viewVideo'></image>
+      <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo"></image>
       <view class='detail'>
         <view class='number'><i class='iconfont icon-download'></i> 2</view>
         <view class='number'><i class='iconfont icon-collect'></i> 2</view>
@@ -27,6 +27,8 @@
     };
     data = {
       imgSrc: '../../resource/duzou.jpg',
+      recommend:[],
+      choseItem: '',
       listdata: [1, 2, 3, 4, 5, 6]
     };
     components = {
@@ -35,9 +37,10 @@
     };
     methods = {
       viewVideo() {
+        let url = '/pages/resource/player/videoPlay?url=' + this.choseItem.url + '&id=' + this.choseItem.id
         wepy.navigateTo({
-          url: '/pages/resource/player/videoPlay'
-        });
+          url: url
+        })
       }
     };
     onReachBottom() {
@@ -52,7 +55,10 @@
         this.$apply()
       })
       api.video.recommendVideo().then((res)=>{
-        console.log(res);
+        if(res.data.code === 200){
+          this.recommend = res.data.data
+          this.choseItem = res.data.data[0]
+        }
       })
     };
     onShow() {};

@@ -31,10 +31,17 @@
     methods = {
       viewVideo(item) {
         console.log(item);
-        let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
-        wepy.navigateTo({
-          url: url
-        })
+        if (item.type == 0) {
+          let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
+          wepy.navigateTo({
+            url: url
+          })
+        } else {
+          const backgroundAudioManager = wx.getBackgroundAudioManager()
+          backgroundAudioManager.title = item.title
+          backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
+          // this.playState = 'show'
+        }
       },
     };
     events = {};
@@ -44,7 +51,7 @@
       let _self = this
       let id = await wepy.getStorageSync('userId');
       let result = await api.collect.getUserCollect({
-        id: id
+        userId: id
       })
       result.data.video.forEach(element => {
         element.type = 0

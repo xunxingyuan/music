@@ -85,10 +85,18 @@
     watch = {};
     computed = {};
     async onLoad(options) {
+      wepy.showLoading({
+        title: 'Loading...', //提示的内容,
+        mask: true, //显示透明蒙层，防止触摸穿透,
+        success: res => {}
+      });
+      
       let result = await api.course.getCourse({
         id: options.id
       })
       if (result.data.code === 200) {
+        wepy.hideLoading();
+        
         this.lessonData = result.data.data
         this.lessonData.notationList.forEach(element => {
           element.url= 'http://192.168.100.246:9501' + element.url

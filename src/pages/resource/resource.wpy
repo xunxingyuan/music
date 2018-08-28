@@ -1,0 +1,104 @@
+<!--  -->
+<template>
+  <view class='resourceData'>
+    <view class='resBox' wx:if="{{videolistdata.length!==0}}">
+      <view class='title'>视频</view>
+      <videolist :list.sync="videolistdata"></videolist>
+    </view>
+    <view class='resBox' wx:if="{{musicListdata.length!==0}}">
+      <view class='title'>音频</view>
+      <repeat for="{{musicListdata}}" key="index" index="index" item="item">
+        <view class='flex musicItem'>
+          <text>{{item.title}}</text>
+          <view @tap="audioPlay({{item}})">
+            <i class="iconfont icon-play1"></i>
+            <text></text>
+          </view>
+        </view>
+      </repeat>
+      <!-- <musiclist :musicList.sync="musicListdata"></musiclist> -->
+    </view>
+    <view class='resBox' wx:if="{{notationListdata.length!==0}}">
+      <view class='title'>曲谱</view>
+      <scorelist :imgList.sync="notationListdata"></scorelist>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import MusicList from '@/components/music/list'
+  import ScoreList from '@/components/score/list'
+  import VideoList from '@/components/video/list'
+  export default class Resource extends wepy.page {
+    config = {
+      navigationBarTitleText: "曲集详情",
+    };
+    data = {
+      albumData: {},
+      videolistdata: [],
+      musicListdata: [],
+      notationListdata: []
+    };
+    components = {
+      musiclist: MusicList,
+      scorelist: ScoreList,
+      videolist: VideoList
+    };
+    methods = {
+      audioPlay(item) {
+        // this.$broadcast('srcChange', {
+        //   name: item.title,
+        //   url: this.selectMusic
+        // })
+        
+        // backgroundAudioManager.epname = '此时此刻'
+        // backgroundAudioManager.singer = '许巍'
+        // backgroundAudioManager.coverImgUrl = 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000'
+        let backgroundAudioManager = wx.getBackgroundAudioManager()
+        backgroundAudioManager.title = item.title
+        backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
+        // this.playState = 'show'
+      },
+    };
+    events = {};
+    watch = {};
+    computed = {};
+    async onLoad() {
+      let resultData = await wepy.getStorageSync('selectResource');
+      let albumData = JSON.parse(resultData)
+      this.videolistdata = albumData.videoList
+      this.musicListdata = albumData.musicList
+      this.notationListdata = albumData.notationList
+      this.$apply()
+      console.log(this.musicListdata);
+    };
+    onShow() {};
+  }
+</script>
+
+<style lang='less'>
+  .resourceData {
+    // padding-bottom: 140rpx;
+    .resBox {
+      background: #fff;
+      margin-bottom: 20rpx;
+      .title {
+        height: 70rpx;
+        line-height: 70rpx;
+        color: #888;
+        font-size: 13px;
+        text-align: left;
+        padding-left: 1rem;
+      }
+      .musicItem{
+        height: 80rpx;
+        align-items: center;
+        padding: 0 1rem;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #333;
+      }
+    }
+  }
+</style>

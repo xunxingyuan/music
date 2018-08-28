@@ -21,6 +21,11 @@ export default {
     getCode: (data) => {
       let reqUrl = url + '/api/login/getVerificationCode'
       return requestData(reqUrl, data, 'GET', true)
+    },
+    //刷新token
+    refresh: (data) =>{
+      let reqUrl = url + '/api/login/refreshToken'
+      return requestData(reqUrl, data, 'GET', true)
     }
   },
   //课程
@@ -103,7 +108,11 @@ export default {
     getSkill: (data)=>{
       let reqUrl = url + '/api/user/skillTree'
       return requestData(reqUrl, data, 'GET')
-    }
+    },
+    setSkill: (data)=>{
+      let reqUrl = url + '/api/user/saveSkill'
+      return requestData(reqUrl, data, 'GET')
+    },
   },
   //评论
   comment: {

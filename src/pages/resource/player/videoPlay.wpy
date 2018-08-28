@@ -2,7 +2,7 @@
 <template>
   <view class='videoPlay'>
     <video hidden="{{showInput}}" class='show' src="{{videoSrc}}" controls="true" objectFit="contain">
-                                                  </video>
+                                                                </video>
     <view hidden="{{showInput}}" class='ctrl'>
       <view class='item' @tap="downloadSrc">
         <i class='iconfont icon-download'></i> {{videoMsg.downloadCount}}
@@ -48,6 +48,21 @@
 </template>
 
 <script>
+  Date.prototype.Format = function(fmt) { //author: meizz
+    var o = {
+      "M+": this.getMonth() + 1, //月份
+      "d+": this.getDate(), //日
+      "h+": this.getHours(), //小时
+      "m+": this.getMinutes(), //分
+      "s+": this.getSeconds(), //秒
+      "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+      "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+      if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+  }
   import wepy from 'wepy';
   import api from '@/tools/api.js'
   export default class VideoPlay extends wepy.page {
@@ -69,12 +84,24 @@
         isUserCollect: false,
         isUserLike: false,
         likeCount: 0,
-      }
+      },
+      permission: ''
     };
     components = {};
     methods = {
       addComment() {
-        this.showInput = true
+        console.log(this.permission);
+        if (this.permission.comment == 'yes') {
+          this.showInput = true
+        } else {
+          wepy.showToast({
+            title: '权限不足', //提示的内容,
+            icon: 'none', //图标,
+            duration: 2000, //延迟时间,
+            mask: true, //显示透明蒙层，防止触摸穿透,
+            success: res => {}
+          });
+        }
       },
       cancel() {
         this.showInput = false
@@ -108,19 +135,64 @@
         let _self = this
         let userId = await wepy.getStorageSync('userId');
         console.log('add download')
-        api.video.saveDownload({
-          userId: userId,
-          videoId: this.videoId
-        })
-        // const downloadTask = wepy.downloadFile({
-        //   url: _self.videoSrc, // 下载资源的 url
-        //   success: res => {
-        //     console.log(res)
-        //   },
-        //   fail: () => {},
-        //   complete: () => {
-        //   }
-        // });
+        if (this.permission.download == 'yes') {
+          api.video.saveDownload({
+            userId: userId,
+            videoId: this.videoId
+          }).then((res) => {
+            wepy.showToast({
+              title: '加入下载成功', //提示的内容,
+              icon: 'success', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          })
+          let token = await wepy.getStorageSync('token');
+          let downloadFile = await wepy.getStorageSync('downloadFile');
+          let header = {}
+          header['Authorization'] = 'Bearer ' + token
+          header['Content-Type'] = 'video/mp4'
+          const downloadTask = wepy.downloadFile({
+            url: _self.videoSrc, // 下载资源的 url
+            header: header,
+            success: res => {
+              console.log(res)
+              let downloadData = JSON.parse(downloadFile)
+              let downloadSrc = {
+                name: _self.videoTitle,
+                videoId: _self.videoId,
+                url: res.tempFilePath,
+                downloadTime: new Date().Format("yyyy-MM-dd hh:mm:ss"),
+                type: 'video'
+              }
+              downloadData.push(downloadSrc)
+              wepy.setStorageSync('downloadFile', JSON.stringify(downloadData))
+              // wepy.saveFile({
+              //   tempFilePath: res.tempFilePath, //需要保存的文件的临时路径,
+              //   success: res => {}
+              // });
+            },
+            fail: () => {},
+            complete: () => {
+              wepy.showToast({
+                title: '下载完成', //提示的内容,
+                icon: 'success', //图标,
+                duration: 2000, //延迟时间,
+                mask: true, //显示透明蒙层，防止触摸穿透,
+                success: res => {}
+              });
+            }
+          });
+        } else {
+          wepy.showToast({
+            title: '权限不足', //提示的内容,
+            icon: 'none', //图标,
+            duration: 2000, //延迟时间,
+            mask: true, //显示透明蒙层，防止触摸穿透,
+            success: res => {}
+          });
+        }
         // downloadTask.onProgressUpdate((res) => {
         //   console.log('下载进度', res.progress)
         //   console.log('已经下载的数据长度', res.totalBytesWritten)
@@ -130,16 +202,26 @@
       async collectVideo() {
         let _self = this
         let userId = await wepy.getStorageSync('userId');
-        api.collect.collectVideo({
-          userId: userId,
-          videoId: this.videoId
-        }).then((res) => {
-          if (res.data.code === 200) {
-            _self.videoMsg.isUserCollect = true
-            _self.videoMsg.collectCount += 1
-            _self.$apply()
-          }
-        })
+        if (this.permission.collect == 'yes') {
+          api.collect.collectVideo({
+            userId: userId,
+            videoId: this.videoId
+          }).then((res) => {
+            if (res.data.code === 200) {
+              _self.videoMsg.isUserCollect = true
+              _self.videoMsg.collectCount += 1
+              _self.$apply()
+            }
+          })
+        } else {
+          wepy.showToast({
+            title: '权限不足', //提示的内容,
+            icon: 'none', //图标,
+            duration: 2000, //延迟时间,
+            mask: true, //显示透明蒙层，防止触摸穿透,
+            success: res => {}
+          });
+        }
       },
       async likeVideo() {
         let _self = this
@@ -185,7 +267,13 @@
     async onLoad(options) {
       this.videoId = options.id
       let userId = await wepy.getStorageSync('userId');
-      this.videoSrc = 'http://192.168.100.246:9501' + options.url
+      let userInfo = await wepy.getStorageSync('userInfo');
+      this.permission = JSON.parse(userInfo).permission
+      if (options.url.split('ttp:').length > 1) {
+        this.videoSrc = options.url
+      } else {
+        this.videoSrc = 'http://192.168.100.246:9501' + options.url
+      }
       this.getVideoComment(options.id)
       this.getVideoDetail(options.id, userId)
       this.$apply()

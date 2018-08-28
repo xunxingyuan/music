@@ -1,45 +1,112 @@
 <!--  -->
 <template>
   <view class='download'>
-    <repeat for="{{downloadList}}" key="index" index="index" item="item">
-      <view class='blockItem'>
+    <repeat for="{{videoList}}" key="index" index="index" item="item">
+      <view class='blockItem' @tap="viewDownloadVideo({{item}})">
         <view class='top'>
-          <text class='title'>双胞胎表演</text>
+          <text class='title'>{{item.title}}</text>
           <text class='type'>视频</text>
         </view>
         <view class='bot'>
-          <text>56.3 MB</text>
-          <text>下载中</text>
+          <text>{{item.downloadTime}}</text>
         </view>
       </view>
     </repeat>
+    <repeat for="{{musicList}}" key="index" index="index" item="item">
+      <view class='blockItem' @tap="viewDownloadMusic({{item}})">
+        <view class='top'>
+          <text class='title'>{{item.title}}</text>
+          <text class='type'>音频</text>
+        </view>
+        <view class='bot'>
+          <text>{{item.downloadTime}}</text>
+        </view>
+      </view>
+    </repeat>
+    <!-- <repeat for="{{downloadList}}" key="index" index="index" item="item">
+          <view class='blockItem' @tap="viewDownload({{item}})">
+            <view class='top'>
+              <text class='title'>{{item.name}}</text>
+              <text wx:if="{{item.type=='music'}}" class='type'>音频</text>
+              <text wx:if="{{item.type=='video'}}" class='type'>视频</text>
+            </view>
+            <view class='bot'>
+              <text>{{item.downloadTime}}</text>
+            </view>
+          </view>
+        </repeat> -->
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
-    import api from '@/tools/api.js'
-
+  import api from '@/tools/api.js'
   export default class Download extends wepy.page {
     config = {
       navigationBarTitleText: "我的下载",
     };
     data = {
-      downloadList: [1, 2, 3, 4, 5]
+      videoList: [],
+      musicList: [],
+      downloadList: []
     };
     components = {};
-    methods = {};
+    methods = {
+      viewDownload(item) {
+        if (item.type == 'video') {
+          let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.videoId
+          wepy.navigateTo({
+            url: url
+          })
+        } else {
+          const backgroundAudioManager = wx.getBackgroundAudioManager()
+          backgroundAudioManager.title = item.title
+          backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
+        }
+      },
+      viewDownloadMusic(item) {
+        let url = item.url
+        if (url.split('ttp:').length = 1) {
+          url = 'http://192.168.100.246:9501' + url
+        }
+        const backgroundAudioManager = wx.getBackgroundAudioManager()
+        backgroundAudioManager.title = item.title
+        backgroundAudioManager.src = url // 设置了 src 之后会自动播放
+      },
+      viewDownloadVideo(item) {
+        let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
+        wepy.navigateTo({
+          url: url
+        })
+      }
+    };
     events = {};
     watch = {};
     computed = {};
     async onLoad() {
       let _self = this
       let id = await wepy.getStorageSync('userId');
+      let downloadFile = await wepy.getStorageSync('downloadFile');
+      let downloadData = JSON.parse(downloadFile)
+      this.downloadList = downloadData
+      console.log(downloadData);
       let result = await api.user.getDownload({
-        userId : id
+        userId: id
       })
-      _self.$apply()
-      console.log(result);
+      if (result.data.code === 200) {
+        result.data.data.music.forEach(element => {
+          this.musicList.push(element)
+        });
+        result.data.data.video.forEach(element => {
+          this.videoList.push(element)
+        });
+      }
+      _self.$apply();
+      wepy.getSavedFileList({
+        success: res => {
+          console.log(res);
+        }
+      });
     };
     onShow() {};
   }

@@ -4,12 +4,12 @@
     <repeat for="{{list}}" key="index" index="index" item="item">
       <view class='blockItem'>
         <view class='top'>
-          <text class='title'>双胞胎表演</text>
+          <text class='title'>{{item.videoTitle}}</text>
           <text class='type'>视频</text>
         </view>
         <view class='botCol'>
-          <view>这首奏鸣曲以精练的钢琴写法，澎湃着阴暗的热情，可以窥见到贝多芬日后强烈的、自成一体的乐调作风。这首作品的节奏较为单调，小节间的</view>
-          <view>2018-06-12 12:21</view>
+          <view>{{item.content}}</view>
+          <view>{{item.createTime}}</view>
         </view>
       </view>
     </repeat>
@@ -24,7 +24,8 @@
       navigationBarTitleText: "我的评论",
     };
     data = {
-      list: [1, 2, 3, 4]
+      list: [],
+      
     };
     components = {};
     methods = {};
@@ -34,8 +35,12 @@
     async onLoad() {
       let id = await wepy.getStorageSync('userId');
       let result = await api.comment.getUserComment({
-        id: id
+        userId: id
       })
+      if(result.data.code === 200){
+        this.list = result.data.data
+        this.$apply()
+      }
       console.log(result);
     };
     onShow() {};

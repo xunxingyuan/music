@@ -57,8 +57,8 @@
       let userInfo = await wepy.getStorageSync('userInfo');
       let userData = JSON.parse(userInfo)
       api.user.getStudents({
-        // code: 3
-        code: userData.vipUser.code
+        code: 'ls1002'
+        // code: userData.vipUser.code
       }).then((res) => {
         if (res.data.code === 200) {
           let result = res.data.data

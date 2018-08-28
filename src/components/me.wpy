@@ -1,55 +1,27 @@
 <!--  -->
 <template>
   <view class='me'>
-    <view class='info flex'>
-      <view class='icon'>
+    <view class='userInfo flex'>
+      <view>
+        <view>
+          <open-data class='username' type="userNickName"></open-data>
+        </view>
+        <view class='role' wx:if="{{roleData == 'teacher'}}">老师</view>
+        <view class='role' wx:if="{{roleData == 'student'}}">学生</view>
+        <view class='role' wx:if="{{roleData == 'vistor'}}">游客</view>
+      </view>
+      <view class="icon">
         <open-data class='iconInner' type="userAvatarUrl"></open-data>
       </view>
-      <view>
-        <open-data class='username' type="userNickName"></open-data> / 老师</view>
     </view>
-    <view class='infoBox'>
-      <view class='userItem flex'>
-        <view class='itemBox first' @tap="viewItem('student')">
-          <text class='title'>我的学生</text>
-          <view class='count flex'>
-            <text class='number'>{{userMsg.studentCount}}</text>
-            <text class='line'>/</text>
-            <text>人</text>
-          </view>
-          <text class='tips'></text>
+    <repeat for="{{showList}}" key="index" index="index" item="item">
+      <view class="tabItem flex" @tap="viewItem({{item}})">
+        <view>
+          {{item.name}}
         </view>
-        <view class='itemBox' @tap="viewItem('download')">
-          <text class='title'>我的下载</text>
-          <view class='count flex'>
-            <text class='number'>{{userMsg.downloadCount}}</text>
-            <text class='line'>/</text>
-            <text>个</text>
-          </view>
-          <text class='tips'></text>
-        </view>
+        <view>></view>
       </view>
-      <view class='userItem flex bot'>
-        <view class='itemBox first' @tap="viewItem('collection')">
-          <text class='title'>我的收藏</text>
-          <view class='count flex'>
-            <text class='number'>{{userMsg.collectCount}}</text>
-            <text class='line'>/</text>
-            <text>个</text>
-          </view>
-          <text class='tips'></text>
-        </view>
-        <view class='itemBox' @tap="viewItem('comment')">
-          <text class='title'>我的评论</text>
-          <view class='count flex'>
-            <text class='number'>{{userMsg.commentCount}}</text>
-            <text class='line'>/</text>
-            <text>条</text>
-          </view>
-          <text class='tips'></text>
-        </view>
-      </view>
-    </view>
+    </repeat>
   </view>
 </template>
 
@@ -61,26 +33,53 @@
       navigationBarTitleText: "我的",
     };
     data = {
-      userMsg:''
+      roleData: '',
+      showList: []
     };
     components = {};
     methods = {
-      viewItem(item) {
-        if (item === 'student') {
+      async viewItem(item) {
+        let userInfo = await wepy.getStorageSync('userInfo');
+        let permission = JSON.parse(userInfo).permission
+        if (item.id === 1) {
           wepy.navigateTo({
             url: '/pages/me/myStudent'
           });
-        } else if (item === 'download') {
+        } else if (item.id === 3) {
           wepy.navigateTo({
             url: '/pages/me/download'
           });
-        } else if (item === 'collection') {
+        } else if (item.id === 4) {
+          if (permission.collect == 'yes') {
+            wepy.navigateTo({
+              url: '/pages/me/collection'
+            });
+          } else {
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          }
+        } else if (item.id === 5) {
+          if (permission.comment == 'yes') {
+            wepy.navigateTo({
+              url: '/pages/me/comment'
+            });
+          }else{
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          }
+        } else if (item.id === 2) {
           wepy.navigateTo({
-            url: '/pages/me/collection'
-          });
-        } else if (item === 'comment') {
-          wepy.navigateTo({
-            url: '/pages/me/comment'
+            url: '/pages/me/myskill'
           });
         }
       }
@@ -89,18 +88,58 @@
     watch = {};
     computed = {};
     async onLoad() {
-      let userInfo = await wepy.getStorageSync('userInfo');
-      let userData = JSON.parse(userInfo)
-      console.log(userData);
-      api.user.getTeacherInfo({
-        code: userData.vipUser.code,
-        id: userData.vipUser.id
-      }).then((res)=>{
-        if(res.data.code === 200){
-          this.userMsg = res.data.data
-          this.$apply()
-        }
-      })
+      let role = await wepy.getStorageSync('role');
+      this.roleData = role
+      switch (role) {
+        case 'vistor':
+          this.showList = [{
+            icon: '',
+            name: '我的收藏',
+            id: 4
+          }, {
+            icon: '',
+            name: '我的评论',
+            id: 5
+          }]
+          break;
+        case 'teacher':
+          this.showList = [{
+            icon: '',
+            name: '我的学生',
+            id: 1
+          }, {
+            icon: '',
+            name: '我的下载',
+            id: 3
+          }, {
+            icon: '',
+            name: '我的收藏',
+            id: 4
+          }, {
+            icon: '',
+            name: '我的评论',
+            id: 5
+          }]
+          break;
+        case 'student':
+          this.showList = [{
+            icon: '',
+            name: '我的技能',
+            id: 2
+          }, {
+            icon: '',
+            name: '我的收藏',
+            id: 4
+          }, {
+            icon: '',
+            name: '我的评论',
+            id: 5
+          }]
+          break;
+        default:
+          break;
+      }
+      this.$apply()
     };
     onShow() {};
   }
@@ -110,6 +149,44 @@
   .me {
     width: 100%;
     height: 100%;
+    background: #F7F7FA;
+    .userInfo {
+      margin-top: 1px;
+      height: 200rpx;
+      background: #D0B485;
+      align-items: center;
+      padding: 0 1rem;
+      justify-content: space-between;
+      .username {
+        font-size: 20px;
+      }
+      .role {
+        font-size: 12px;
+        color: #666;
+      }
+      .icon {
+        margin-top: 0.5rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        background: #fff;
+        margin-bottom: 0.5rem;
+        overflow: hidden;
+        .iconInner {
+          width: 60px;
+          height: 60px;
+        }
+      }
+    }
+    .tabItem {
+      height: 120rpx;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      border-bottom: solid 1px #eee;
+      color: #353535;
+      font-size: 15px;
+    }
     .info {
       height: 500rpx;
       background: #D0B485;
