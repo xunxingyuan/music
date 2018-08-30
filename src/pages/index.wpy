@@ -54,6 +54,7 @@
         let vipId = await wepy.getStorageSync('vipId');
         if (!vipId || vipId == 'null') {
           this.showLogin = true
+          this.$apply()
         } else {
           api.login.refresh({
             openid: this.$parent.globalData.openId,
@@ -67,11 +68,6 @@
         }
       },
       auth(num) {
-        wepy.showLoading({
-          title: 'Loading...', //提示的内容,
-          mask: true, //显示透明蒙层，防止触摸穿透,
-          success: res => {}
-        });
         switch (num) {
           case '3':
             //游客登录
@@ -108,7 +104,6 @@
               phone: this.phoneNumber,
               verificationCode: this.authCode
             }).then((res) => {
-              wepy.hideLoading();
               if (res.data.code == 200) {
                 clearInterval(this.countUtil)
                 if (res.data.data.permission.role == '老师') {
