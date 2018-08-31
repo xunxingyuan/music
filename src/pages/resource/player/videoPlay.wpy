@@ -1,20 +1,31 @@
 <!--  -->
 <template>
   <view class='videoPlay'>
-    <video hidden="{{showInput}}" class='show' src="{{videoSrc}}" controls="true" objectFit="contain">
-                                                                </video>
+    <video hidden="{{showInput}}" class='show' src="{{videoSrc}}" controls="true" objectFit="contain"></video>
     <view hidden="{{showInput}}" class='ctrl'>
       <view class='item' @tap="downloadSrc">
-        <i class='iconfont icon-download'></i> {{videoMsg.downloadCount}}
+        <image class='icon' src="../../../resource/download.png" mode="scaleToFill" lazy-load="true">
+        </image>
+        {{videoMsg.downloadCount}}
       </view>
       <view class='item'>
-        <i @tap="collectVideo" wx:if="{{!videoMsg.isUserCollect}}" class='iconfont icon-collect1'></i><i wx:if="{{videoMsg.isUserCollect}}" class='iconfont icon-collect'></i> {{videoMsg.collectCount}}
+        <image @tap="collectVideo" wx:if="{{!videoMsg.isUserCollect}}" class='icon' src="../../../resource/collect.png" mode="scaleToFill" lazy-load="false">
+        </image>
+        <image wx:if="{{videoMsg.isUserCollect}}" class='icon' src="../../../resource/collect1.png" mode="scaleToFill" lazy-load="false">
+        </image>
+        {{videoMsg.collectCount}}
       </view>
       <view class='item' @tap="addComment">
-        <i class='iconfont icon-dyncomments'></i> {{videoMsg.commentCount}}
+        <image class='icon' src="../../../resource/message1.png" mode="scaleToFill" lazy-load="true">
+        </image>
+        {{videoMsg.commentCount}}
       </view>
       <view class='item'>
-        <i @tap="likeVideo" wx:if="{{!videoMsg.isUserLike}}" class='iconfont icon-heart'></i><i wx:if="{{videoMsg.isUserLike}}" class='iconfont icon-heart-fill'></i> {{videoMsg.likeCount}}
+        <image class='icon' @tap="likeVideo" wx:if="{{!videoMsg.isUserLike}}" src="../../../resource/like.png" mode="scaleToFill" lazy-load="false">
+        </image>
+        <image class='icon' wx:if="{{videoMsg.isUserLike}}" src="../../../resource/like2.png" mode="scaleToFill" lazy-load="false">
+        </image>
+        {{videoMsg.likeCount}}
       </view>
     </view>
     <view class='submitComments' wx:if="{{showInput}}">
@@ -31,14 +42,17 @@
         <view class='commentItem'>
           <view class='top flex'>
             <view class='user flex'>
-              <image class='userIcon' src="{{item.appUser.avatarUrl}}" mode="aspectFill" lazy-load="false">
+              <image class='userIcon' src="{{item.appUser.avatarUrl}}" mode="aspectFill" lazy-load="true">
               </image>
               <view>
                 <view class='name'>{{item.appUser.nickname}}</view>
                 <view class='time'>{{item.createTime}}</view>
               </view>
             </view>
-            <view><i class='iconfont icon-heart' @tap="likeComment({{item}})"></i> {{item.likeCount}}</view>
+            <view class='flex'>
+              <image class='icon' src="../../../resource/message1.png" mode="scaleToFill" lazy-load="false">
+              </image>
+              {{item.likeCount}}</view>
           </view>
           <view class='bot'>{{item.content}}</view>
         </view>
@@ -330,9 +344,12 @@
       .item {
         margin-right: 1.5rem;
         color: #666;
-        .icon-collect,
-        .icon-heart-fill {
-          color: #D0B485;
+        display: flex;
+        align-items: center;
+        .icon {
+          margin-right: 10px;
+          width: 1rem;
+          height: 1rem;
         }
       }
     }
@@ -372,6 +389,10 @@
               color: #bbb;
               font-size: 12px;
             }
+          }
+          .icon {
+            width: 1rem;
+            height: 1rem;
           }
         }
         .bot {

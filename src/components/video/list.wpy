@@ -7,7 +7,7 @@
         </image>
         <view class='intro'>
           <text>{{item.title}}</text>
-          <view><i class='iconfont icon-heart' @tap="likeVideo({{item}})"></i> {{item.likeCount}}</view>
+          <!-- <view><i class='iconfont icon-heart' @tap="likeVideo({{item}})"></i> {{item.likeCount}}</view> -->
         </view>
         <text wx:if="{{item.isFree===1}}" class='type'>FREE</text>
         <text wx:if="{{item.isFree===0}}" class='vip'>VIP</text>
@@ -102,16 +102,18 @@
 
 <style lang='less'>
   .videoList {
-    margin-top: 0.5rem;
+    // margin-top: 0.5rem;
     background: #fff;
     display: flex;
     flex-wrap: wrap;
     width: 100%;
+    box-sizing: border-box;
+    padding: 0 6px;
     .videoItem {
       width: 50%;
       position: relative;
       box-sizing: border-box;
-      padding: 8px 5px;
+      padding: 8px 6px;
       .botImg {
         width: 100%;
         height: 120px;

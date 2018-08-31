@@ -3,7 +3,13 @@
   <view class="navBot">
     <repeat for="{{menu}}" key="index" index="index" item="item">
       <view @tap="toPath({{item.id}})" class='navItem' :class="{'active':activeTab === item.id}">
-        <i class="iconfont {{item.icon}}"></i>
+        <!-- <i class="iconfont {{item.icon}}"></i> -->
+        <image class='icon' src="{{item.icon_src}}" mode="scaleToFill"
+          lazy-load="false">
+        </image>
+        <image class='activeIcon' src="{{item.active_src}}" mode="scaleToFill"
+          lazy-load="false">
+        </image>
         <text>{{item.name}}</text>
       </view>
     </repeat>
@@ -33,11 +39,15 @@
         case 'vistor':
           this.menu = [{
             name: '资源',
-            icon: 'icon-play',
+            icon: 'resorce',
+            icon_src: '../../resource/music.png',
+            active_src: '../../resource/music1.png',
             id: 'resource'
           }, {
             name: '我的',
-            icon: 'icon-person',
+            icon: 'mine',
+            icon_src: '../../resource/user.png',
+            active_src: '../../resource/user1.png',
             id: 'me'
           }]
           this.$apply()
@@ -45,15 +55,21 @@
         case 'teacher':
           this.menu = [{
             name: '学习',
-            icon: 'icon-home',
+            icon: 'home',
+            icon_src: '../../resource/home.png',
+            active_src: '../../resource/home2.png',
             id: 'learn'
           }, {
             name: '资源',
-            icon: 'icon-play',
+            icon: 'resorce',
+            icon_src: '../../resource/music.png',
+            active_src: '../../resource/music1.png',
             id: 'resource'
           }, {
             name: '我的',
-            icon: 'icon-person',
+            icon: 'mine',
+            icon_src: '../../resource/user.png',
+            active_src: '../../resource/user1.png',
             id: 'me'
           }]
           this.$apply()
@@ -61,15 +77,21 @@
         case 'student':
           this.menu = [{
             name: '学习',
-            icon: 'icon-home',
+            icon: 'home',
+            icon_src: '../../resource/home.png',
+            active_src: '../../resource/home2.png',
             id: 'learn'
           }, {
             name: '资源',
-            icon: 'icon-play',
+            icon: 'resorce',
+            icon_src: '../../resource/music.png',
+            active_src: '../../resource/music1.png',
             id: 'resource'
           }, {
             name: '我的',
-            icon: 'icon-person',
+            icon: 'mine',
+            icon_src: '../../resource/user.png',
+            active_src: '../../resource/user1.png',
             id: 'me'
           }]
           this.$apply()
@@ -103,13 +125,23 @@
         display: block;
         color: #353535;
       }
+      .icon{
+        width: 25px;
+        height: 25px;
+      }
+      .activeIcon{
+        width: 25px;
+        height: 25px;
+        display: none;
+      }
     }
     .active {
       color: #D0B485;
-      .iconfont {
-        font-size: 24px;
+      .icon{
+        display: none;
+      }
+      .activeIcon {
         display: block;
-        color: #D0B485;
       }
     }
   }

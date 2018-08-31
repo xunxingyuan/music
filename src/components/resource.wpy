@@ -4,11 +4,17 @@
     <search :type="video"></search>
     <view class='searchItem'>
       <view class='flex type'>
-        <view @tap="viewData('video')"><i class='iconfont icon-video'></i> 视频</view>
+        <view class='flex' @tap="viewData('video')">
+          <image class='icon' src="../../resource/play.png" mode="scaleToFill" lazy-load="false">
+          </image> 视频</view>
         <text>/</text>
-        <view @tap="viewData('music')"><i class='iconfont icon-voice'></i> 音频</view>
+        <view class='flex' @tap="viewData('music')">
+          <image class='icon' src="../../resource/voice.png" mode="scaleToFill" lazy-load="false">
+          </image> 音频</view>
         <text>/</text>
-        <view @tap="viewData('score')"><i class='iconfont icon-score'></i> 曲谱</view>
+        <view class='flex' @tap="viewData('score')">
+          <image class='icon' src="../../resource/score.png" mode="scaleToFill" lazy-load="false">
+          </image> 曲谱</view>
       </view>
     </view>
     <view class='content'>
@@ -16,9 +22,15 @@
         <view class='item flex'>
           <view class='name' @tap='viewDetail({{item}})'>{{item.title}} <text class='vip' wx:if="{{item.isFree==0}}">VIP</text><text class='free' wx:if="{{item.isFree!=0}}">FREE</text></view>
           <view class='detail'>
-            <view class='number'><i class='iconfont icon-video'></i> {{item.videoList.length}}</view>
-            <view class='number'><i class='iconfont icon-voice'></i> {{item.musicList.length}}</view>
-            <view class='number'><i class='iconfont icon-score'></i> {{item.notationList.length}}</view>
+            <view class='number'>
+              <image class='icon' src="../../resource/play.png" mode="scaleToFill" lazy-load="false">
+              </image> {{item.videoList.length}}</view>
+            <view class='number'>
+              <image class='icon' src="../../resource/voice.png" mode="scaleToFill" lazy-load="false">
+              </image> {{item.musicList.length}}</view>
+            <view class='number'>
+              <image class='icon' src="../../resource/score.png" mode="scaleToFill" lazy-load="false">
+              </image> {{item.notationList.length}}</view>
           </view>
         </view>
       </repeat>
@@ -127,6 +139,12 @@
         font-size: 16px;
         color: #fff;
         height: 80rpx;
+        .icon {
+          width: 1rem;
+          height: 1rem;
+          display: inline-block;
+          margin-right: 5px;
+        }
       }
     }
     .content {
@@ -162,6 +180,14 @@
           .number {
             margin-left: 1rem;
             font-size: 12px;
+            display: flex;
+            align-items: center;
+          }
+          .icon {
+            width: 1rem;
+            height: 1rem;
+            display: inline-block;
+            margin-right: 5px;
           }
         }
       }

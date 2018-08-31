@@ -4,13 +4,17 @@
     <search :type="video"></search>
     <view class='top'>
       <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo"></image>
-      <view class='detail'>
+      <view class='intro'>{{choseItem.title}}</view>
+      <!-- <view class='detail'>
         <view class='number'><i class='iconfont icon-download'></i> 2</view>
         <view class='number'><i class='iconfont icon-collect'></i> 2</view>
         <view class='number'><i class='iconfont icon-dyncomments'></i> 2</view>
         <view class='number'><i class='iconfont icon-heart'></i> 2</view>
-      </view>
+      </view> -->
       <text class='type'>FREE</text>
+    </view>
+    <view class='videoTitle'>
+      全部视频
     </view>
     <list :list.sync="listdata"></list>
   </view>
@@ -58,6 +62,7 @@
         if(res.data.code === 200){
           this.recommend = res.data.data
           this.choseItem = res.data.data[0]
+          this.$apply()
         }
       })
     };
@@ -83,9 +88,17 @@
       display: flex;
       flex-flow: column;
       position: relative;
+      padding: 12px 12px 0 12px;
+      box-sizing: border-box;
+      background: linear-gradient(to bottom, #D0B485, #e3e3e6);
       .topImg {
         width: 100%;
         height: 450rpx;
+      }
+      .intro{
+        height: 1.8rem;
+        line-height: 1.8rem;
+        font-size: 15px;
       }
       .detail {
         flex: 1;
@@ -100,6 +113,13 @@
           color: #353535;
         }
       }
+    }
+    .videoTitle{
+      background: #fff;
+      height: 1.8rem;
+      line-height: 1.8rem;
+      color:#353535;
+      padding-left: 12px;
     }
   }
 </style>

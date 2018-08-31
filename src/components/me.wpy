@@ -16,7 +16,10 @@
     </view>
     <repeat for="{{showList}}" key="index" index="index" item="item">
       <view class="tabItem flex" @tap="viewItem({{item}})">
-        <view>
+        <view class='flex'>
+          <image class='icon' src="{{item.icon}}" mode="scaleToFill"
+            lazy-load="false">
+          </image>
           {{item.name}}
         </view>
         <view>></view>
@@ -93,45 +96,45 @@
       switch (role) {
         case 'vistor':
           this.showList = [{
-            icon: '',
+            icon: '../../resource/like3.png',
             name: '我的收藏',
             id: 4
           }, {
-            icon: '',
+            icon: '../../resource/message.png',
             name: '我的评论',
             id: 5
           }]
           break;
         case 'teacher':
           this.showList = [{
-            icon: '',
+            icon: '../../resource/user2.png',
             name: '我的学生',
             id: 1
           }, {
-            icon: '',
+            icon: '../../resource/voice1.png',
             name: '我的下载',
             id: 3
           }, {
-            icon: '',
+            icon: '../../resource/like3.png',
             name: '我的收藏',
             id: 4
           }, {
-            icon: '',
+            icon: '../../resource/message.png',
             name: '我的评论',
             id: 5
           }]
           break;
         case 'student':
           this.showList = [{
-            icon: '',
+            icon: '../../resource/voice1.png',
             name: '我的技能',
             id: 2
           }, {
-            icon: '',
+            icon: '../../resource/like3.png',
             name: '我的收藏',
             id: 4
           }, {
-            icon: '',
+            icon: '../../resource/message.png',
             name: '我的评论',
             id: 5
           }]
@@ -186,6 +189,11 @@
       border-bottom: solid 1px #eee;
       color: #353535;
       font-size: 15px;
+      .icon{
+        width: 20px;
+        height: 20px;
+        margin-right: 1rem;
+      }
     }
     .info {
       height: 500rpx;
