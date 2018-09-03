@@ -10,10 +10,16 @@
               <text class='free' hidden="{{item.isFree != 1}}">FREE</text>
               <text class='vip' hidden="{{item.isFree != 0}}">VIP</text>
             </view>
-            <view>
-              <!-- <text class='count'>1</text> -->
-              <text class='count'>{{item.musicCount}}</text>
-              <text class='count'>{{item.notationCount}}</text>
+            <view class='count flex'>
+              <image class='icon' src="{{imgList.play}}" mode="scaleToFill" lazy-load="false">
+              </image>
+              <text class='count'>{{item.videoList.length}}</text>
+              <image class='icon' src="{{imgList.voice}}" mode="scaleToFill" lazy-load="false">
+              </image>
+              <text class='count'>{{item.musicList.length}}</text>
+              <image class='icon' src="{{imgList.score}}" mode="scaleToFill" lazy-load="false">
+              </image>
+              <text class='count'>{{item.notationList.length}}</text>
             </view>
           </view>
           <view class='right'></view>
@@ -22,7 +28,7 @@
           <repeat for="{{item.musicList}}" key="index" index="index" item="detail">
             <view class='detailBox flex' @tap.stop='audioPlay({{detail}})'>
               <view class='detailContent'>
-                <view class='title'><i class="iconfont icon-MusicAcc"></i> {{detail.title}}</view>
+                <view class='title'>{{detail.title}}</view>
                 <view class='info'>
                   <!-- <text>{{detail.music}}</text> -->
                   <!-- <i class='iconfont icon-download' @tap.stop="downloadMusic({{detail}})"></i> -->
@@ -48,8 +54,7 @@
 </template>
 
 <script>
-
-Date.prototype.Format = function(fmt) { //author: meizz
+  Date.prototype.Format = function(fmt) { //author: meizz
     var o = {
       "M+": this.getMonth() + 1, //月份
       "d+": this.getDate(), //日
@@ -75,7 +80,8 @@ Date.prototype.Format = function(fmt) { //author: meizz
       playState: 'hidden',
       showCtrl: 1,
       selectMusic: '',
-      selectItem: ''
+      selectItem: '',
+      imgList: ''
     };
     components = {
       musicPlay: MusicPlay
@@ -219,7 +225,10 @@ Date.prototype.Format = function(fmt) { //author: meizz
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    onLoad() {
+      this.imgList = this.$parent.$parent.globalData.imgList
+      this.$apply()
+    };
     onShow() {};
   }
 </script>
@@ -235,8 +244,16 @@ Date.prototype.Format = function(fmt) { //author: meizz
       align-items: center;
       justify-content: space-between;
       .musicShow {
-        justify-content: space-between;
+        justify-content: flex-start;
         .left {
+          .flex{
+            justify-content: flex-start;
+          }
+          .icon{
+            width: 12px;
+            height: 12px;
+            margin-right: 3px;
+          }
           .name {
             font-size: 18px;
           }

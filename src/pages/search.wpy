@@ -8,7 +8,7 @@
       <view class='typeContain'>
         <radio @tap="setType('video')" checked="{{selectType === 'video'}}" name="id" /> 视频
       </view>
-      <view class='typeContain mid'>
+      <view class='typeContain'>
         <radio @tap="setType('music')" checked="{{selectType === 'music'}}" name="id" /> 音频
         <!-- <view>
                               <view>
@@ -177,7 +177,7 @@
     width: 100%;
     .search {
       width: 100%;
-      margin-top: 1rpx;
+      // margin-top: 1rpx;
       height: 100rpx;
       background: #D0B485;
       box-sizing: border-box;

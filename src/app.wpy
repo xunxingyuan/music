@@ -32,7 +32,37 @@
     }
     globalData = {
       userInfo: null,
-      openId: null
+      openId: null,
+      imgList: {
+        home: 'home.png',
+        home2: 'home2.png',
+        download1: 'download1.png',
+        collect: 'collect.png',
+        collect1: 'collect1.png',
+        edit: 'edit.png',
+        like: 'like.png',
+        like2: 'like2.png',
+        like3: 'like3.png',
+        message: 'message.png',
+        message1: 'message1.png',
+        message2: 'message2.png',
+        mine: 'mine.png',
+        music: 'music.png',
+        music1: 'music1.png',
+        play: 'play.png',
+        score: 'score.png',
+        search: 'search.png',
+        type1: 'type1.png',
+        type2: 'type2.png',
+        type3: 'type3.png',
+        type4: 'type4.png',
+        type5: 'type5.png',
+        user: 'user.png',
+        user1: 'user1.png',
+        user2: 'user2.png',
+        voice: 'voice.png',
+        voice1: 'voice1.png'
+      }
     }
     constructor() {
       super()
@@ -97,6 +127,10 @@
           }
         }
       })
+      let url = "http://192.168.100.246:9501/static/icons/"
+      for(var val in this.globalData.imgList){
+        this.globalData.imgList[val] = url+ this.globalData.imgList[val]
+      }
     }
     getUserInfo(cb) {
       const that = this

@@ -76,7 +76,6 @@
               nickname: this.$parent.globalData.userInfo.nickName,
               openid: this.$parent.globalData.openId,
             }).then((res) => {
-              wepy.hideLoading();
               if (res.data.code == 200) {
                 wepy.setStorageSync('role', 'vistor')
                 wepy.setStorageSync('token', res.data.data.token)

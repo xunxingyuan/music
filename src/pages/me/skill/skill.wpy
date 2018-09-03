@@ -6,7 +6,9 @@
       <view class='infoBox flex'>
         <view class='left'>
           <view class='name'>{{name}}</view>
-          <view class='count'>已学会课程 {{learnList.length}} / {{total}} <text wx:if="{{!delShow}}" class='edit' @tap="showDel">编辑</text><text wx:if="{{delShow}}" class='edit' @tap="showDel">取消编辑</text></view>
+          <view class='count'>已学会课程 {{learnList.length}} / {{total}} <image class='icon' src="{{imgList.edit}}" mode="scaleToFill"
+            lazy-load="false">
+          </image>  <text wx:if="{{!delShow}}" class='edit' @tap="showDel">编辑</text><text wx:if="{{delShow}}" class='edit' @tap="showDel">关闭编辑</text></view>
         </view>
         <image class='icon' src="{{imgSrc}}" mode="scaleToFill" lazy-load="false">
         </image>
@@ -368,7 +370,8 @@
       total: 100,
       learnList: [],
       idList: [],
-      delShow: false
+      delShow: false,
+      imgList:''
     };
     components = {
       userHeader: UserHeader,
@@ -433,6 +436,7 @@
       this.imgSrc = icon
       this.name = options.name
       this.userId = options.id
+      this.imgList = this.$parent.globalData.imgList
       this.$apply()
       this._initData(options)
     };
@@ -556,10 +560,16 @@
       .count {
         color: #a9a9a9;
         font-size: 14px;
+        .icon{
+          margin-left: 1rem;
+          display: inline-block;
+          width: 12px;
+          height: 12px;
+        }
       }
       .edit {
         color: #D0B485;
-        margin-left: 1rem;
+        
       }
     }
     .info {

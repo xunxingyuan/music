@@ -5,15 +5,15 @@
     <view class='searchItem'>
       <view class='flex type'>
         <view class='flex' @tap="viewData('video')">
-          <image class='icon' src="../../resource/play.png" mode="scaleToFill" lazy-load="false">
+          <image class='icon' src="{{imgList.play}}" mode="scaleToFill" lazy-load="false">
           </image> 视频</view>
         <text>/</text>
         <view class='flex' @tap="viewData('music')">
-          <image class='icon' src="../../resource/voice.png" mode="scaleToFill" lazy-load="false">
+          <image class='icon' src="{{imgList.voice}}" mode="scaleToFill" lazy-load="false">
           </image> 音频</view>
         <text>/</text>
         <view class='flex' @tap="viewData('score')">
-          <image class='icon' src="../../resource/score.png" mode="scaleToFill" lazy-load="false">
+          <image class='icon' src="{{imgList.score}}" mode="scaleToFill" lazy-load="false">
           </image> 曲谱</view>
       </view>
     </view>
@@ -23,13 +23,13 @@
           <view class='name' @tap='viewDetail({{item}})'>{{item.title}} <text class='vip' wx:if="{{item.isFree==0}}">VIP</text><text class='free' wx:if="{{item.isFree!=0}}">FREE</text></view>
           <view class='detail'>
             <view class='number'>
-              <image class='icon' src="../../resource/play.png" mode="scaleToFill" lazy-load="false">
+              <image class='icon' src="{{imgList.play}}" mode="scaleToFill" lazy-load="false">
               </image> {{item.videoList.length}}</view>
             <view class='number'>
-              <image class='icon' src="../../resource/voice.png" mode="scaleToFill" lazy-load="false">
+              <image class='icon' src="{{imgList.voice}}" mode="scaleToFill" lazy-load="false">
               </image> {{item.musicList.length}}</view>
             <view class='number'>
-              <image class='icon' src="../../resource/score.png" mode="scaleToFill" lazy-load="false">
+              <image class='icon' src="{{imgList.score}}" mode="scaleToFill" lazy-load="false">
               </image> {{item.notationList.length}}</view>
           </view>
         </view>
@@ -49,7 +49,9 @@
     props = {
       resData: Array
     }
-    data = {};
+    data = {
+      imgList:''
+    };
     components = {
       search: Search
     };
@@ -114,7 +116,9 @@
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    onLoad() {
+      this.imgList = this.$parent.$parent.globalData.imgList
+    };
     onShow() {};
   }
 </script>

@@ -96,45 +96,45 @@
       switch (role) {
         case 'vistor':
           this.showList = [{
-            icon: '../../resource/like3.png',
+            icon: 'like3',
             name: '我的收藏',
             id: 4
           }, {
-            icon: '../../resource/message.png',
+            icon: 'message',
             name: '我的评论',
             id: 5
           }]
           break;
         case 'teacher':
           this.showList = [{
-            icon: '../../resource/user2.png',
+            icon: 'user2',
             name: '我的学生',
             id: 1
           }, {
-            icon: '../../resource/voice1.png',
+            icon: 'voice1',
             name: '我的下载',
             id: 3
           }, {
-            icon: '../../resource/like3.png',
+            icon: 'like3',
             name: '我的收藏',
             id: 4
           }, {
-            icon: '../../resource/message.png',
+            icon: 'message',
             name: '我的评论',
             id: 5
           }]
           break;
         case 'student':
           this.showList = [{
-            icon: '../../resource/voice1.png',
+            icon: 'voice1',
             name: '我的技能',
             id: 2
           }, {
-            icon: '../../resource/like3.png',
+            icon: 'like3',
             name: '我的收藏',
             id: 4
           }, {
-            icon: '../../resource/message.png',
+            icon: 'message',
             name: '我的评论',
             id: 5
           }]
@@ -142,6 +142,9 @@
         default:
           break;
       }
+      this.showList.forEach(element => {
+        element.icon = this.$parent.$parent.globalData.imgList[element.icon]
+      });
       this.$apply()
     };
     onShow() {};
@@ -154,7 +157,7 @@
     height: 100%;
     background: #F7F7FA;
     .userInfo {
-      margin-top: 1px;
+      // margin-top: 1px;
       height: 200rpx;
       background: #D0B485;
       align-items: center;

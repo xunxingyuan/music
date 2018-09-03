@@ -35,70 +35,73 @@
     computed = {};
     async onLoad() {
       let role = await wepy.getStorageSync('role');
+      console.log(this.$parent.$parent.globalData)
       switch (role) {
         case 'vistor':
           this.menu = [{
             name: '资源',
             icon: 'resorce',
-            icon_src: '../../resource/music.png',
-            active_src: '../../resource/music1.png',
+            icon_src: 'music',
+            active_src: 'music1',
             id: 'resource'
           }, {
             name: '我的',
             icon: 'mine',
-            icon_src: '../../resource/user.png',
-            active_src: '../../resource/user1.png',
+            icon_src: 'user',
+            active_src: 'user1',
             id: 'me'
           }]
-          this.$apply()
           break;
         case 'teacher':
           this.menu = [{
             name: '学习',
             icon: 'home',
-            icon_src: '../../resource/home.png',
-            active_src: '../../resource/home2.png',
+            icon_src: 'home',
+            active_src: 'home2',
             id: 'learn'
           }, {
             name: '资源',
             icon: 'resorce',
-            icon_src: '../../resource/music.png',
-            active_src: '../../resource/music1.png',
+            icon_src: 'music',
+            active_src: 'music1',
             id: 'resource'
           }, {
             name: '我的',
             icon: 'mine',
-            icon_src: '../../resource/user.png',
-            active_src: '../../resource/user1.png',
+            icon_src: 'user',
+            active_src: 'user1',
             id: 'me'
           }]
-          this.$apply()
           break;
         case 'student':
           this.menu = [{
             name: '学习',
             icon: 'home',
-            icon_src: '../../resource/home.png',
-            active_src: '../../resource/home2.png',
+            icon_src: 'home',
+            active_src: 'home2',
             id: 'learn'
-          }, {
+          },, {
             name: '资源',
             icon: 'resorce',
-            icon_src: '../../resource/music.png',
-            active_src: '../../resource/music1.png',
+            icon_src: 'music',
+            active_src: 'music1',
             id: 'resource'
           }, {
             name: '我的',
             icon: 'mine',
-            icon_src: '../../resource/user.png',
-            active_src: '../../resource/user1.png',
+            icon_src: 'user',
+            active_src: 'user1',
             id: 'me'
           }]
-          this.$apply()
           break;
         default:
           break;
       }
+      this.menu.forEach(element => {
+        element.icon_src = this.$parent.$parent.globalData.imgList[element.icon_src]
+        element.active_src = this.$parent.$parent.globalData.imgList[element.active_src]
+      });
+      this.$apply()
     };
     onShow() {};
   }
