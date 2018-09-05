@@ -23,6 +23,7 @@
       activeTab: '',
       role: 'vistor',
       resourceData: [],
+      pageNumber: 1
     };
     components = {
       nav: Nav,
@@ -49,17 +50,30 @@
           })
         }
       },
-    }
+    };
     getResource() {
       api.music.searchMusic({
-        pageNumber: 1
+        pageNumber: this.pageNumber
       }).then((res) => {
         if (res.data.code === 200) {
-          this.resourceData = res.data.data
+          if (this.pageNumber === 1) {
+            this.resourceData = res.data.data
+          } else {
+            res.data.data.forEach(element => {
+              this.resourceData.push(element)
+            });
+          }
           this.$apply()
         }
       })
-    }
+    };
+    onReachBottom() {
+      this.$broadcast('reachBottom')
+      if (this.activeTab === 'resource') {
+        this.pageNumber += 1
+        this.getResource()
+      }
+    };
     events = {};
     watch = {};
     computed = {};

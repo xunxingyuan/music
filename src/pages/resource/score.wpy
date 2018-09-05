@@ -18,11 +18,17 @@
     };
     data = {
       imgSrc: 'http://192.168.100.246:9501/static/notation/qxlsflkjasdgfldasgkldjasogifu.jpg',
-      imgList: []
+      imgList: [],
+      pageNumber: 1,
     };
     components = {
       search: Search,
       list: List
+    };
+    onReachBottom() {
+      console.log('bottom');
+      this.pageNumber +=1
+      this.loadMore()
     };
     methods = {};
     events = {};
@@ -31,13 +37,24 @@
     onLoad() {
       let _self = this
       api.score.searchScore({
-        pageNumber: 1
+        pageNumber: _self.pageNumber
       }).then((res) => {
         _self.imgList = res.data
         _self.$apply()
       })
     };
     onShow() {};
+    loadMore(){
+      let _self = this
+      api.score.searchScore({
+        pageNumber: _self.pageNumber
+      }).then((res) => {
+        res.data.forEach(element => {
+          _self.imgList.push(element)
+        });
+        _self.$apply()
+      })
+    }
   }
 </script>
 

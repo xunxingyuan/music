@@ -26,7 +26,13 @@
       search: Search
     };
     methods = {};
-    events = {};
+    events = {
+      'reachBottom': () => {
+        console.log('bottom');
+        this.pageNumber += 1
+        this.getLearn();
+      }
+    };
     watch = {};
     computed = {};
     async onLoad() {
@@ -41,14 +47,18 @@
         pageNumber: this.pageNumber
       }
       console.log(userData);
-      
-      if(role=='student'){
-        searchData['ccode']== userData.vipUser.ccode
+      if (role == 'student') {
+        searchData['ccode'] == userData.vipUser.ccode
       }
-
       api.course.searchCourse(searchData).then(res => {
         if (res.data.code === 200) {
-          this.lists = res.data.data;
+          if (this.pageNumber === 1) {
+            this.lists = res.data.data;
+          } else {
+            res.data.data.forEach(element => {
+              this.lists.push(element)
+            });
+          }
           this.lists.forEach(element => {
             let date = element.schedule;
             let day = new Date(date).getDay();
@@ -77,7 +87,9 @@
               default:
                 break;
             }
-            element.schedule = element.schedule.slice(6, 10)
+            if (element.schedule.length > 5) {
+              element.schedule = element.schedule.slice(6, 10)
+            }
           });
           this.$apply();
         }

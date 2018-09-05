@@ -45,6 +45,9 @@
       scorelist: ScoreList,
       videolist: VideoList
     };
+    onReachBottom() {
+      console.log('bottom');
+    };
     methods = {
       audioPlay(item) {
         // this.$broadcast('srcChange', {

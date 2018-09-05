@@ -3,13 +3,13 @@
   <view class='music'>
     <search :type="music"></search>
     <!-- <view class='searchFilter'>
-        <text>节拍器</text>
-        <text>人声</text>
-        <text>吉他</text>
-        <text>钢琴</text>
-        <text>鼓</text>
-        <text>...</text>
-      </view> -->
+          <text>节拍器</text>
+          <text>人声</text>
+          <text>吉他</text>
+          <text>钢琴</text>
+          <text>鼓</text>
+          <text>...</text>
+        </view> -->
     <list :musicList.sync="musicList"></list>
   </view>
 </template>
@@ -26,13 +26,18 @@
     data = {
       playState: 'hidden',
       showCtrl: 1,
-      musicList: []
+      musicList: [],
+      pageNumber: 1
     };
     components = {
       search: Search,
       list: list
     };
-    methods = {
+    methods = {};
+    onReachBottom() {
+      console.log('bottom');
+      this.pageNumber += 1
+      this.loadMore()
     };
     events = {};
     watch = {};
@@ -40,7 +45,7 @@
     onLoad() {
       let _self = this
       api.music.searchMusic({
-        pageNumber: 1
+        pageNumber: _self.pageNumber
       }).then((res) => {
         if (res.data.code === 200) {
           _self.musicList = res.data.data
@@ -62,6 +67,25 @@
       })
     };
     onShow() {};
+    loadMore() {
+      let _self = this
+      api.music.searchMusic({
+        pageNumber: _self.pageNumber
+      }).then((res) => {
+        if (res.data.code === 200) {
+          res.data.data.forEach(element => {
+             _self.musicList.push(element)
+          });
+          _self.$apply()
+        } else {
+          wepy.showToast({
+            title: res.data.message,
+            icon: 'none',
+            duration: 1000
+          })
+        }
+      })
+    };
   }
 </script>
 
@@ -85,6 +109,5 @@
         border-radius: 13px;
       }
     }
-    
   }
 </style>
