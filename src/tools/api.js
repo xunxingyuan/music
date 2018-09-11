@@ -1,6 +1,6 @@
 import wepy from 'wepy'
 
-const url = 'http://192.168.100.246:9501'
+const url = 'http://183.62.42.146:24602'
 
 export default {
   //微信验证
