@@ -25,248 +25,304 @@
         <view>></view>
       </view>
     </repeat>
+    <view class='exit'>
+      <text class='exitBtn' @tap="exitUser">退出账号</text>
+    </view>
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import api from '@/tools/api.js'
-  export default class Me extends wepy.component {
-    config = {
-      navigationBarTitleText: "我的",
-    };
-    data = {
-      roleData: '',
-      showList: []
-    };
-    components = {};
-    methods = {
-      async viewItem(item) {
-        let userInfo = await wepy.getStorageSync('userInfo');
-        let permission = JSON.parse(userInfo).permission
-        if (item.id === 1) {
-          wepy.navigateTo({
-            url: '/pages/me/myStudent'
-          });
-        } else if (item.id === 3) {
-          wepy.navigateTo({
-            url: '/pages/me/download'
-          });
-        } else if (item.id === 4) {
-          if (permission.collect == 'yes') {
-            wepy.navigateTo({
-              url: '/pages/me/collection'
-            });
-          } else {
-            wepy.showToast({
-              title: '权限不足', //提示的内容,
-              icon: 'none', //图标,
-              duration: 2000, //延迟时间,
-              mask: true, //显示透明蒙层，防止触摸穿透,
-              success: res => {}
-            });
+import wepy from 'wepy';
+import api from '@/tools/api.js';
+export default class Me extends wepy.component {
+  config = {
+    navigationBarTitleText: '我的'
+  };
+  data = {
+    roleData: '',
+    showList: []
+  };
+  components = {};
+  methods = {
+    exitUser() {
+      wepy.showModal({
+        title: '提示', //提示的标题,
+        content: '是否注销当前用户', //提示的内容,
+        showCancel: true, //是否显示取消按钮,
+        cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
+        cancelColor: '#000000', //取消按钮的文字颜色,
+        confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
+        confirmColor: '#3CC51F', //确定按钮的文字颜色,
+        success: res => {
+          console.log(res);
+          if (res.confirm) {
+            wepy.setStorageSync('role', null);
+            wepy.setStorageSync('token', null);
+            wepy.setStorageSync('userId', null);
+            wepy.setStorageSync('vipId', null);
+            wepy.setStorageSync('userInfo', null);
+            wepy.redirectTo({ url: '/pages/index' });
           }
-        } else if (item.id === 5) {
-          if (permission.comment == 'yes') {
-            wepy.navigateTo({
-              url: '/pages/me/comment'
-            });
-          }else{
-            wepy.showToast({
-              title: '权限不足', //提示的内容,
-              icon: 'none', //图标,
-              duration: 2000, //延迟时间,
-              mask: true, //显示透明蒙层，防止触摸穿透,
-              success: res => {}
-            });
-          }
-        } else if (item.id === 2) {
+        }
+      });
+    },
+    async viewItem(item) {
+      let userInfo = await wepy.getStorageSync('userInfo');
+      let permission = JSON.parse(userInfo).permission;
+      if (item.id === 1) {
+        wepy.navigateTo({
+          url: '/pages/me/myStudent'
+        });
+      } else if (item.id === 3) {
+        wepy.navigateTo({
+          url: '/pages/me/download'
+        });
+      } else if (item.id === 4) {
+        if (permission.collect == 'yes') {
           wepy.navigateTo({
-            url: '/pages/me/myskill'
+            url: '/pages/me/collection'
+          });
+        } else {
+          wepy.showToast({
+            title: '权限不足', //提示的内容,
+            icon: 'none', //图标,
+            duration: 2000, //延迟时间,
+            mask: true, //显示透明蒙层，防止触摸穿透,
+            success: res => {}
           });
         }
+      } else if (item.id === 5) {
+        if (permission.comment == 'yes') {
+          wepy.navigateTo({
+            url: '/pages/me/comment'
+          });
+        } else {
+          wepy.showToast({
+            title: '权限不足', //提示的内容,
+            icon: 'none', //图标,
+            duration: 2000, //延迟时间,
+            mask: true, //显示透明蒙层，防止触摸穿透,
+            success: res => {}
+          });
+        }
+      } else if (item.id === 2) {
+        wepy.navigateTo({
+          url: '/pages/me/mySkill'
+        });
       }
-    };
-    events = {};
-    watch = {};
-    computed = {};
-    async onLoad() {
-      let role = await wepy.getStorageSync('role');
-      this.roleData = role
-      switch (role) {
-        case 'vistor':
-          this.showList = [{
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  async onLoad() {
+    let role = await wepy.getStorageSync('role');
+    this.roleData = role;
+    switch (role) {
+      case 'vistor':
+        this.showList = [
+          {
             icon: 'like3',
             name: '我的收藏',
             id: 4
-          }, {
+          },
+          {
             icon: 'message',
             name: '我的评论',
             id: 5
-          }]
-          break;
-        case 'teacher':
-          this.showList = [{
+          }
+        ];
+        break;
+      case 'teacher':
+        this.showList = [
+          {
             icon: 'user2',
             name: '我的学生',
             id: 1
-          }, {
+          },
+          {
             icon: 'voice1',
             name: '我的下载',
             id: 3
-          }, {
+          },
+          {
             icon: 'like3',
             name: '我的收藏',
             id: 4
-          }, {
+          },
+          {
             icon: 'message',
             name: '我的评论',
             id: 5
-          }]
-          break;
-        case 'student':
-          this.showList = [{
+          }
+        ];
+        break;
+      case 'student':
+        this.showList = [
+          {
             icon: 'voice1',
             name: '我的技能',
             id: 2
-          }, {
+          },
+          {
             icon: 'like3',
             name: '我的收藏',
             id: 4
-          }, {
+          },
+          {
             icon: 'message',
             name: '我的评论',
             id: 5
-          }]
-          break;
-        default:
-          break;
-      }
-      this.showList.forEach(element => {
-        element.icon = this.$parent.$parent.globalData.imgList[element.icon]
-      });
-      this.$apply()
-    };
-    onShow() {};
+          }
+        ];
+        break;
+      default:
+        break;
+    }
+    this.showList.forEach(element => {
+      element.icon = this.$parent.$parent.globalData.imgList[element.icon];
+    });
+    this.$apply();
   }
+  onShow() {}
+}
 </script>
 
 <style lang='less'>
-  .me {
+.me {
+  width: 100%;
+  height: 100%;
+  background: #f7f7fa;
+  position: relative;
+  .exit {
     width: 100%;
-    height: 100%;
-    background: #F7F7FA;
-    .userInfo {
-      // margin-top: 1px;
-      height: 200rpx;
-      background: #D0B485;
-      align-items: center;
-      padding: 0 1rem;
-      justify-content: space-between;
-      .username {
-        font-size: 20px;
-      }
-      .role {
-        font-size: 12px;
-        color: #666;
-      }
-      .icon {
-        margin-top: 0.5rem;
+    bottom: 160rpx;
+    position: absolute;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .exitBtn {
+      width: 120px;
+      text-align: center;
+      font-size: 14px;
+      height: 2rem;
+      line-height: 2rem;
+      border: dashed 1px #ddd;
+      color: tomato;
+    }
+  }
+  .userInfo {
+    // margin-top: 1px;
+    height: 200rpx;
+    background: #d0b485;
+    align-items: center;
+    padding: 0 1rem;
+    justify-content: space-between;
+    .username {
+      font-size: 20px;
+    }
+    .role {
+      font-size: 12px;
+      color: #666;
+    }
+    .icon {
+      margin-top: 0.5rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 30px;
+      background: #fff;
+      margin-bottom: 0.5rem;
+      overflow: hidden;
+      .iconInner {
         width: 60px;
         height: 60px;
-        border-radius: 30px;
-        background: #fff;
-        margin-bottom: 0.5rem;
-        overflow: hidden;
-        .iconInner {
-          width: 60px;
-          height: 60px;
-        }
-      }
-    }
-    .tabItem {
-      height: 120rpx;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1rem;
-      border-bottom: solid 1px #eee;
-      color: #353535;
-      font-size: 15px;
-      .icon{
-        width: 20px;
-        height: 20px;
-        margin-right: 1rem;
-      }
-    }
-    .info {
-      height: 500rpx;
-      background: #D0B485;
-      flex-flow: column;
-      font-size: 14px;
-      justify-content: flex-start;
-      .icon {
-        margin-top: 0.5rem;
-        width: 110px;
-        height: 110px;
-        border-radius: 55px;
-        background: #fff;
-        margin-bottom: 0.5rem;
-        overflow: hidden;
-        .iconInner {
-          width: 110px;
-          height: 110px;
-        }
-      }
-      .username {
-        font-size: 20px;
-      }
-    }
-    .infoBox {
-      margin-top: -130rpx;
-      .userItem {
-        .itemBox {
-          height: 240rpx;
-          flex: 1;
-          margin: 0 1rem;
-          background: #fff;
-          border-radius: 5px;
-          box-shadow: 0 0 2px #9D9DA7;
-          padding: 1rem;
-          position: relative;
-          display: flex;
-          flex-flow: column;
-          align-items: flex-start;
-          justify-content: space-between;
-          .title {
-            font-size: 16px;
-            color: #353535;
-          }
-          .count {
-            align-self: center;
-            width: 100%;
-            align-items: center;
-            justify-content: center;
-            color: #D0B485;
-            font-size: 12px;
-            .number {
-              font-size: 32px;
-            }
-            .line {
-              margin: 0 0.3rem;
-            }
-          }
-          .tips {
-            font-size: 10px;
-            color: #999;
-          }
-        }
-        .first {
-          margin-right: 0;
-        }
-      }
-      .bot {
-        margin-top: 1rem;
       }
     }
   }
+  .tabItem {
+    height: 120rpx;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    border-bottom: solid 1px #eee;
+    color: #353535;
+    font-size: 15px;
+    .icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 1rem;
+    }
+  }
+  .info {
+    height: 500rpx;
+    background: #d0b485;
+    flex-flow: column;
+    font-size: 14px;
+    justify-content: flex-start;
+    .icon {
+      margin-top: 0.5rem;
+      width: 110px;
+      height: 110px;
+      border-radius: 55px;
+      background: #fff;
+      margin-bottom: 0.5rem;
+      overflow: hidden;
+      .iconInner {
+        width: 110px;
+        height: 110px;
+      }
+    }
+    .username {
+      font-size: 20px;
+    }
+  }
+  .infoBox {
+    margin-top: -130rpx;
+    .userItem {
+      .itemBox {
+        height: 240rpx;
+        flex: 1;
+        margin: 0 1rem;
+        background: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 2px #9d9da7;
+        padding: 1rem;
+        position: relative;
+        display: flex;
+        flex-flow: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        .title {
+          font-size: 16px;
+          color: #353535;
+        }
+        .count {
+          align-self: center;
+          width: 100%;
+          align-items: center;
+          justify-content: center;
+          color: #d0b485;
+          font-size: 12px;
+          .number {
+            font-size: 32px;
+          }
+          .line {
+            margin: 0 0.3rem;
+          }
+        }
+        .tips {
+          font-size: 10px;
+          color: #999;
+        }
+      }
+      .first {
+        margin-right: 0;
+      }
+    }
+    .bot {
+      margin-top: 1rem;
+    }
+  }
+}
 </style>

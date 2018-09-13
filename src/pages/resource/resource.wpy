@@ -1,13 +1,14 @@
 <!--  -->
 <template>
   <view class='resourceData'>
-    <view class='resBox' wx:if="{{videolistdata.length!==0}}">
+    <view class='resBox'>
       <view class='title'>视频</view>
-      <videolist :list.sync="videolistdata"></videolist>
+      <videolist wx:if="{{videolistdata.length!==0}}" :list.sync="videolistdata"></videolist>
+      <view wx:if="{{videolistdata.length==0}}" class='tips'>当前曲集视频列表为空</view>
     </view>
-    <view class='resBox' wx:if="{{musicListdata.length!==0}}">
+    <view class='resBox' >
       <view class='title'>音频</view>
-      <repeat for="{{musicListdata}}" key="index" index="index" item="item">
+      <repeat wx:if="{{musicListdata.length!==0}}" for="{{musicListdata}}" key="index" index="index" item="item">
         <view class='flex musicItem'>
           <text>{{item.title}}</text>
           <view @tap="audioPlay({{item}})">
@@ -16,11 +17,13 @@
           </view>
         </view>
       </repeat>
+      <view wx:if="{{musicListdata.length==0}}"  class='tips'>当前曲集视频列表为空</view>
       <!-- <musiclist :musicList.sync="musicListdata"></musiclist> -->
     </view>
-    <view class='resBox' wx:if="{{notationListdata.length!==0}}">
+    <view class='resBox' >
       <view class='title'>曲谱</view>
-      <scorelist :imgList.sync="notationListdata"></scorelist>
+      <scorelist wx:if="{{notationListdata.length!==0}}" :imgList.sync="notationListdata"></scorelist>
+      <view wx:if="{{notationListdata.length==0}}" class='tips'>当前曲集曲谱列表为空</view>
     </view>
   </view>
 </template>
@@ -101,6 +104,14 @@
         justify-content: space-between;
         font-size: 14px;
         color: #333;
+      }
+      .tips{
+        width: 100%;
+        text-align: center;
+        height: 3rem;
+        line-height: 3rem;
+        font-size: 14px;
+        color: #666;
       }
     }
   }

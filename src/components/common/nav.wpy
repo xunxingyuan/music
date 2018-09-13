@@ -80,7 +80,7 @@
             icon_src: 'home',
             active_src: 'home2',
             id: 'learn'
-          },, {
+          }, {
             name: '资源',
             icon: 'resorce',
             icon_src: 'music',

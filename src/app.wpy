@@ -127,7 +127,7 @@
           }
         }
       })
-      let url = "http://192.168.100.246:9501/static/icons/"
+      let url = "http://183.62.42.146:24602/static/icons/"
       for(var val in this.globalData.imgList){
         this.globalData.imgList[val] = url+ this.globalData.imgList[val]
       }
