@@ -44,7 +44,7 @@
       })
     };
     onShow() {};
-    loadMore(){
+    async loadMore(){
       let _self = this
       api.score.searchScore({
         pageNumber: _self.pageNumber

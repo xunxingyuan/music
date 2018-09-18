@@ -3,7 +3,7 @@
   <view class='musicList'>
     <repeat for="{{musicList}}" key="index" index="index" item="item">
       <view class='musicItem'>
-        <view class='musicShow flex' @tap='showDetail({{item}})'>
+        <view class='musicShow flex' @tap="showDetail({{item}})">
           <view class='left'>
             <view class='flex'>
               <view class='name'>{{item.title}}</view>
@@ -49,7 +49,7 @@
         <view class='ctrl cancel' @tap='cancelShowMusicCtrl'>取消</view>
       </view>
     </view>
-    <musicPlay :musicSrc.sync="selectMusic" wx:if="{{playState == 'show'}}"></musicPlay>
+    <!-- <musicPlay :musicSrc.sync="selectMusic" wx:if="{{playState == 'show'}}"></musicPlay> -->
   </view>
 </template>
 
@@ -71,7 +71,6 @@
   }
   import wepy from 'wepy';
   import api from '@/tools/api.js'
-  import MusicPlay from '@/components/music/musicPlay'
   export default class musicList extends wepy.component {
     props = {
       musicList: Array
@@ -83,9 +82,7 @@
       selectItem: '',
       imgList: ''
     };
-    components = {
-      musicPlay: MusicPlay
-    };
+    components = {};
     methods = {
       async collectMusic(item) {
         let userId = await wepy.getStorageSync('userId');

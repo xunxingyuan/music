@@ -3,7 +3,7 @@
   <view class='video'>
     <search :type="video"></search>
     <view class='top'>
-      <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo"></image>
+      <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo"/>
       <view class='intro'>{{choseItem.title}}</view>
       <!-- <view class='detail'>
         <view class='number'><i class='iconfont icon-download'></i> 2</view>
