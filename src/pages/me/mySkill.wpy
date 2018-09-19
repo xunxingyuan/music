@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <view class='Myskill'>
+  <view class='Myskill mainPage'>
+    <top title='我的技能' backColor="black" back='yes'></top>
     <view class='total'>已学会课程 {{geted}} / {{total}}</view>
     <repeat for="{{list}}" key="index" index="index" item="item">
       <view class='skillBox'>
@@ -23,6 +24,8 @@
 <script>
   import wepy from 'wepy';
   import api from '@/tools/api.js';
+  import Top from '@/components/common/top';
+
   export default class Myskill extends wepy.page {
     config = {
       navigationBarTitleText: "我的技能",
@@ -33,7 +36,9 @@
       skillList: [],
       list: []
     };
-    components = {};
+    components = {
+      top:Top
+    };
     methods = {};
     events = {};
     watch = {};

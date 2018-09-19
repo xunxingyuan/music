@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <view class='searchBox'>
+  <view class='searchBox mainPage'>
+    <top title='搜索' backColor="black" back='yes'></top>
     <view class='search'>
       <input bindfocus="bindfocus" bindinput="bindKeyInput" class='searchBox' type="text" placeholder="输入搜索内容" confirm-type="search" bindconfirm="searchData"> </input>
     </view>
@@ -44,6 +45,8 @@
   import MusicList from '@/components/music/list'
   import VideoList from '@/components/video/list'
   import ScoreList from '@/components/score/list'
+  import Top from '@/components/common/top';
+
   export default class Search extends wepy.page {
     config = {
       navigationBarTitleText: "搜索",
@@ -78,7 +81,8 @@
       learnlist: LearnList,
       musiclist: MusicList,
       videolist: VideoList,
-      scorelist: ScoreList
+      scorelist: ScoreList,
+      top: Top
     };
     onReachBottom() {
       console.log('bottom');
@@ -179,7 +183,7 @@
       width: 100%;
       // margin-top: 1rpx;
       height: 100rpx;
-      background: #D0B485;
+      background: transparent;
       box-sizing: border-box;
       display: flex;
       padding: 0 1rem;
@@ -189,7 +193,7 @@
         display: block;
         width: 100%;
         height: 60rpx;
-        background: #E5E5E5;
+        background: #fff;
         border-radius: 14px;
         align-items: center;
         font-size: 14px;

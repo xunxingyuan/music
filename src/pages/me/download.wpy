@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <view class='download'>
+  <view class='download mainPage'>
+    <top title='我的下载' backColor="black" back='yes'></top>
     <repeat for="{{videoList}}" key="index" index="index" item="item">
       <view class='blockItem' @tap="viewDownloadVideo({{item}})">
         <view class='top'>
@@ -40,7 +41,8 @@
 
 <script>
   import wepy from 'wepy';
-  import api from '@/tools/api.js'
+  import api from '@/tools/api.js';
+  import Top from '@/components/common/top';
   export default class Download extends wepy.page {
     config = {
       navigationBarTitleText: "我的下载",
@@ -50,7 +52,9 @@
       musicList: [],
       downloadList: []
     };
-    components = {};
+    components = {
+      top:Top
+    };
     methods = {
       viewDownload(item) {
         if (item.type == 'video') {

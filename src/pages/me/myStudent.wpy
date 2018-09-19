@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <view class='myStudent'>
+  <view class='myStudent mainPage'>
+    <top title='我的学生' backColor="black" back='yes'></top>
     <view class='classList'>
       <repeat for="{{classListData}}" key="index" index="index" item="item">
         <view class='msg' :class="{'acitve':active=== index }" @tap='choseClass({{item}},{{index}})'>
@@ -24,6 +25,8 @@
 <script>
   import wepy from 'wepy';
   import api from '@/tools/api.js'
+  import Top from '@/components/common/top';
+
   export default class Student extends wepy.page {
     config = {
       navigationBarTitleText: "我的学生",
@@ -35,7 +38,9 @@
       imgSrc: '../../resource/images.png',
       studentData: ''
     };
-    components = {};
+    components = {
+      top:Top
+    };
     methods = {
       choseClass(item,index) {
         this.active = index

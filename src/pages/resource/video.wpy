@@ -1,8 +1,9 @@
 <!--  -->
 <template>
-  <view class='video'>
+  <view class='video mainPage'>
+    <top title='视频' backColor="black" back='yes'></top>
     <search :type="video"></search>
-    <view class='top'>
+    <view class='topBox'>
       <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo"/>
       <view class='intro'>{{choseItem.title}}</view>
       <!-- <view class='detail'>
@@ -25,6 +26,8 @@
   import Search from '@/components/common/search'
   import List from '@/components/video/list'
   import api from '@/tools/api.js'
+  import Top from '@/components/common/top';
+
   export default class Video extends wepy.page {
     config = {
       navigationBarTitleText: "视频",
@@ -38,7 +41,8 @@
     };
     components = {
       search: Search,
-      list: List
+      list: List,
+      top:Top
     };
     methods = {
       viewVideo() {
@@ -83,7 +87,7 @@
       border-radius: 2px;
       color: #040817;
     }
-    .top {
+    .topBox {
       width: 100%;
       height: 530rpx;
       display: flex;

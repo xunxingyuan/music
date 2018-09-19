@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <view class='score'>
+  <view class='score mainPage'>
+    <top title='曲谱' backColor="black" back='yes'></top>
     <search></search>
     <list :imgList.sync="imgList"></list>
   </view>
@@ -10,7 +11,8 @@
   import wepy from 'wepy';
   import Search from '@/components/common/search'
   import api from '@/tools/api.js'
-    import List from '@/components/score/list'
+  import List from '@/components/score/list'
+  import Top from '@/components/common/top';
 
   export default class Score extends wepy.page {
     config = {
@@ -23,7 +25,8 @@
     };
     components = {
       search: Search,
-      list: List
+      list: List,
+      top:Top
     };
     onReachBottom() {
       console.log('bottom');

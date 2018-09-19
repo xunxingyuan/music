@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <view class='music'>
+  <view class='music mainPage'>
+    <top title='音频' backColor="black" back='yes'></top>
     <search :type="music"></search>
     <!-- <view class='searchFilter'>
           <text>节拍器</text>
@@ -19,6 +20,8 @@
   import Search from '@/components/common/search'
   import api from '@/tools/api.js'
   import list from '@/components/music/list'
+  import Top from '@/components/common/top';
+
   export default class Music extends wepy.page {
     config = {
       navigationBarTitleText: "音频",
@@ -31,7 +34,8 @@
     };
     components = {
       search: Search,
-      list: list
+      list: list,
+      top:Top
     };
     methods = {};
     onReachBottom() {

@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <view class='lesson'>
+  <view class='lesson mainPage'>
+    <top title='返回' backColor="black" back='yes'></top>
     <view class='block'>
       <view><text class='time'>{{lessonData.schedule}}</text></view>
       <view class='flex msg'>
@@ -43,7 +44,8 @@
 
 <script>
   import wepy from 'wepy';
-  import api from '@/tools/api.js'
+  import api from '@/tools/api.js';
+  import Top from '@/components/common/top';
   export default class Lesson extends wepy.page {
     config = {
       navigationBarTitleText: "详情",
@@ -53,7 +55,9 @@
       lessonData: '',
       selectMusic: ''
     };
-    components = {};
+    components = {
+      top:Top
+    };
     methods = {
       viewScore(item) {
         let current = item.url

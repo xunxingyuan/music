@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <view class='resourceData'>
+  <view class='resourceData mainPage'>
+    <top title='资源' backColor="black" back='yes'></top>
     <view class='resBox'>
       <view class='title'>视频</view>
       <videolist wx:if="{{videolistdata.length!==0}}" :list.sync="videolistdata"></videolist>
@@ -33,6 +34,8 @@
   import MusicList from '@/components/music/list'
   import ScoreList from '@/components/score/list'
   import VideoList from '@/components/video/list'
+  import Top from '@/components/common/top';
+
   export default class Resource extends wepy.page {
     config = {
       navigationBarTitleText: "曲集详情",
@@ -46,7 +49,8 @@
     components = {
       musiclist: MusicList,
       scorelist: ScoreList,
-      videolist: VideoList
+      videolist: VideoList,
+      top:Top
     };
     onReachBottom() {
       console.log('bottom');

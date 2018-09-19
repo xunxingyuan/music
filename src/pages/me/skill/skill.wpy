@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <view class='skill'>
+  <view class='skill mainPage'>
+    <top title='返回' backColor="black" back='yes'></top>
     <!-- <userHeader :imgSrcData.sync='imgSrc' :userName.sync="name"></userHeader> -->
     <view class='info'>
       <view class='infoBox flex'>
@@ -37,7 +38,9 @@
 <script>
   import wepy from 'wepy';
   import UserHeader from '@/components/common/userHeader'
-  import api from '@/tools/api.js'
+  import api from '@/tools/api.js';
+  import Top from '@/components/common/top';
+
   export default class Skill extends wepy.page {
     config = {
       navigationBarTitleText: "学生",
@@ -375,6 +378,7 @@
     };
     components = {
       userHeader: UserHeader,
+      top:Top
     };
     methods = {
       showDel() {

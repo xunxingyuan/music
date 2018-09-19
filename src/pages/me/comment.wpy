@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <view class='comment'>
+  <view class='comment mainPage'>
+    <top title='我的评论' backColor="black" back='yes'></top>
     <repeat for="{{list}}" key="index" index="index" item="item">
       <view class='blockItem'>
         <view class='top'>
@@ -18,7 +19,8 @@
 
 <script>
   import wepy from 'wepy';
-  import api from '@/tools/api.js'
+  import api from '@/tools/api.js';
+  import Top from '@/components/common/top';
   export default class Comment extends wepy.page {
     config = {
       navigationBarTitleText: "我的评论",
@@ -27,7 +29,9 @@
       list: [],
       
     };
-    components = {};
+    components = {
+      top:Top
+    };
     methods = {};
     events = {};
     watch = {};
@@ -48,5 +52,4 @@
 </script>
 
 <style lang='less'>
-
 </style>

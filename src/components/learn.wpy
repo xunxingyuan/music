@@ -2,7 +2,6 @@
 <template>
   <view class='learn'>
     <search :type="learn"></search>
-    <view class='back'></view>
     <list :listData.sync="lists" class='uptop'></list>
   </view>
 </template>
@@ -46,7 +45,7 @@
       let searchData = {
         pageNumber: this.pageNumber
       }
-      console.log(userData);
+      // console.log(userData);
       if (role == 'student') {
         searchData['ccode'] == userData.vipUser.ccode
       }
@@ -103,13 +102,8 @@
   .learn {
     width: 100%;
     height: 100%;
-    .back {
-      height: 120rpx;
-      width: 100%;
-      background: #d0b485;
-    }
+    position: relative;
     .uptop {
-      margin-top: -130rpx;
       margin-bottom: 140rpx;
     }
   }

@@ -35,7 +35,6 @@
     computed = {};
     async onLoad() {
       let role = await wepy.getStorageSync('role');
-      console.log(this.$parent.$parent.globalData)
       switch (role) {
         case 'vistor':
           this.menu = [{
@@ -115,6 +114,7 @@
     display: flex;
     width: 100%;
     background: #fff;
+    z-index: 12;
     .navItem {
       flex: 1;
       text-align: center;

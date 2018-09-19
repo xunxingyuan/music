@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <view class='videoPlay'>
+  <view class='videoPlay mainPage'>
+    <top title='返回' backColor="black" back='yes'></top>
     <video hidden="{{showInput}}" class='show' src="{{videoSrc}}" controls="true" objectFit="contain"></video>
     <view class='videoTitle'>{{videoTitle}}</view>
     <view hidden="{{showInput}}" class='ctrl'>
@@ -80,6 +81,7 @@
   }
   import wepy from 'wepy';
   import api from '@/tools/api.js'
+  import Top from '@/components/common/top';
   export default class VideoPlay extends wepy.page {
     config = {
       navigationBarTitleText: "返回",
@@ -103,7 +105,9 @@
       },
       permission: ''
     };
-    components = {};
+    components = {
+      top: Top
+    };
     methods = {
       addComment() {
         console.log(this.permission);
