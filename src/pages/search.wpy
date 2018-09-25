@@ -3,7 +3,11 @@
   <view class='searchBox mainPage'>
     <top title='搜索' backColor="black" back='yes'></top>
     <view class='search'>
-      <input bindfocus="bindfocus" bindinput="bindKeyInput" class='searchBox' type="text" placeholder="输入搜索内容" confirm-type="search" bindconfirm="searchData"> </input>
+      <!-- <image class='icon' src="../resource/search1.png" mode="scaleToFill"
+          lazy-load="false">
+        </image> -->
+      <i class='icon iconfont icon-sousuo'></i>
+      <input bindfocus="bindfocus" bindinput="bindKeyInput" class='searchBoxItem' type="text" placeholder="输入搜索内容" confirm-type="search" bindconfirm="searchData"> </input>
     </view>
     <view wx:if="{{showSearch}}" class="searchType flex">
       <view class='typeContain'>
@@ -12,14 +16,14 @@
       <view class='typeContain'>
         <radio @tap="setType('music')" checked="{{selectType === 'music'}}" name="id" /> 音频
         <!-- <view>
-                              <view>
-                                <checkbox-group @change="checkboxChange">
-                                  <label wx:for="{{musicType}}">
-                                    <checkbox value="{{item.name}}" checked="{{item.checked}}" name="id" /> {{item.value}}
-                                  </label>
-                                </checkbox-group>
-                              </view>
-                            </view> -->
+                                <view>
+                                  <checkbox-group @change="checkboxChange">
+                                    <label wx:for="{{musicType}}">
+                                      <checkbox value="{{item.name}}" checked="{{item.checked}}" name="id" /> {{item.value}}
+                                    </label>
+                                  </checkbox-group>
+                                </view>
+                              </view> -->
       </view>
       <view class='typeContain'>
         <radio @tap="setType('score')" checked="{{selectType === 'score'}}" name="id" /> 图谱
@@ -46,7 +50,6 @@
   import VideoList from '@/components/video/list'
   import ScoreList from '@/components/score/list'
   import Top from '@/components/common/top';
-
   export default class Search extends wepy.page {
     config = {
       navigationBarTitleText: "搜索",
@@ -93,7 +96,7 @@
       this.searchData('add')
     };
     searchData(val) {
-      if(val !== 'add'){
+      if (val !== 'add') {
         this.pageNumber = 1
         this.searchResult = []
       }
@@ -130,8 +133,40 @@
           }).then((res) => {
             if (res.data.code === 200) {
               res.data.data.forEach(element => {
+                let date = element.schedule;
+                let day = new Date(date).getDay();
+                switch (day) {
+                  case 1:
+                    element['day'] = '周一';
+                    break;
+                  case 2:
+                    element['day'] = '周二';
+                    break;
+                  case 3:
+                    element['day'] = '周三';
+                    break;
+                  case 4:
+                    element['day'] = '周四';
+                    break;
+                  case 5:
+                    element['day'] = '周五';
+                    break;
+                  case 6:
+                    element['day'] = '周六';
+                    break;
+                  case 0:
+                    element['day'] = '周日';
+                    break;
+                  default:
+                    break;
+                }
+                if (element.schedule.length > 5) {
+                  element.schedule = element.schedule.slice(6, 10)
+                  element.schedule = element.schedule.replace('-',' - ')
+                }
                 this.searchResult.push(element)
               });
+              
               this.$apply()
             }
           })
@@ -180,8 +215,7 @@
     align-items: center;
     width: 100%;
     .search {
-      width: 100%;
-      // margin-top: 1rpx;
+      width: 100%; // margin-top: 1rpx;
       height: 100rpx;
       background: transparent;
       box-sizing: border-box;
@@ -189,20 +223,25 @@
       padding: 0 1rem;
       align-items: center;
       justify-content: center;
-      .searchBox {
+      position: relative;
+      .icon {
+        position: absolute;
+        width: 1rem;
+        height: 1rem;
+        z-index: 10;
+        left: 1.5rem;
+        top: 17px;
+      }
+      .searchBoxItem {
         display: block;
         width: 100%;
         height: 60rpx;
-        background: #fff;
+        background: #eee;
         border-radius: 14px;
         align-items: center;
         font-size: 14px;
         padding: 0 0.5rem;
-        .icon {
-          margin-top: 8px;
-          color: #fff;
-          margin-left: 10px;
-        }
+        padding-left: 1.7rem;
       }
     }
     .searchType {

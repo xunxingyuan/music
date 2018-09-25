@@ -343,7 +343,8 @@
       line-height: 1.8rem;
       background: #fff;
       padding-left: 1rem;
-      color:#353535;
+      color:#000;
+      font-size: 16px;
     }
     .ctrl {
       width: 100%;

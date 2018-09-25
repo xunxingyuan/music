@@ -2,13 +2,11 @@
 <template>
   <view class="navBot">
     <repeat for="{{menu}}" key="index" index="index" item="item">
-      <view @tap="toPath({{item.id}})" class='navItem' :class="{'active':activeTab === item.id}">
+      <view @tap.stop="toPath({{item.id}})" class='navItem' :class="{'active': activeTab == item.id}">
         <!-- <i class="iconfont {{item.icon}}"></i> -->
-        <image class='icon' src="{{item.icon_src}}" mode="scaleToFill"
-          lazy-load="false">
+        <image class='icon' src="{{item.icon_src}}" mode="scaleToFill" lazy-load="false">
         </image>
-        <image class='activeIcon' src="{{item.active_src}}" mode="scaleToFill"
-          lazy-load="false">
+        <image class='activeIcon' src="{{item.active_src}}" mode="scaleToFill" lazy-load="false">
         </image>
         <text>{{item.name}}</text>
       </view>
@@ -19,22 +17,24 @@
   import wepy from 'wepy';
   export default class Nav extends wepy.component {
     props = {
-      activeTab: Number,
     };
     data = {
-      menu: []
+      menu: [],
+      activeTab: 'learn'
     };
     components = {};
     methods = {
       toPath(name) {
         this.$emit('changeTab', name)
+        this.activeTab = name
+        this.$apply()
       },
     };
     events = {};
     watch = {};
     computed = {};
-    async onLoad() {
-      let role = await wepy.getStorageSync('role');
+    onLoad() {
+      let role = wepy.getStorageSync('role');
       switch (role) {
         case 'vistor':
           this.menu = [{
@@ -50,13 +50,14 @@
             active_src: 'user1',
             id: 'me'
           }]
+          this.activeTab = 'resource'
           break;
         case 'teacher':
           this.menu = [{
             name: '学习',
             icon: 'home',
-            icon_src: 'home',
-            active_src: 'home2',
+            icon_src: 'home2',
+            active_src: 'home',
             id: 'learn'
           }, {
             name: '资源',
@@ -71,6 +72,7 @@
             active_src: 'user1',
             id: 'me'
           }]
+          this.activeTab = 'learn'
           break;
         case 'student':
           this.menu = [{
@@ -92,6 +94,7 @@
             active_src: 'user1',
             id: 'me'
           }]
+          this.activeTab = 'learn'
           break;
         default:
           break;
@@ -114,6 +117,7 @@
     display: flex;
     width: 100%;
     background: #fff;
+    border-top: solid 1px #eee;
     z-index: 12;
     .navItem {
       flex: 1;
@@ -123,24 +127,25 @@
       flex-flow: column;
       align-items: center;
       justify-content: center;
+      color: #666;
       .iconfont {
         font-size: 24px;
         display: block;
         color: #353535;
       }
-      .icon{
+      .icon {
         width: 25px;
         height: 25px;
       }
-      .activeIcon{
+      .activeIcon {
         width: 25px;
         height: 25px;
         display: none;
       }
     }
     .active {
-      color: #D0B485;
-      .icon{
+      color: #333;
+      .icon {
         display: none;
       }
       .activeIcon {

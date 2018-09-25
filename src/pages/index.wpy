@@ -60,10 +60,18 @@
             openid: this.$parent.globalData.openId,
           }).then((res) => {
             // wepy.setStorageSync('role', 'teacher')
-            wepy.setStorageSync('token', res.data.data)
-            wepy.redirectTo({
-              url: '/pages/home'
-            });
+            if (res.data.code === 200) {
+              wepy.setStorageSync('token', res.data.data)
+              wepy.redirectTo({
+                url: '/pages/home'
+              });
+            } else {
+              wepy.showToast({
+                title: res.data.message,
+                icon: 'none',
+                duration: 1000
+              })
+            }
           })
         }
       },

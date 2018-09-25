@@ -14,6 +14,7 @@
         </view>
       </view>
     </repeat>
+    <view class='tips' wx:if="{{list.length == 0}}">暂无评论</view>
   </view>
 </template>
 
@@ -52,4 +53,12 @@
 </script>
 
 <style lang='less'>
+.comment{
+  .tips{
+    text-align: center;
+    line-height: 3rem;
+    width: 100%;
+    font-size: 14px;
+  }
+}
 </style>

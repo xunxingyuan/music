@@ -32,7 +32,7 @@
         <view class='flex musicItem'>
           <text>{{item.title}}</text>
           <view @tap="audioPlay({{item}})">
-            <i class="iconfont icon-play1"></i>
+            <i class="iconfont icon-shipin"></i>
             <text></text>
           </view>
         </view>
@@ -81,7 +81,23 @@
         // backgroundAudioManager.coverImgUrl = 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000'
         let backgroundAudioManager = wx.getBackgroundAudioManager()
         backgroundAudioManager.title = item.title
-        backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
+        wepy.showModal({
+          title: '播放音乐', //提示的标题,
+          content: '是否开始播放音乐：' + item.title, //提示的内容,
+          showCancel: true, //是否显示取消按钮,
+          cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
+          cancelColor: '#000000', //取消按钮的文字颜色,
+          confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
+          confirmColor: '#3CC51F', //确定按钮的文字颜色,
+          success: res => {
+            if (res.confirm){
+              backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
+            }
+          }
+        });
+
+
+        
         // this.playState = 'show'
       },
     };

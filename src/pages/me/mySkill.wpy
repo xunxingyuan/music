@@ -43,8 +43,8 @@
     events = {};
     watch = {};
     computed = {};
-    async onLoad() {
-      let userInfo = await wepy.getStorageSync('userInfo');
+    onLoad() {
+      let userInfo = wepy.getStorageSync('userInfo');
       let userData = JSON.parse(userInfo)
       console.log(userData);
       

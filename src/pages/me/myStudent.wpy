@@ -23,133 +23,139 @@
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import api from '@/tools/api.js'
-  import Top from '@/components/common/top';
+import wepy from 'wepy';
+import api from '@/tools/api.js';
+import Top from '@/components/common/top';
 
-  export default class Student extends wepy.page {
-    config = {
-      navigationBarTitleText: "我的学生",
-    };
-    data = {
-      classListData: [],
-      active: 0,
-      studentList: [],
-      imgSrc: '../../resource/images.png',
-      studentData: ''
-    };
-    components = {
-      top:Top
-    };
-    methods = {
-      choseClass(item,index) {
-        this.active = index
-        this.studentList = this.studentData[item]
-      },
-      viewStudent(item) {
-        let url = "/pages/me/skill/skill?id="+ item.id+'&name='+ item.name
-        wepy.setStorageSync('viewUser', item.appUser.avatarUrl)
-        wepy.navigateTo({
-          url: url
-        });
-      }
-    };
-    events = {};
-    watch = {};
-    computed = {};
-    async onLoad() {
-      let _self = this
-      let userInfo = await wepy.getStorageSync('userInfo');
-      let userData = JSON.parse(userInfo)
-      api.user.getStudents({
+export default class Student extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的学生'
+  };
+  data = {
+    classListData: [],
+    active: 0,
+    studentList: [],
+    imgSrc: '../../resource/images.png',
+    studentData: ''
+  };
+  components = {
+    top: Top
+  };
+  methods = {
+    choseClass(item, index) {
+      this.active = index;
+      this.studentList = this.studentData[item];
+    },
+    viewStudent(item) {
+      let url = '/pages/me/skill/skill?id=' + item.id + '&name=' + item.name;
+      wepy.setStorageSync('viewUser', item.appUser.avatarUrl);
+      wepy.navigateTo({
+        url: url
+      });
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad() {
+    let _self = this;
+    let userInfo = wepy.getStorageSync('userInfo');
+    let userData = JSON.parse(userInfo);
+    api.user
+      .getStudents({
         code: 'ls1002'
         // code: userData.vipUser.code
-      }).then((res) => {
+      })
+      .then(res => {
         if (res.data.code === 200) {
-          let result = res.data.data
-          _self.studentData = result
-          _self.classListData = []
-          _self.studentList = []
-          Object.keys(result).forEach(function(key,index) {
+          let result = res.data.data;
+          _self.studentData = result;
+          _self.classListData = [];
+          _self.studentList = [];
+          Object.keys(result).forEach(function(key, index) {
             // console.log(key,index, result[key]);
-            _self.classListData.push(key)
-            result[key].forEach((e)=>{
-              if(e.appUser === ''||e.appUser.avatarUrl===''){
-                e.appUser = {}
-                e.appUser['avatarUrl'] = "../../resource/images.png"
+            _self.classListData.push(key);
+            result[key].forEach(e => {
+              if (e.appUser === '' || e.appUser.avatarUrl === '') {
+                e.appUser = {};
+                e.appUser['avatarUrl'] = '../../resource/images.png';
               }
-            })
-            if(index === 0){
-              _self.studentList = result[key]
+            });
+            if (index === 0) {
+              _self.studentList = result[key];
             }
           });
         }
-        this.$apply()
-      })
-    };
-    onShow() {};
+        this.$apply();
+      });
   }
+  onShow() {}
+}
 </script>
 
 <style lang='less'>
-  .myStudent {
-    width: 100%;
-    height: 100%;
-    .classList {
+.myStudent {
+  width: 100%;
+  height: 100%;
+  .classList {
+    height: 130rpx;
+    background: #f9f5ed;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 10%;
+    overflow-x: auto;
+    .msg {
+      min-width: 100px;
+      margin-right: 1rem;
       height: 130rpx;
-      background: #F9F5ED;
+      position: relative;
+      text-align: center;
+      color: #c0bdb7;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      padding: 0 10%;
-      overflow-x: auto;
-      .msg {
-        min-width: 100px;
-        margin-right: 1rem;
-        height: 130rpx;
-        position: relative;
-        text-align: center;
-        color: #C0BDB7;
-        display: flex;
+      justify-content: center;
+      .lineBox {
+        position: absolute;
+        display: none;
         align-items: center;
         justify-content: center;
-        .lineBox {
-          position: absolute;
-          display: none;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          bottom: 0;
-          left: 0;
-          .line {
-            width: 40px;
-            height: 2px;
-            background: #D0B485;
-          }
-        }
-      }
-      .acitve {
-        color: #353535;
-        .lineBox {
-          display: flex;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        .line {
+          // width: 40px;
+          // height: 2px;
+          // background: #D0B485;
+          width: 0;
+          height: 0;
+          border: solid 10px transparent;
+          border-bottom: solid 10px #fff;
         }
       }
     }
-    .student {
-      height: 130rpx;
-      background: #fff;
-      border-bottom: solid 1px #E5E5E5;
-      justify-content: flex-start;
-      padding-left: 1rem;
-      .userIcon {
-        width: 80rpx;
-        height: 80rpx;
-        border-radius: 40rpx;
-      }
-      text {
-        margin-left: 0.5rem;
-        color: #353535;
+    .acitve {
+      color: #353535;
+      .lineBox {
+        display: flex;
       }
     }
   }
+  .student {
+    height: 130rpx;
+    background: #fff;
+    border-bottom: solid 1px #e5e5e5;
+    justify-content: flex-start;
+    padding-left: 1rem;
+    .userIcon {
+      width: 80rpx;
+      height: 80rpx;
+      border-radius: 40rpx;
+    }
+    text {
+      margin-left: 0.5rem;
+      color: #353535;
+    }
+  }
+}
 </style>

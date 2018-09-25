@@ -1,10 +1,8 @@
-<!--  -->
 <template>
   <view class='videoList'>
     <repeat for="{{list}}" key="index" index="index" item="item">
       <div class='videoItem'>
-        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo({{item}})" />
-      
+        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo({{item}})"></image>
         <view class='intro'>
           <text>{{item.title}}</text>
           <!-- <view><i class='iconfont icon-heart' @tap="likeVideo({{item}})"></i> {{item.likeCount}}</view> -->
@@ -18,13 +16,13 @@
 
 <script>
   import wepy from 'wepy';
-  import api from '@/tools/api.js'
+  import api from '@/tools/api.js';
   export default class videoList extends wepy.component {
     props = {
       list: Array
     };
     data = {
-      imgSrc: '../../resource/duzou.jpg',
+      imgSrc: '../../resource/videoImg.png',
     };
     components = {};
     methods = {

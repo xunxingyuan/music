@@ -5,13 +5,18 @@
       <view class="listItem" @tap='toLesson({{item}})'>
         <view class='msgTop flex'>
           <view class='time'>
-            <view class='date'>{{item.schedule}} | {{item.day}}</mydate>
+            <view class='date'>{{item.schedule}} <text>/ {{item.day}}</text>
             </view>
           </view>
           <view class='count'>
             <text>曲谱 {{item.notationList.length}}</text>
             <text>音频 {{item.musicList.length}}</text>
           </view>
+        </view>
+        <view class="skillBox" wx:if="{{index == 0}}">
+          <text>右手手指序号 T 1234</text>
+          <text>拨片弹拨 Pick</text>
+          <text>右手手指序号 T 1234</text>
         </view>
         <view class='msgBot flex'>
           <text>{{item.className}}</text>
@@ -54,26 +59,34 @@
 <style lang='less'>
   .listContain {
     width: 100%;
+    height: auto;
     .listItem {
       margin: 0.5rem 1rem;
-      padding: 1rem 0 0 0;
+      margin-bottom: 1rem;
+      padding: 0.5rem 0 0 0;
       background: #fff;
       border-radius: 3px;
-      box-shadow: 0 0 2px #9D9DA7;
+      box-shadow: 0 0 5px 4px rgba(0,0,0,0.04);
       .msgTop {
         padding: 0 1rem;
         justify-content: space-between;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
         .time {
           font-size: 12px;
           color: #666;
           .date {
-            font-size: 18px;
-            color: #000;
+            font-size: 30px;
+            color: rgba(0, 0, 0, 0.8);
+            font-weight: 600;
+            text{
+              font-size: 13px;
+              font-weight: 500;
+              color: rgba(0, 0, 0, 1);
+            }
           }
         }
         .count {
-          font-size: 14px;
+          font-size: 15px;
           text {
             margin-left: 0.5rem;
           }
@@ -81,7 +94,7 @@
       }
       .msgBot {
         height: 70rpx;
-        border-top: solid 1px #ddd;
+        border-top: solid 1px #f7f7f7;
         font-size: 12px;
         color: #999;
         // width: 100%;
@@ -89,6 +102,15 @@
         padding: 0 1rem;
         .line {
           margin: 0 0.5rem;
+        }
+      }
+      .skillBox{
+        display: flex;
+        flex-flow: column;
+        font-size: 16px;
+        padding: 0 1rem;
+        text{
+          line-height: 2;
         }
       }
     }

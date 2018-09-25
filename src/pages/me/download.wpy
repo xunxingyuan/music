@@ -24,6 +24,8 @@
         </view>
       </view>
     </repeat>
+    <view class='tips' wx:if="{{videoList.length == 0&&musicList.length == 0}}">暂无下载内容</view>
+
     <!-- <repeat for="{{downloadList}}" key="index" index="index" item="item">
           <view class='blockItem' @tap="viewDownload({{item}})">
             <view class='top'>
@@ -65,7 +67,20 @@
         } else {
           const backgroundAudioManager = wx.getBackgroundAudioManager()
           backgroundAudioManager.title = item.title
-          backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
+          wepy.showModal({
+          title: '播放音乐', //提示的标题,
+          content: '是否开始播放音乐：' + item.title, //提示的内容,
+          showCancel: true, //是否显示取消按钮,
+          cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
+          cancelColor: '#000000', //取消按钮的文字颜色,
+          confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
+          confirmColor: '#3CC51F', //确定按钮的文字颜色,
+          success: res => {
+            if (res.confirm){
+              backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
+            }
+          }
+        });
         }
       },
       viewDownloadMusic(item) {
@@ -75,7 +90,20 @@
         }
         const backgroundAudioManager = wx.getBackgroundAudioManager()
         backgroundAudioManager.title = item.title
-        backgroundAudioManager.src = url // 设置了 src 之后会自动播放
+        wepy.showModal({
+          title: '播放音乐', //提示的标题,
+          content: '是否开始播放音乐：' + item.title, //提示的内容,
+          showCancel: true, //是否显示取消按钮,
+          cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
+          cancelColor: '#000000', //取消按钮的文字颜色,
+          confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
+          confirmColor: '#3CC51F', //确定按钮的文字颜色,
+          success: res => {
+            if (res.confirm){
+              backgroundAudioManager.src = url // 设置了 src 之后会自动播放
+            }
+          }
+        });
       },
       viewDownloadVideo(item) {
         let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
@@ -117,5 +145,12 @@
 </script>
 
 <style lang='less'>
-
+.download{
+  .tips{
+    text-align: center;
+    line-height: 3rem;
+    width: 100%;
+    font-size: 14px;
+  }
+}
 </style>

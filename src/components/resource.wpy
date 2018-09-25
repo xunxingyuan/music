@@ -1,20 +1,25 @@
 <!--  -->
 <template>
   <view class='resource'>
-    <search :type="video"></search>
+    <view class="searchTop">
+      <search :type="video"></search>
+    </view>
     <view class='searchItem'>
       <view class='flex type'>
-        <view class='flex' @tap="viewData('video')">
-          <image class='icon' src="{{imgList.play}}" mode="scaleToFill" lazy-load="false">
-          </image> 视频</view>
+        <view @tap="viewData('video')">
+          <!-- <image class='icon' src="{{imgList.play}}" mode="scaleToFill" lazy-load="false">
+          </image>  -->
+          <i class="iconfont icon-shipin"></i> 视频</view>
         <text>/</text>
-        <view class='flex' @tap="viewData('music')">
-          <image class='icon' src="{{imgList.voice}}" mode="scaleToFill" lazy-load="false">
-          </image> 音频</view>
+        <view @tap="viewData('music')">
+          <!-- <image class='icon' src="{{imgList.voice}}" mode="scaleToFill" lazy-load="false">
+          </image>  -->
+          <i class="iconfont icon-laba"></i> 音频</view>
         <text>/</text>
-        <view class='flex' @tap="viewData('score')">
-          <image class='icon' src="{{imgList.score}}" mode="scaleToFill" lazy-load="false">
-          </image> 曲谱</view>
+        <view @tap="viewData('score')">
+          <!-- <image class='icon' src="{{imgList.score}}" mode="scaleToFill" lazy-load="false">
+          </image>  -->
+          <i class="iconfont icon-iconfontqupu"></i> 曲谱</view>
       </view>
     </view>
     <view class='content'>
@@ -23,14 +28,17 @@
           <view class='name' @tap='viewDetail({{item}})'>{{item.title}} <text class='vip' wx:if="{{item.isFree==0}}">VIP</text><text class='free' wx:if="{{item.isFree!=0}}">FREE</text></view>
           <view class='detail'>
             <view class='number'>
-              <image class='icon' src="{{imgList.play}}" mode="scaleToFill" lazy-load="false">
-              </image> {{item.videoList.length}}</view>
+              <!-- <image class='icon' src="{{imgList.play}}" mode="scaleToFill" lazy-load="false">
+              </image>  -->
+              <i class="iconfont icon-shipin"></i> {{item.videoList.length}}</view>
             <view class='number'>
-              <image class='icon' src="{{imgList.voice}}" mode="scaleToFill" lazy-load="false">
-              </image> {{item.musicList.length}}</view>
+              <!-- <image class='icon' src="{{imgList.voice}}" mode="scaleToFill" lazy-load="false">
+              </image>  -->
+              <i class="iconfont icon-laba"></i> {{item.musicList.length}}</view>
             <view class='number'>
-              <image class='icon' src="{{imgList.score}}" mode="scaleToFill" lazy-load="false">
-              </image> {{item.notationList.length}}</view>
+              <!-- <image class='icon' src="{{imgList.score}}" mode="scaleToFill" lazy-load="false">
+              </image>  -->
+              <i class="iconfont icon-iconfontqupu"></i> {{item.notationList.length}}</view>
           </view>
         </view>
       </repeat>
@@ -50,7 +58,7 @@
       resData: Array
     }
     data = {
-      imgList:''
+      imgList: ''
     };
     components = {
       search: Search
@@ -129,10 +137,24 @@
     overflow: auto;
     height: 100%;
     position: relative;
+    padding-top: 100rpx;
+    display: flex;
+    flex-flow: column;
+    .searchTop {
+      position: fixed;
+      top: 1.5rem;
+      left: 0;
+      width: 50%;
+      z-index: 11;
+    }
     .searchItem {
       background: transparent;
-      padding: 0 1rem;
-      padding-bottom: 0.5rem;
+      // padding: 0 1rem;
+      // padding-bottom: 0.5rem;
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
       .searchInner {
         background: #e5e5e5;
         border-radius: 14px;
@@ -151,13 +173,18 @@
           display: inline-block;
           margin-right: 5px;
         }
+        .iconfont{
+          margin-right: 3px;
+        }
       }
     }
     .content {
-      padding-bottom: 140rpx;
+      margin-bottom: 220rpx;
+      flex: 1;
+      overflow: auto;
       .item {
         background: #fff;
-        margin-bottom: 1px;
+        border-bottom: solid 1px #f7f7f7; // margin-bottom: 1px;
         height: 120rpx;
         padding: 0 1rem;
         line-height: 120rpx;
@@ -166,17 +193,18 @@
           font-size: 16px;
           color: #000;
           text {
-            padding: 2px 4px;
+            padding: 2px 6px;
             font-size: 12px;
             border-radius: 2px;
+            margin-left: 5px;
           }
           .free {
             background: #F0FCF4;
             color: #67A677;
           }
           .vip {
-            background: #D0B485;
-            color: #fff;
+            background: rgba(208, 180, 133, 0.14);
+            color: #D0B485;
           }
         }
         .detail {
@@ -188,6 +216,10 @@
             font-size: 12px;
             display: flex;
             align-items: center;
+            .iconfont{
+              font-size: 16px;
+              margin-right: 2px;
+            }
           }
           .icon {
             width: 1rem;

@@ -15,9 +15,7 @@
   import Top from '@/components/common/top';
 
   export default class Score extends wepy.page {
-    config = {
-      navigationBarTitleText: "曲谱",
-    };
+    config = {};
     data = {
       imgSrc: 'http://192.168.100.246:9501/static/notation/qxlsflkjasdgfldasgkldjasogifu.jpg',
       imgList: [],

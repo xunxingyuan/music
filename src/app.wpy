@@ -1,7 +1,7 @@
 <script>
-  import wepy from 'wepy'
-  import api from './tools/api.js'
-  import 'wepy-async-function'
+  import wepy from 'wepy';
+  import api from './tools/api.js';
+  import 'wepy-async-function';
   export default class extends wepy.app {
     config = {
       pages: [
@@ -14,23 +14,21 @@
         'pages/resource/score',
         'pages/resource/music',
         'pages/resource/player/videoPlay',
-        'pages/resource/player/scoreView',
-        'pages/resource/player/musicShow',
         'pages/me/collection',
         'pages/me/download',
         'pages/me/comment',
         'pages/me/myStudent',
         'pages/me/mySkill',
-        'pages/me/skill/skill',
+        'pages/me/skill/skill'
       ],
       window: {
-        "backgroundTextStyle": "light",
-        "navigationBarBackgroundColor": "#D0B485",
-        "navigationBarTitleText": "律声云课堂",
-        "navigationBarTextStyle": "write",
-        "navigationStyle":"custom"
+        backgroundTextStyle: 'light',
+        navigationBarBackgroundColor: '#D0B485',
+        navigationBarTitleText: '律声云课堂',
+        navigationBarTextStyle: 'write',
+        navigationStyle: 'custom'
       }
-    }
+    };
     globalData = {
       userInfo: null,
       openId: null,
@@ -68,10 +66,10 @@
         resourceTop: 'resourceTop.png',
         back: 'back.png'
       }
-    }
+    };
     constructor() {
-      super()
-      this.use('requestfix')
+      super();
+      this.use('requestfix');
       // 拦截request请求
       this.intercept('request', {
         // 发出请求时的回调函数
@@ -92,11 +90,23 @@
           // 可以在这里对收到的响应数据对象进行加工处理
           // console.log('request success: ', p);
           // 必须返回响应数据对象，否则后续无法对响应数据进行处理
-          return p;
+          console.log('request success: ', p);
+          if (p.data.code && p.data.code === 98) {
+            wepy.setStorageSync('role', null);
+            wepy.setStorageSync('token', null);
+            wepy.setStorageSync('userId', null);
+            wepy.setStorageSync('vipId', null);
+            wepy.setStorageSync('userInfo', null);
+            wepy.redirectTo({
+              url: '/pages/index'
+            });
+          } else {
+            return p;
+          }
         },
         //请求失败后的回调函数
         fail(p) {
-          // console.log('request fail: ', p);
+          console.log('request fail: ', p);
           // 必须返回响应数据对象，否则后续无法对响应数据进行处理
           return p;
         },
@@ -108,57 +118,60 @@
       });
     }
     async onLaunch() {
-      let _self = this
+      let _self = this;
       await wepy.login({
         success: function(res) {
           if (res.code) {
             //发起网络请求
-            api.auth({
-              code: res.code
-            }).then((res) => {
-              if (res.data.code == 200) {
-                _self.globalData.openId = res.data.data.openid
-              }
-            })
+            api
+              .auth({
+                code: res.code
+              })
+              .then(res => {
+                if (res.data.code == 200) {
+                  _self.globalData.openId = res.data.data.openid;
+                }
+              });
           } else {
-            console.log('登录失败！' + res.errMsg)
+            console.log('登录失败！' + res.errMsg);
           }
         }
       });
       await wx.getSetting({
-        success: (res) => {
+        success: res => {
           if (res.authSetting['scope.userInfo']) {
-            this.getUserInfo()
+            this.getUserInfo();
           }
         }
-      })
-      let url = "http://183.62.42.146:24602/static/icons/"
-      for(var val in this.globalData.imgList){
-        this.globalData.imgList[val] = url+ this.globalData.imgList[val]
+      });
+      let url = 'http://183.62.42.146:24602/static/icons/';
+      for (var val in this.globalData.imgList) {
+        this.globalData.imgList[val] = url + this.globalData.imgList[val];
       }
     }
     getUserInfo(cb) {
-      const that = this
+      const that = this;
       if (this.globalData.userInfo) {
-        return this.globalData.userInfo
+        return this.globalData.userInfo;
       }
       wepy.getUserInfo({
         success(res) {
-          that.globalData.userInfo = res.userInfo
+          that.globalData.userInfo = res.userInfo;
           console.log(that.globalData.userInfo);
-          cb && cb(res.userInfo)
+          cb && cb(res.userInfo);
         }
-      })
+      });
     }
   }
 </script>
 
 <style lang="less">
-  @import "./styles/icons.less";
+  @import './styles/icons.less';
   page {
     height: 100%;
     background: rgba(227, 227, 230, 1);
     position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
   .container {
     height: 100%;
@@ -168,7 +181,7 @@
     justify-content: space-between;
     box-sizing: border-box;
   }
-  .mainPage{
+  .mainPage {
     padding-top: 150rpx;
   }
   .flex {

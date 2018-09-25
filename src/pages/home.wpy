@@ -1,70 +1,70 @@
 <!--  -->
 <template>
   <view id="homeContain" class='home mainPage'>
-    <top :title.sync='title' backColor="no" back='no'></top>
+    <!-- <top :title.sync='title' backColor="no" back='no'></top> -->
     <view class='topBox'>
-      <image class='bg' src="{{bgSrc}}" mode="aspectFill"
-        lazy-load="false">
+      <image class='bg' src="{{bgSrc}}" mode="aspectFill" lazy-load="false">
       </image>
     </view>
-    <learn class='mainContent' :learnData.sync="courseData" wx:if="{{activeTab == 'learn'}}"></learn>
+    <learn class='mainContent' wx:if="{{activeTab == 'learn'}}"></learn>
     <resource class='mainContent' :resData.sync="resourceData" wx:if="{{activeTab == 'resource'}}"></resource>
     <me class='mainContent' wx:if="{{activeTab == 'me'}}"></me>
-    <nav :activeTab.sync='activeTab' @changeTab.user='changeTabCtrl'></nav>
+    <nav></nav>
   </view>
 </template>
 
 <script>
-import wepy from 'wepy';
-import Nav from '@/components/common/nav';
-import Top from '@/components/common/top';
-import Learn from '@/components/learn';
-import Resource from '@/components/resource';
-import Me from '@/components/me';
-import api from '@/tools/api.js';
-export default class Example extends wepy.page {
-  config = {
-    navigationBarTitleText: ''
-  };
-  data = {
-    activeTab: '',
-    role: 'vistor',
-    resourceData: [],
-    pageNumber: 1
-  };
-  components = {
-    nav: Nav,
-    top: Top,
-    learn: Learn,
-    resource: Resource,
-    me: Me
-  };
-  methods = {
-    changeTabCtrl(name, evt) {
-      this.activeTab = name;
-      if (name === 'learn') {
-        // this.getLearn()
-        wepy.setNavigationBarTitle({
-          title: '学习'
-        });
-      } else if (name === 'resource') {
-        this.getResource();
-        wepy.setNavigationBarTitle({
-          title: '资源'
-        });
-      } else if (name === 'me') {
-        wepy.setNavigationBarTitle({
-          title: '我的'
-        });
+  import wepy from 'wepy';
+  import Nav from '@/components/common/nav';
+  import Top from '@/components/common/top';
+  import Learn from '@/components/learn';
+  import Resource from '@/components/resource';
+  import Me from '@/components/me';
+  import api from '@/tools/api.js';
+  export default class Example extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    };
+    data = {
+      activeTab: 'learn',
+      role: 'vistor',
+      resourceData: [],
+      pageNumber: 1
+    };
+    components = {
+      nav: Nav,
+      top: Top,
+      learn: Learn,
+      resource: Resource,
+      me: Me
+    };
+    methods = {
+      changeTabCtrl(name, evt) {
+        console.log('点击了' + name)
+        this.activeTab = name;
+        this.$apply();
+        // if (name === 'learn') {
+        //   // this.getLearn()
+        //   wepy.setNavigationBarTitle({
+        //     title: '学习'
+        //   });
+        // } else if (name === 'resource') {
+        //   this.getResource();
+        //   wepy.setNavigationBarTitle({
+        //     title: '资源'
+        //   });
+        // } else if (name === 'me') {
+        //   wepy.setNavigationBarTitle({
+        //     title: '我的'
+        //   });
+        // }
       }
-    }
-  };
-  getResource() {
-    api.music
-      .searchMusic({
+    };
+    getResource() {
+      let _self = this
+      api.music.searchMusic({
         pageNumber: this.pageNumber
-      })
-      .then(res => {
+      }).then(res => {
         if (res.data.code === 200) {
           if (this.pageNumber === 1) {
             this.resourceData = res.data.data;
@@ -73,109 +73,121 @@ export default class Example extends wepy.page {
               this.resourceData.push(element);
             });
           }
-          this.$apply();
+          _self.$apply();
         }
       });
-  }
-  onReachBottom() {
-    this.$broadcast('reachBottom');
-    if (this.activeTab === 'resource') {
-      this.pageNumber += 1;
-      this.getResource();
     }
-  }
-  events = {};
-  watch = {};
-  computed = {
-    title() {
-      switch (this.activeTab) {
-        case 'learn':
-          return '学习';
-          break;
-        case 'resource':
-          return '资源';
-          break;
-        case 'me':
-          return '我的';
-          break;
-        default:
-          return '学习';
-          break;
-      }
-    },
-    bgSrc() {
-      switch (this.activeTab) {
-        case 'learn':
-          return this.$parent.globalData.imgList.learnTop;
-          break;
-        case 'resource':
-          return this.$parent.globalData.imgList.meTop;
-          break;
-        case 'me':
-          return this.$parent.globalData.imgList.resourceTop;
-          break;
-        default:
-          return this.$parent.globalData.imgList.learnTop;
-          break;
-      }
-    }
-  };
-  async onLoad() {
-    let role = await wepy.getStorageSync('role');
-    switch (role) {
-      case 'vistor':
-        this.activeTab = 'resource';
-        this.role = 'vistor';
-        wepy.setNavigationBarTitle({
-          title: '资源'
-        });
+    onReachBottom() {
+      this.$broadcast('reachBottom');
+      if (this.activeTab === 'resource') {
+        this.pageNumber += 1;
         this.getResource();
-        this.$apply();
-        break;
-      case 'teacher':
-        this.activeTab = 'learn';
-        this.role = 'teacher';
-        wepy.setNavigationBarTitle({
-          title: '学习'
-        });
-        // this.getLearn()
-        this.$apply();
-        break;
-      case 'student':
-        this.activeTab = 'learn';
-        this.role = 'student';
-        wepy.setNavigationBarTitle({
-          title: '学习'
-        });
-        // this.getLearn()
-        this.$apply();
-        break;
-      default:
-        break;
+      }
     }
+    events = {
+      'changeTab': (data, $event) => {
+        this.activeTab = data;
+        if (data === 'resource') {
+          this.getResource();
+        }
+        this.$apply();
+      }
+    };
+    watch = {};
+    computed = {
+      title() {
+        switch (this.activeTab) {
+          case 'learn':
+            return '学习';
+            break;
+          case 'resource':
+            return '资源';
+            break;
+          case 'me':
+            return '我的';
+            break;
+          default:
+            return '学习';
+            break;
+        }
+      },
+      bgSrc() {
+        switch (this.activeTab) {
+          case 'learn':
+            return this.$parent.globalData.imgList.learnTop;
+            break;
+          case 'resource':
+            return this.$parent.globalData.imgList.resourceTop;
+            break;
+          case 'me':
+            return this.$parent.globalData.imgList.meTop;
+            break;
+          default:
+            return this.$parent.globalData.imgList.learnTop;
+            break;
+        }
+      }
+    };
+    onLoad() {
+      let role = wepy.getStorageSync('role');
+      switch (role) {
+        case 'vistor':
+          this.activeTab = 'resource';
+          this.role = 'vistor';
+          // wepy.setNavigationBarTitle({
+          //   title: '资源'
+          // });
+          this.getResource();
+          this.$apply();
+          break;
+        case 'teacher':
+          this.activeTab = 'learn';
+          this.role = 'teacher';
+          // wepy.setNavigationBarTitle({
+          //   title: '学习'
+          // });
+          // this.getLearn()
+          this.$apply();
+          break;
+        case 'student':
+          this.activeTab = 'learn';
+          this.role = 'student';
+          // wepy.setNavigationBarTitle({
+          //   title: '学习'
+          // });
+          // this.getLearn()
+          this.$apply();
+          break;
+        default:
+          this.activeTab = 'learn';
+          this.$apply();
+          break;
+      }
+    }
+    onShow() {};
   }
-  onShow() {};
-}
 </script>
 
 <style lang='less'>
-.home {
-  height: 100%;
-  box-sizing: border-box;
-  .topBox {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 400rpx;
-    width: 100%;
-    z-index: 10;
-    .bg {
+  .home {
+    height: 100%;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    .topBox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 400rpx;
       width: 100%;
-      height: 100%;
+      z-index: 10;
+      .bg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .mainContent {
+      z-index: 11;
     }
   }
-  .mainContent {
-    z-index: 11;
-  }
-}
 </style>
