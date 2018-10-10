@@ -41,6 +41,10 @@ export default {
   },
   //视频
   video: {
+    getVideoBypage: (data)=>{
+      let reqUrl = url + '/api/video/getByPage'
+      return requestData(reqUrl,data,'GET')
+    },
     getAllVideo: (data) => {
       let reqUrl = url + '/api/video/getAll'
       return requestData(reqUrl, data, 'GET')

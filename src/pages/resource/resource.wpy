@@ -87,8 +87,8 @@
     events = {};
     watch = {};
     computed = {};
-    onLoad() {
-      let resultData = wepy.getStorageSync('selectResource');
+    async onLoad() {
+      let resultData = await wepy.getStorageSync('selectResource');
       let albumData = JSON.parse(resultData)
       this.videolistdata = albumData.videoList
       this.musicListdata = albumData.musicList

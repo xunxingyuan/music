@@ -96,7 +96,6 @@ export default class Student extends wepy.page {
 <style lang='less'>
 .myStudent {
   width: 100%;
-  height: 100%;
   .classList {
     height: 130rpx;
     background: #f9f5ed;

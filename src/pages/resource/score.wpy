@@ -13,7 +13,6 @@
   import api from '@/tools/api.js'
   import List from '@/components/score/list'
   import Top from '@/components/common/top';
-
   export default class Score extends wepy.page {
     config = {};
     data = {
@@ -24,18 +23,18 @@
     components = {
       search: Search,
       list: List,
-      top:Top
+      top: Top
     };
     onReachBottom() {
       console.log('bottom');
-      this.pageNumber +=1
+      this.pageNumber += 1
       this.loadMore()
     };
     methods = {};
     events = {};
     watch = {};
     computed = {};
-    onLoad() {
+    async onLoad() {
       let _self = this
       api.score.searchScore({
         pageNumber: _self.pageNumber
@@ -45,16 +44,15 @@
       })
     };
     onShow() {};
-    async loadMore(){
+    async loadMore() {
       let _self = this
-      api.score.searchScore({
+      let res = await api.score.searchScore({
         pageNumber: _self.pageNumber
-      }).then((res) => {
-        res.data.forEach(element => {
-          _self.imgList.push(element)
-        });
-        _self.$apply()
       })
+      res.data.forEach(element => {
+        _self.imgList.push(element)
+      });
+      _self.$apply()
     }
   }
 </script>

@@ -4,15 +4,24 @@
     <top title='视频' backColor="black" back='yes'></top>
     <search :type="video"></search>
     <view class='topBox'>
-      <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo"/>
-      <view class='intro'>{{choseItem.title}}</view>
+      <swiper indicator-dots autoplay circular>
+        <block wx:for="{{recommend}}" wx:key="">
+          <swiper-item>
+            <image @tap="viewVideo({{item}})" class="topImg" mode="aspectFill" src="{{imgSrc}}"></image>
+            <view class="indroduce">{{item.title}}</view>
+            <text class='type' wx:if="{{item.isFree == 1}}">FREE</text>
+            <text class='type vip' wx:if="{{item.isFree == 0}}">VIP</text>
+          </swiper-item>
+        </block>
+      </swiper>
+      <!-- <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo"/> -->
+      <!-- <view class='intro'>{{choseItem.title}}</view> -->
       <!-- <view class='detail'>
-        <view class='number'><i class='iconfont icon-download'></i> 2</view>
-        <view class='number'><i class='iconfont icon-collect'></i> 2</view>
-        <view class='number'><i class='iconfont icon-dyncomments'></i> 2</view>
-        <view class='number'><i class='iconfont icon-heart'></i> 2</view>
-      </view> -->
-      <text class='type'>FREE</text>
+                <view class='number'><i class='iconfont icon-download'></i> 2</view>
+                <view class='number'><i class='iconfont icon-collect'></i> 2</view>
+                <view class='number'><i class='iconfont icon-dyncomments'></i> 2</view>
+                <view class='number'><i class='iconfont icon-heart'></i> 2</view>
+              </view> -->
     </view>
     <view class='videoTitle'>
       全部视频
@@ -27,26 +36,25 @@
   import List from '@/components/video/list'
   import api from '@/tools/api.js'
   import Top from '@/components/common/top';
-
   export default class Video extends wepy.page {
     config = {
       navigationBarTitleText: "视频",
     };
     data = {
       imgSrc: '../../resource/videoImg.png',
-      recommend:[],
+      recommend: [],
       choseItem: '',
-      listdata: [1, 2, 3, 4, 5, 6],
-      pageNumeber: 1
+      listdata: [],
+      pageNumber: 1
     };
     components = {
       search: Search,
       list: List,
-      top:Top
+      top: Top
     };
     methods = {
-      viewVideo() {
-        let url = '/pages/resource/player/videoPlay?url=' + this.choseItem.url + '&id=' + this.choseItem.id
+      viewVideo(item) {
+        let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
         wepy.navigateTo({
           url: url
         })
@@ -54,24 +62,37 @@
     };
     onReachBottom() {
       console.log('bottom');
+      this.pageNumber += 1
+      this.getVideoList()
     };
     events = {};
     watch = {};
     computed = {};
-    onLoad() {
-      api.video.getAllVideo().then((res)=>{
-        this.listdata = res.data
-        this.$apply()
-      })
-      api.video.recommendVideo().then((res)=>{
-        if(res.data.code === 200){
+    async onLoad() {
+      this.getVideoList()
+      api.video.recommendVideo().then((res) => {
+        if (res.data.code === 200) {
           this.recommend = res.data.data
-          this.choseItem = res.data.data[0]
-          this.$apply()
         }
       })
+      
     };
-    onShow() {};
+    onShow() {
+      
+    };
+    async getVideoList() {
+      let res = await api.video.getVideoBypage({
+        pageNumber: this.pageNumber
+      })
+      if (this.pageNumber == 1) {
+          this.listdata = res.data
+        } else {
+          res.data.forEach(element => {
+            this.listdata.push(element)
+          });
+        }
+        this.$apply()
+    }
   }
 </script>
 
@@ -87,6 +108,10 @@
       border-radius: 2px;
       color: #fff;
     }
+    .vip {
+      background: #D0B485;
+      color: #fff;
+    }
     .topBox {
       width: 100%;
       height: 530rpx;
@@ -95,13 +120,18 @@
       position: relative;
       padding: 0 12px 0 12px;
       box-sizing: border-box;
-      background: transparent;
-      // background: linear-gradient(to bottom, #D0B485, #e3e3e6);
+      background: transparent; // background: linear-gradient(to bottom, #D0B485, #e3e3e6);
+      swiper {
+        height: 530rpx;
+      }
       .topImg {
         width: 100%;
         height: 450rpx;
       }
-      .intro{
+      .indroduce {
+        font-size: 15px;
+      }
+      .intro {
         height: 1.8rem;
         line-height: 1.8rem;
         font-size: 15px;
@@ -120,13 +150,14 @@
         }
       }
     }
-    .videoTitle{
+    .videoTitle {
       background: #fff;
       height: 1.8rem;
       line-height: 1.8rem;
-      color:#353535;
+      color: #353535;
       padding-left: 12px;
       font-size: 16px;
+      padding-top: 4px;
     }
   }
 </style>

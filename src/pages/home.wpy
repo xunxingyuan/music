@@ -1,16 +1,31 @@
 <!--  -->
 <template>
-  <view id="homeContain" class='home mainPage'>
+  <scroll-view id="homeContain" class='home mainPage'>
     <!-- <top :title.sync='title' backColor="no" back='no'></top> -->
-    <view class='topBox'>
+    <view class='topBox {{activeTab}}'>
       <image class='bg' src="{{bgSrc}}" mode="aspectFill" lazy-load="false">
       </image>
     </view>
+    <view class="searchTop" wx:if="{{activeTab == 'learn'||activeTab == 'resource'}}">
+      <search :type="video"></search>
+    </view>
+    <view class='searchItem' wx:if="{{activeTab == 'resource'}}">
+      <view class='flex type'>
+        <view @tap="viewData('video')">
+          <i class="iconfont icon-shipin"></i> 视频</view>
+        <text>/</text>
+        <view @tap="viewData('music')">
+          <i class="iconfont icon-laba"></i> 音频</view>
+        <text>/</text>
+        <view @tap="viewData('score')">
+          <i class="iconfont icon-iconfontqupu"></i> 曲谱</view>
+      </view>
+    </view>
     <learn class='mainContent' wx:if="{{activeTab == 'learn'}}"></learn>
-    <resource class='mainContent' :resData.sync="resourceData" wx:if="{{activeTab == 'resource'}}"></resource>
-    <me class='mainContent' wx:if="{{activeTab == 'me'}}"></me>
+    <resource class='mainContent' wx:if="{{activeTab == 'resource'}}"></resource>
+    <me class='mainContent me' wx:if="{{activeTab == 'me'}}"></me>
     <nav></nav>
-  </view>
+  </scroll-view>
 </template>
 
 <script>
@@ -19,6 +34,7 @@
   import Top from '@/components/common/top';
   import Learn from '@/components/learn';
   import Resource from '@/components/resource';
+  import Search from '@/components/common/search'
   import Me from '@/components/me';
   import api from '@/tools/api.js';
   export default class Example extends wepy.page {
@@ -36,60 +52,38 @@
       top: Top,
       learn: Learn,
       resource: Resource,
-      me: Me
+      me: Me,
+      search: Search
     };
     methods = {
       changeTabCtrl(name, evt) {
         console.log('点击了' + name)
         this.activeTab = name;
         this.$apply();
-        // if (name === 'learn') {
-        //   // this.getLearn()
-        //   wepy.setNavigationBarTitle({
-        //     title: '学习'
-        //   });
-        // } else if (name === 'resource') {
-        //   this.getResource();
-        //   wepy.setNavigationBarTitle({
-        //     title: '资源'
-        //   });
-        // } else if (name === 'me') {
-        //   wepy.setNavigationBarTitle({
-        //     title: '我的'
-        //   });
-        // }
-      }
-    };
-    getResource() {
-      let _self = this
-      api.music.searchMusic({
-        pageNumber: this.pageNumber
-      }).then(res => {
-        if (res.data.code === 200) {
-          if (this.pageNumber === 1) {
-            this.resourceData = res.data.data;
-          } else {
-            res.data.data.forEach(element => {
-              this.resourceData.push(element);
-            });
-          }
-          _self.$apply();
+      },
+      viewData(item) {
+        if (item === 'video') {
+          wepy.navigateTo({
+            url: '/pages/resource/video'
+          });
+        } else if (item === 'music') {
+          wepy.navigateTo({
+            url: '/pages/resource/music'
+          });
+        } else if (item === 'score') {
+          wepy.navigateTo({
+            url: '/pages/resource/score'
+          });
         }
-      });
-    }
+      },
+    };
     onReachBottom() {
+      console.log('reachbottom')
       this.$broadcast('reachBottom');
-      if (this.activeTab === 'resource') {
-        this.pageNumber += 1;
-        this.getResource();
-      }
     }
     events = {
       'changeTab': (data, $event) => {
         this.activeTab = data;
-        if (data === 'resource') {
-          this.getResource();
-        }
         this.$apply();
       }
     };
@@ -170,24 +164,66 @@
 
 <style lang='less'>
   .home {
-    height: 100%;
     box-sizing: border-box;
     position: relative;
-    overflow: hidden;
     .topBox {
       position: fixed;
       top: 0;
       left: 0;
       height: 400rpx;
       width: 100%;
-      z-index: 10;
+      z-index: 11;
       .bg {
         width: 100%;
         height: 100%;
       }
     }
+    .searchTop {
+      position: fixed;
+      top: 1.5rem;
+      left: 0;
+      width: 50%;
+      z-index: 20;
+    }
+    .searchItem {
+      background: transparent;
+      position: fixed;
+      width: 100%;
+      top: 4.1rem;
+      z-index: 12;
+      left: 0;
+      .searchInner {
+        background: #e5e5e5;
+        border-radius: 14px;
+        height: 30px;
+        padding: 0 0.5rem;
+        color: #fff;
+      }
+      .type {
+        justify-content: space-around;
+        font-size: 16px;
+        color: #fff;
+        height: 80rpx;
+        .icon {
+          width: 1rem;
+          height: 1rem;
+          display: inline-block;
+          margin-right: 5px;
+        }
+        .iconfont{
+          margin-right: 3px;
+        }
+      }
+    }
+    
     .mainContent {
-      z-index: 11;
+      z-index: 10;
+    }
+    .resource{
+      height: 250rpx;
+    }
+    .me{
+      z-index: 12;
     }
   }
 </style>

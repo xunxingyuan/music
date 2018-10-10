@@ -1,43 +1,26 @@
 <!--  -->
 <template>
-  <view class='resource'>
-    <view class="searchTop">
-      <search :type="video"></search>
-    </view>
-    <view class='searchItem'>
-      <view class='flex type'>
-        <view @tap="viewData('video')">
-          <!-- <image class='icon' src="{{imgList.play}}" mode="scaleToFill" lazy-load="false">
-          </image>  -->
-          <i class="iconfont icon-shipin"></i> 视频</view>
-        <text>/</text>
-        <view @tap="viewData('music')">
-          <!-- <image class='icon' src="{{imgList.voice}}" mode="scaleToFill" lazy-load="false">
-          </image>  -->
-          <i class="iconfont icon-laba"></i> 音频</view>
-        <text>/</text>
-        <view @tap="viewData('score')">
-          <!-- <image class='icon' src="{{imgList.score}}" mode="scaleToFill" lazy-load="false">
-          </image>  -->
-          <i class="iconfont icon-iconfontqupu"></i> 曲谱</view>
-      </view>
-    </view>
+  <view class='resourceBox'>
     <view class='content'>
-      <repeat for="{{resData}}" key="index" index="index" item="item">
+      <repeat for="{{resourceData}}" key="index" index="index" item="item">
         <view class='item flex'>
-          <view class='name' @tap='viewDetail({{item}})'>{{item.title}} <text class='vip' wx:if="{{item.isFree==0}}">VIP</text><text class='free' wx:if="{{item.isFree!=0}}">FREE</text></view>
+          <view class='name' @tap='viewDetail({{item}})'>
+            <text class='title'>{{item.title}}</text>
+            <text class='vip' wx:if="{{item.isFree==0}}">VIP</text>
+            <text class='free' wx:if="{{item.isFree!=0}}">FREE</text>
+          </view>
           <view class='detail'>
             <view class='number'>
               <!-- <image class='icon' src="{{imgList.play}}" mode="scaleToFill" lazy-load="false">
-              </image>  -->
+                </image>  -->
               <i class="iconfont icon-shipin"></i> {{item.videoList.length}}</view>
             <view class='number'>
               <!-- <image class='icon' src="{{imgList.voice}}" mode="scaleToFill" lazy-load="false">
-              </image>  -->
+                </image>  -->
               <i class="iconfont icon-laba"></i> {{item.musicList.length}}</view>
             <view class='number'>
               <!-- <image class='icon' src="{{imgList.score}}" mode="scaleToFill" lazy-load="false">
-              </image>  -->
+                </image>  -->
               <i class="iconfont icon-iconfontqupu"></i> {{item.notationList.length}}</view>
           </view>
         </view>
@@ -54,36 +37,24 @@
     config = {
       navigationBarTitleText: "资源",
     };
-    props = {
-      resData: Array
-    }
+    props = {};
     data = {
-      imgList: ''
+      imgList: '',
+      resourceData: [],
+      pageNumber: 1
     };
     components = {
       search: Search
     };
     methods = {
-      viewData(item) {
-        if (item === 'video') {
-          wepy.navigateTo({
-            url: '/pages/resource/video'
-          });
-        } else if (item === 'music') {
-          wepy.navigateTo({
-            url: '/pages/resource/music'
-          });
-        } else if (item === 'score') {
-          wepy.navigateTo({
-            url: '/pages/resource/score'
-          });
-        }
-      },
       viewVideo(item) {
         let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
         wepy.navigateTo({
           url: url
         })
+      },
+      reachBottom() {
+        console.log('reach Bottom');
       },
       async viewDetail(item) {
         wepy.setStorageSync('selectResource', JSON.stringify(item))
@@ -121,67 +92,48 @@
         }
       }
     };
-    events = {};
+    events = {
+      'reachBottom': () => {
+        this.pageNumber += 1
+        this.getResource();
+      }
+    };
     watch = {};
     computed = {};
     onLoad() {
       this.imgList = this.$parent.$parent.globalData.imgList
+      this.getResource()
     };
     onShow() {};
+    getResource() {
+      let _self = this
+      api.music.searchMusic({
+        pageNumber: this.pageNumber
+      }).then(res => {
+        if (res.data.code === 200) {
+          if (this.pageNumber === 1) {
+            this.resourceData = res.data.data;
+          } else {
+            res.data.data.forEach(element => {
+              this.resourceData.push(element);
+            });
+          }
+          _self.$apply();
+        }
+      });
+    }
   }
 </script>
 
 <style lang='less'>
-  .resource {
+  .resourceBox {
     width: 100%;
     overflow: auto;
     height: 100%;
     position: relative;
+    padding-bottom: 130rpx;
     padding-top: 100rpx;
-    display: flex;
-    flex-flow: column;
-    .searchTop {
-      position: fixed;
-      top: 1.5rem;
-      left: 0;
-      width: 50%;
-      z-index: 11;
-    }
-    .searchItem {
-      background: transparent;
-      // padding: 0 1rem;
-      // padding-bottom: 0.5rem;
-      position: absolute;
-      width: 100%;
-      top: 0;
-      left: 0;
-      .searchInner {
-        background: #e5e5e5;
-        border-radius: 14px;
-        height: 30px;
-        padding: 0 0.5rem;
-        color: #fff;
-      }
-      .type {
-        justify-content: space-around;
-        font-size: 16px;
-        color: #fff;
-        height: 80rpx;
-        .icon {
-          width: 1rem;
-          height: 1rem;
-          display: inline-block;
-          margin-right: 5px;
-        }
-        .iconfont{
-          margin-right: 3px;
-        }
-      }
-    }
     .content {
-      margin-bottom: 220rpx;
-      flex: 1;
-      overflow: auto;
       .item {
         background: #fff;
         border-bottom: solid 1px #f7f7f7; // margin-bottom: 1px;
@@ -192,11 +144,22 @@
         .name {
           font-size: 16px;
           color: #000;
+          display: flex;
+          align-items: center;
           text {
             padding: 2px 6px;
+            height: auto;
             font-size: 12px;
             border-radius: 2px;
             margin-left: 5px;
+            height: 1rem;
+            line-height: 1rem;
+          }
+          .title {
+            width: 50%;
+            line-height: 120rpx;
+            height: 120rpx;
+            overflow: hidden;
           }
           .free {
             background: #F0FCF4;
@@ -216,7 +179,7 @@
             font-size: 12px;
             display: flex;
             align-items: center;
-            .iconfont{
+            .iconfont {
               font-size: 16px;
               margin-right: 2px;
             }

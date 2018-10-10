@@ -290,11 +290,12 @@
       if (options.url.split('ttp:').length > 1) {
         this.videoSrc = options.url
       } else {
-        this.videoSrc = 'http://192.168.100.246:9501' + options.url
+        this.videoSrc = encodeURI('http://183.62.42.146:24602' + options.url)
       }
       this.getVideoComment(options.id)
       this.getVideoDetail(options.id, userId)
       this.imgList = this.$parent.globalData.imgList
+      console.log(this.videoSrc)
       this.$apply()
       
     };

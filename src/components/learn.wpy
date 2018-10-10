@@ -107,7 +107,6 @@
     width: 100%;
     height: 100%;
     position: relative;
-    overflow: auto;
     .uptop {
       margin-top: 0.5rem;
       margin-bottom: 140rpx;

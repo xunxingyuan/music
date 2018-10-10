@@ -4,13 +4,13 @@
     <top title='音频' backColor="black" back='yes'></top>
     <search :type="music"></search>
     <!-- <view class='searchFilter'>
-          <text>节拍器</text>
-          <text>人声</text>
-          <text>吉他</text>
-          <text>钢琴</text>
-          <text>鼓</text>
-          <text>...</text>
-        </view> -->
+            <text>节拍器</text>
+            <text>人声</text>
+            <text>吉他</text>
+            <text>钢琴</text>
+            <text>鼓</text>
+            <text>...</text>
+          </view> -->
     <list :musicList.sync="musicList"></list>
   </view>
 </template>
@@ -21,7 +21,6 @@
   import api from '@/tools/api.js'
   import list from '@/components/music/list'
   import Top from '@/components/common/top';
-
   export default class Music extends wepy.page {
     config = {
       navigationBarTitleText: "音频",
@@ -35,7 +34,7 @@
     components = {
       search: Search,
       list: list,
-      top:Top
+      top: Top
     };
     methods = {};
     onReachBottom() {
@@ -46,49 +45,47 @@
     events = {};
     watch = {};
     computed = {};
-    onLoad() {
+    async onLoad() {
       let _self = this
-      api.music.searchMusic({
+      let res = await api.music.searchMusic({
         pageNumber: _self.pageNumber
-      }).then((res) => {
-        if (res.data.code === 200) {
-          _self.musicList = res.data.data
-          _self.musicList.forEach((e, index) => {
-            if (index === 0) {
-              e.show = 0
-            } else {
-              e.show = 1
-            }
-          })
-          _self.$apply()
-        } else {
-          wepy.showToast({
-            title: res.data.message,
-            icon: 'none',
-            duration: 1000
-          })
-        }
       })
+      if (res.data.code === 200) {
+        _self.musicList = res.data.data
+        _self.musicList.forEach((e, index) => {
+          if (index === 0) {
+            e.show = 0
+          } else {
+            e.show = 1
+          }
+        })
+        _self.$apply()
+      } else {
+        wepy.showToast({
+          title: res.data.message,
+          icon: 'none',
+          duration: 1000
+        })
+      }
     };
     onShow() {};
-    loadMore() {
+    async loadMore() {
       let _self = this
-      api.music.searchMusic({
+      let res = await api.music.searchMusic({
         pageNumber: _self.pageNumber
-      }).then((res) => {
-        if (res.data.code === 200) {
-          res.data.data.forEach(element => {
-             _self.musicList.push(element)
-          });
-          _self.$apply()
-        } else {
-          wepy.showToast({
-            title: res.data.message,
-            icon: 'none',
-            duration: 1000
-          })
-        }
       })
+      if (res.data.code === 200) {
+        res.data.data.forEach(element => {
+          _self.musicList.push(element)
+        });
+        _self.$apply()
+      } else {
+        wepy.showToast({
+          title: res.data.message,
+          icon: 'none',
+          duration: 1000
+        })
+      }
     };
   }
 </script>
