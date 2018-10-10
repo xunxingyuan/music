@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <view class='videoPlay mainPage'>
-    <top title='返回' backColor="black" back='yes'></top>
+    <top title='视频' backColor="black" back='yes'></top>
     <video hidden="{{showInput}}" class='show' src="{{videoSrc}}" controls="true" objectFit="contain"></video>
     <view class='videoTitle'>{{videoTitle}}</view>
     <view hidden="{{showInput}}" class='ctrl'>
@@ -253,6 +253,25 @@
           if (res.data.code === 200) {
             _self.videoMsg.isUserLike = true
             _self.videoMsg.likeCount += 1
+            wepy.showToast({
+              title: '点赞成功',
+              icon: 'success',
+              duration: 1000
+            })
+            _self.$apply()
+          }
+        })
+      },
+      async unlike(){
+        let _self = this
+        let userId = await wepy.getStorageSync('userId');
+        api.video.likeVideo({
+          userId: userId,
+          videoId: this.videoId
+        }).then((res) => {
+          if (res.data.code === 200) {
+            _self.videoMsg.isUserLike = false
+            _self.videoMsg.likeCount -= 1
             _self.$apply()
           }
         })
@@ -297,6 +316,7 @@
       this.imgList = this.$parent.globalData.imgList
       console.log(this.videoSrc)
       this.$apply()
+      wepy.showShareMenu({ withShareTicket: true });
       
     };
     onShow() {};

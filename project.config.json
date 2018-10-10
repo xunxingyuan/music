@@ -3,13 +3,13 @@
 	"setting": {
 		"urlCheck": false,
 		"es6": false,
-		"postcss": false,
+		"postcss": true,
 		"minified": true,
 		"newFeature": true
 	},
 	"compileType": "miniprogram",
 	"appid": "wx709c744315a078ec",
 	"projectname": "musiclesson",
-	"miniprogramRoot": "./dist",
+	"miniprogramRoot": "dist/",
 	"condition": {}
 }

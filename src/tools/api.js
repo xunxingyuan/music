@@ -86,6 +86,11 @@ export default {
     saveDownload: (data) => {
       let reqUrl = url + '/api/music/download'
       return requestData(reqUrl, data, 'GET')
+    },
+    //获取曲集详情
+    getAlbumByID: (data) => {
+      let reqUrl = url + '/api/album/getAlbumById'
+      return requestData(reqUrl, data, 'GET')
     }
   },
   //曲谱

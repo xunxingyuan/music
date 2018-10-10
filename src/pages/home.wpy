@@ -189,7 +189,7 @@
       background: transparent;
       position: fixed;
       width: 100%;
-      top: 4.1rem;
+      top: 4.3rem;
       z-index: 12;
       left: 0;
       .searchInner {

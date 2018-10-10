@@ -7,7 +7,7 @@
       <videolist wx:if="{{videolistdata.length!==0}}" :list.sync="videolistdata"></videolist>
       <view wx:if="{{videolistdata.length==0}}" class='tips'>当前曲集视频列表为空</view>
     </view>
-    <view class='resBox' >
+    <view class='resBox'>
       <view class='title'>音频</view>
       <repeat wx:if="{{musicListdata.length!==0}}" for="{{musicListdata}}" key="index" index="index" item="item">
         <view class='flex musicItem'>
@@ -18,10 +18,10 @@
           </view>
         </view>
       </repeat>
-      <view wx:if="{{musicListdata.length==0}}"  class='tips'>当前曲集视频列表为空</view>
+      <view wx:if="{{musicListdata.length==0}}" class='tips'>当前曲集视频列表为空</view>
       <!-- <musiclist :musicList.sync="musicListdata"></musiclist> -->
     </view>
-    <view class='resBox' >
+    <view class='resBox'>
       <view class='title'>曲谱</view>
       <scorelist wx:if="{{notationListdata.length!==0}}" :imgList.sync="notationListdata"></scorelist>
       <view wx:if="{{notationListdata.length==0}}" class='tips'>当前曲集曲谱列表为空</view>
@@ -35,7 +35,7 @@
   import ScoreList from '@/components/score/list'
   import VideoList from '@/components/video/list'
   import Top from '@/components/common/top';
-
+  import api from '@/tools/api.js'
   export default class Resource extends wepy.page {
     config = {
       navigationBarTitleText: "曲集详情",
@@ -50,21 +50,13 @@
       musiclist: MusicList,
       scorelist: ScoreList,
       videolist: VideoList,
-      top:Top
+      top: Top
     };
     onReachBottom() {
       console.log('bottom');
     };
     methods = {
       audioPlay(item) {
-        // this.$broadcast('srcChange', {
-        //   name: item.title,
-        //   url: this.selectMusic
-        // })
-        
-        // backgroundAudioManager.epname = '此时此刻'
-        // backgroundAudioManager.singer = '许巍'
-        // backgroundAudioManager.coverImgUrl = 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000'
         let backgroundAudioManager = wx.getBackgroundAudioManager()
         backgroundAudioManager.title = item.title
         wepy.showModal({
@@ -76,7 +68,7 @@
           confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
           confirmColor: '#3CC51F', //确定按钮的文字颜色,
           success: res => {
-            if (res.confirm){
+            if (res.confirm) {
               backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
             }
           }
@@ -87,14 +79,29 @@
     events = {};
     watch = {};
     computed = {};
-    async onLoad() {
-      let resultData = await wepy.getStorageSync('selectResource');
-      let albumData = JSON.parse(resultData)
-      this.videolistdata = albumData.videoList
-      this.musicListdata = albumData.musicList
-      this.notationListdata = albumData.notationList
-      this.$apply()
-      console.log(this.musicListdata);
+     onLoad(options) {
+      let id = options.id
+      // let resultData = wepy.getStorageSync('selectResource');
+      // let albumData = JSON.parse(resultData)
+      // console.log(albumData)
+      // this.videolistdata = albumData.videoList
+      // this.musicListdata = albumData.musicList
+      // this.notationListdata = albumData.notationList
+      // this.$apply()
+      // console.log(this.musicListdata);
+      // let res = await api.music.getAlbumByID({
+      //   id: id
+      // })
+      api.music.getAlbumByID({
+        id: id
+      }).then((res) => {
+        if (res.data.code === 200) {
+          this.videolistdata = res.data.data.videoList
+          this.musicListdata = res.data.data.musicList
+          this.notationListdata = res.data.data.notationList
+          this.$apply()
+        }
+      })
     };
     onShow() {};
   }
@@ -114,7 +121,7 @@
         text-align: left;
         padding-left: 1rem;
       }
-      .musicItem{
+      .musicItem {
         height: 80rpx;
         align-items: center;
         padding: 0 1rem;
@@ -122,7 +129,7 @@
         font-size: 14px;
         color: #333;
       }
-      .tips{
+      .tips {
         width: 100%;
         text-align: center;
         height: 3rem;

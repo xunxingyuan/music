@@ -56,10 +56,10 @@
       reachBottom() {
         console.log('reach Bottom');
       },
-      async viewDetail(item) {
+      viewDetail(item) {
         wepy.setStorageSync('selectResource', JSON.stringify(item))
-        let url = '/pages/resource/resource'
-        let userInfo = await wepy.getStorageSync('userInfo');
+        let url = '/pages/resource/resource?id=' + item.id
+        let userInfo = wepy.getStorageSync('userInfo');
         let permission = JSON.parse(userInfo).permission
         if (item.isFree == 0) {
           if (permission.playVip == 'yes') {

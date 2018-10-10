@@ -19,7 +19,10 @@
   import wepy from 'wepy';
   export default class scoreList extends wepy.component {
     props = {
-      imgList: Array
+      imgList: {
+        type: Array,
+        default: []
+      }
     };
     data = {};
     components = {};

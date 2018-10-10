@@ -73,6 +73,7 @@
       api.video.recommendVideo().then((res) => {
         if (res.data.code === 200) {
           this.recommend = res.data.data
+          this.$apply()
         }
       })
       
