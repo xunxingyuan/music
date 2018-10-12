@@ -131,7 +131,7 @@
           // wepy.setNavigationBarTitle({
           //   title: '资源'
           // });
-          this.getResource();
+          // this.getResource();
           this.$apply();
           break;
         case 'teacher':
@@ -223,6 +223,9 @@
       height: 250rpx;
     }
     .me{
+      z-index: 12;
+    }
+    .learn{
       z-index: 12;
     }
   }

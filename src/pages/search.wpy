@@ -161,8 +161,8 @@
                     break;
                 }
                 if (element.schedule.length > 5) {
-                  element.schedule = element.schedule.slice(6, 10)
-                  element.schedule = element.schedule.replace('-',' - ')
+                  element.schedule = element.schedule.slice(5, 10)
+                  // element.schedule = element.schedule.replace('-',' - ')
                 }
                 this.searchResult.push(element)
               });

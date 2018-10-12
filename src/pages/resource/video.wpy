@@ -7,7 +7,7 @@
       <swiper indicator-dots autoplay circular>
         <block wx:for="{{recommend}}" wx:key="">
           <swiper-item>
-            <image @tap="viewVideo({{item}})" class="topImg" mode="aspectFill" src="{{imgSrc}}"></image>
+            <image @tap="viewVideo({{item}})" class="topImg" mode="aspectFill" src="{{item.thumbnail}}"></image>
             <view class="indroduce">{{item.title}}</view>
             <text class='type' wx:if="{{item.isFree == 1}}">FREE</text>
             <text class='type vip' wx:if="{{item.isFree == 0}}">VIP</text>
@@ -17,11 +17,11 @@
       <!-- <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo"/> -->
       <!-- <view class='intro'>{{choseItem.title}}</view> -->
       <!-- <view class='detail'>
-                <view class='number'><i class='iconfont icon-download'></i> 2</view>
-                <view class='number'><i class='iconfont icon-collect'></i> 2</view>
-                <view class='number'><i class='iconfont icon-dyncomments'></i> 2</view>
-                <view class='number'><i class='iconfont icon-heart'></i> 2</view>
-              </view> -->
+                  <view class='number'><i class='iconfont icon-download'></i> 2</view>
+                  <view class='number'><i class='iconfont icon-collect'></i> 2</view>
+                  <view class='number'><i class='iconfont icon-dyncomments'></i> 2</view>
+                  <view class='number'><i class='iconfont icon-heart'></i> 2</view>
+                </view> -->
     </view>
     <view class='videoTitle'>
       全部视频
@@ -54,10 +54,38 @@
     };
     methods = {
       viewVideo(item) {
+        let userInfo = wepy.getStorageSync('userInfo');
+        let permission = JSON.parse(userInfo).permission
         let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
-        wepy.navigateTo({
-          url: url
-        })
+        if (item.isFree == 1) {
+          if (permission.playFree == 'yes') {
+            wepy.navigateTo({
+              url: url
+            })
+          } else {
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          }
+        } else {
+          if (permission.playVip == 'yes') {
+            wepy.navigateTo({
+              url: url
+            })
+          } else {
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          }
+        }
       }
     };
     onReachBottom() {
@@ -76,23 +104,21 @@
           this.$apply()
         }
       })
-      
     };
     onShow() {
-      
     };
     async getVideoList() {
       let res = await api.video.getVideoBypage({
         pageNumber: this.pageNumber
       })
       if (this.pageNumber == 1) {
-          this.listdata = res.data
-        } else {
-          res.data.forEach(element => {
-            this.listdata.push(element)
-          });
-        }
-        this.$apply()
+        this.listdata = res.data
+      } else {
+        res.data.forEach(element => {
+          this.listdata.push(element)
+        });
+      }
+      this.$apply()
     }
   }
 </script>
@@ -128,6 +154,7 @@
       .topImg {
         width: 100%;
         height: 450rpx;
+        border: solid 1px #eee;
       }
       .indroduce {
         font-size: 15px;

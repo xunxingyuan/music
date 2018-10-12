@@ -2,7 +2,7 @@
   <view class='videoList'>
     <repeat for="{{list}}" key="index" index="index" item="item">
       <div class='videoItem'>
-        <image class='botImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo({{item}})"></image>
+        <image class='botImg' src="{{item.thumbnail}}" mode="aspectFill" lazy-load="false" @tap="viewVideo({{item}})"></image>
         <view class='intro'>
           <text>{{item.title}}</text>
           <!-- <view><i class='iconfont icon-heart' @tap="likeVideo({{item}})"></i> {{item.likeCount}}</view> -->
@@ -117,6 +117,7 @@
         height: 120px;
         border-top-left-radius: 3px;
         border-top-right-radius: 3px;
+        border: solid 1px #ddd;
       }
       .intro {
         display: flex;

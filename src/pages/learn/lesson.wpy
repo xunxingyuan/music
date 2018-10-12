@@ -11,9 +11,10 @@
     </view>
     <view class='block'>
       <text class='title'>知识点</text>
-      <text class='point'>右手手指序号 T 1234</text>
-      <text class='point'>拨片弹拨 Pick</text>
-      <text class='point'>右手手指序号 T 1234</text>
+      <repeat for="{{lessonData.knowledgePoints}}" key="index" index="index" item="item">
+          <text class='point'>{{item.name}}</text>
+      </repeat>
+      <text class='tips' wx:if="{{lessonData.knowledgePoints.length === 0}}">暂无相关知识点</text>
     </view>
     <view class='block'>
       <text class='title'>曲谱</text>
@@ -24,6 +25,7 @@
             <view>{{item.title}}</view>
           </view>
         </repeat>
+        <text class='tips' wx:if="{{lessonData.notationList.length === 0}}">暂无相关曲谱</text>
       </view>
     </view>
     <view class='block last'>
@@ -37,6 +39,7 @@
           </view>
         </view>
       </repeat>
+      <text class='tips' wx:if="{{lessonData.musicList.length === 0}}">暂无相关曲谱</text>
     </view>
   </view>
 </template>
@@ -52,7 +55,7 @@
     };
     data = {
       imgSrc: "../../resource/pu.png",
-      lessonData: '',
+      lessonData: [],
       selectMusic: ''
     };
     components = {
@@ -95,10 +98,6 @@
             }
           }
         });
-
-
-        
-        // this.playState = 'show'
       },
     };
     events = {};
@@ -110,12 +109,6 @@
       })
       if (result.data.code === 200) {        
         this.lessonData = result.data.data
-        // this.lessonData.notationList.forEach(element => {
-        //   element.url= 'http://192.168.100.246:9501' + element.url
-        // });
-        // this.lessonData.musicList.forEach(element => {
-        //   element.url= 'http://192.168.100.246:9501' + element.url
-        // });
         this.$apply()
       }
       console.log(result);
@@ -131,6 +124,11 @@
       background: #f9f9f9;
       padding: 1rem;
       font-size: 15px;
+      .tips{
+        margin-top: 10px;
+        color: #999;
+        font-size: 14px;
+      }
       .imgBox {
         overflow-y: hidden;
         overflow-x: auto;

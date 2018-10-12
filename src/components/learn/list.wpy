@@ -14,9 +14,9 @@
           </view>
         </view>
         <view class="skillBox" wx:if="{{index == 0}}">
-          <text>右手手指序号 T 1234</text>
-          <text>拨片弹拨 Pick</text>
-          <text>右手手指序号 T 1234</text>
+          <repeat for="{{item.knowledgePoints}}" key="index" index="index" item="item">
+              <text>{{item.name}}</text>
+          </repeat>
         </view>
         <view class='msgBot flex'>
           <text>{{item.className}}</text>

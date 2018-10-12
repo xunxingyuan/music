@@ -200,6 +200,7 @@
       .title {
         font-size: 18px;
         color: #000;
+        width: 80%;
       }
       .type {
         font-size: 14px;

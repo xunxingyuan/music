@@ -12,15 +12,15 @@
             </view>
             <view class='count flex'>
               <!-- <image class='icon' src="{{imgList.play}}" mode="scaleToFill" lazy-load="false">
-              </image> -->
+                            </image> -->
               <i class="iconfont icon-shipin"></i>
               <text class='count'>{{item.videoList.length}}</text>
               <!-- <image class='icon' src="{{imgList.voice}}" mode="scaleToFill" lazy-load="false">
-              </image> -->
+                            </image> -->
               <i class="iconfont icon-laba"></i>
               <text class='count'>{{item.musicList.length}}</text>
               <!-- <image class='icon' src="{{imgList.score}}" mode="scaleToFill" lazy-load="false">
-              </image> -->
+                            </image> -->
               <i class="iconfont icon-iconfontqupu"></i>
               <text class='count'>{{item.notationList.length}}</text>
             </view>
@@ -29,7 +29,7 @@
         </view>
         <view class='detail' hidden="{{item.show === 1}}">
           <repeat for="{{item.musicList}}" key="index" index="index" item="detail">
-            <view class='detailBox flex' @tap.stop='audioPlay({{detail}})'>
+            <view class='detailBox flex' @tap.stop='checkPermission({{detail}},{{item.isFree}})'>
               <view class='detailContent'>
                 <view class='title'>{{detail.title}}</view>
                 <view class='info'>
@@ -132,35 +132,34 @@
       cancelShowMusicCtrl() {
         this.showCtrl = 1
       },
-      audioPlay(item) {
-        this.selectMusic = item.url
-        // this.$broadcast('srcChange', {
-        //   name: item.title,
-        //   url: this.selectMusic
-        // })
-        // backgroundAudioManager.epname = '此时此刻'
-        // backgroundAudioManager.singer = '许巍'
-        // backgroundAudioManager.coverImgUrl = 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000'
-        const backgroundAudioManager = wx.getBackgroundAudioManager()
-        backgroundAudioManager.title = item.title
-        wepy.showModal({
-          title: '播放音乐', //提示的标题,
-          content: '是否开始播放音乐：' + item.title, //提示的内容,
-          showCancel: true, //是否显示取消按钮,
-          cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
-          cancelColor: '#000000', //取消按钮的文字颜色,
-          confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
-          confirmColor: '#3CC51F', //确定按钮的文字颜色,
-          success: res => {
-            if (res.confirm){
-              backgroundAudioManager.src = this.selectMusic // 设置了 src 之后会自动播放
-            }
+      checkPermission(item, type) {
+        let userInfo = wepy.getStorageSync('userInfo');
+        let permission = JSON.parse(userInfo).permission
+        if (type == 1) {
+          if (permission.playFree == 'yes') {
+            this.audioPlay(item)
+          } else {
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
           }
-        });
-        
-
-        
-        // this.playState = 'show'
+        } else {
+          if (permission.playVip == 'yes') {
+            this.audioPlay(item)
+          } else {
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          }
+        }
       },
       showIntro() {
         wepy.showModal({
@@ -197,35 +196,49 @@
             header: header,
             success: res => {
               console.log(res.tempFilePath);
-              let downloadSrc = {
-                name: music.title,
-                musicId: music.id,
-                url: res.tempFilePath,
-                downloadTime: new Date().Format("yyyy-MM-dd hh:mm:ss"),
-                type: 'music'
-              }
-              downloadData.push(downloadSrc)
-              wepy.setStorageSync('downloadFile', JSON.stringify(downloadData))
-              // wepy.saveFile({
-              //   tempFilePath: res.tempFilePath, //需要保存的文件的临时路径,
-              //   success: resp => {
-              //     console.log(resp);
-              //   },
-              //   fail: (error) => {
-              //     console.log(error);
-              //   }
-              // });
+              wepy.saveFile({
+                tempFilePath: res.tempFilePath, //需要保存的文件的临时路径,
+                success: resp => {
+                  console.log(resp);
+                  let downloadSrc = {
+                    name: music.title,
+                    musicId: music.id,
+                    url: resp.savedFilePath,
+                    downloadTime: new Date().Format("yyyy-MM-dd hh:mm:ss"),
+                    type: 'music'
+                  }
+                  downloadData.push(downloadSrc)
+                  wepy.setStorageSync('downloadFile', JSON.stringify(downloadData))
+                  wepy.showToast({
+                    title: '下载完成', //提示的内容,
+                    icon: 'success', //图标,
+                    duration: 2000, //延迟时间,
+                    mask: true, //显示透明蒙层，防止触摸穿透,
+                    success: res => {}
+                  });
+                },
+                fail: (error) => {
+                  console.log(error);
+                  wepy.showToast({
+                    title: '下载失败', //提示的内容,
+                    icon: 'none', //图标,
+                    duration: 2000, //延迟时间,
+                    mask: true, //显示透明蒙层，防止触摸穿透,
+                    success: res => {}
+                  });
+                }
+              });
             },
-            fail: () => {},
-            complete: (res) => {
+            fail: () => {
               wepy.showToast({
-                title: '下载完成', //提示的内容,
-                icon: 'success', //图标,
+                title: '下载失败', //提示的内容,
+                icon: 'none', //图标,
                 duration: 2000, //延迟时间,
                 mask: true, //显示透明蒙层，防止触摸穿透,
                 success: res => {}
               });
-            }
+            },
+            complete: (res) => {}
           });
         } else {
           wepy.showToast({
@@ -246,6 +259,34 @@
       this.$apply()
     };
     onShow() {};
+    audioPlay(item) {
+      console.log(item)
+      this.selectMusic = item.url
+      // this.$broadcast('srcChange', {
+      //   name: item.title,
+      //   url: this.selectMusic
+      // })
+      // backgroundAudioManager.epname = '此时此刻'
+      // backgroundAudioManager.singer = '许巍'
+      // backgroundAudioManager.coverImgUrl = 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000'
+      const backgroundAudioManager = wx.getBackgroundAudioManager()
+      backgroundAudioManager.title = item.title
+      wepy.showModal({
+        title: '播放音乐', //提示的标题,
+        content: '是否开始播放音乐：' + item.title, //提示的内容,
+        showCancel: true, //是否显示取消按钮,
+        cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
+        cancelColor: '#000000', //取消按钮的文字颜色,
+        confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
+        confirmColor: '#3CC51F', //确定按钮的文字颜色,
+        success: res => {
+          if (res.confirm) {
+            backgroundAudioManager.src = this.selectMusic // 设置了 src 之后会自动播放
+          }
+        }
+      });
+      // this.playState = 'show'
+    }
   }
 </script>
 
@@ -262,10 +303,10 @@
       .musicShow {
         justify-content: flex-start;
         .left {
-          .flex{
+          .flex {
             justify-content: flex-start;
           }
-          .icon{
+          .icon {
             width: 12px;
             height: 12px;
             margin-right: 3px;

@@ -13,7 +13,7 @@
       <view class='item'>
         <image @tap="collectVideo" wx:if="{{!videoMsg.isUserCollect}}" class='icon' src="{{imgList.collect}}" mode="scaleToFill" lazy-load="false">
         </image>
-        <image wx:if="{{videoMsg.isUserCollect}}" class='icon' src="{{imgList.collect1}}" mode="scaleToFill" lazy-load="false">
+        <image @tap="collectVideo('cancel')" wx:if="{{videoMsg.isUserCollect}}" class='icon' src="{{imgList.collect1}}" mode="scaleToFill" lazy-load="false">
         </image>
         {{videoMsg.collectCount}}
       </view>
@@ -87,7 +87,7 @@
       navigationBarTitleText: "返回",
     };
     data = {
-      imgList:'',
+      imgList: '',
       videoId: '',
       videoTitle: '',
       videoSrc: 'http://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f0201690402534804102ca905ce620b1241b726bc41dcff44e00204012882540400&bizid=1023&hy=SH&fileparam=302c020101042530230204136ffd93020457e3c4ff02024ef202031e8d7f02030f42400204045a320a0201000400',
@@ -179,29 +179,44 @@
             success: res => {
               console.log(res)
               let downloadData = JSON.parse(downloadFile)
-              let downloadSrc = {
-                name: _self.videoTitle,
-                videoId: _self.videoId,
-                url: res.tempFilePath,
-                downloadTime: new Date().Format("yyyy-MM-dd hh:mm:ss"),
-                type: 'video'
-              }
-              downloadData.push(downloadSrc)
-              wepy.setStorageSync('downloadFile', JSON.stringify(downloadData))
-              // wepy.saveFile({
-              //   tempFilePath: res.tempFilePath, //需要保存的文件的临时路径,
-              //   success: res => {}
-              // });
+              wepy.saveFile({
+                tempFilePath: res.tempFilePath, //需要保存的文件的临时路径,
+                success: resp => {
+                  console.log(resp.savedFilePath)
+                  let downloadSrc = {
+                    name: _self.videoTitle,
+                    videoId: _self.videoId,
+                    url: resp.savedFilePath,
+                    downloadTime: new Date().Format("yyyy-MM-dd hh:mm:ss"),
+                    type: 'video'
+                  }
+                  downloadData.push(downloadSrc)
+                  wepy.setStorageSync('downloadFile', JSON.stringify(downloadData))
+                },
+                fail: (error) => {
+                  console.log(error);
+                  wepy.showToast({
+                    title: '下载失败', //提示的内容,
+                    icon: 'none', //图标,
+                    duration: 2000, //延迟时间,
+                    mask: true, //显示透明蒙层，防止触摸穿透,
+                    success: res => {}
+                  });
+                }
+              });
+              
             },
-            fail: () => {},
-            complete: () => {
+            fail: () => {
               wepy.showToast({
-                title: '下载完成', //提示的内容,
-                icon: 'success', //图标,
+                title: '下载失败', //提示的内容,
+                icon: 'none', //图标,
                 duration: 2000, //延迟时间,
                 mask: true, //显示透明蒙层，防止触摸穿透,
                 success: res => {}
               });
+            },
+            complete: () => {
+              
             }
           });
         } else {
@@ -219,7 +234,7 @@
         //   console.log('预期需要下载的数据总长度', res.totalBytesExpectedToWrite)
         // })
       },
-      async collectVideo() {
+      async collectVideo(type) {
         let _self = this
         let userId = await wepy.getStorageSync('userId');
         if (this.permission.collect == 'yes') {
@@ -228,8 +243,27 @@
             videoId: this.videoId
           }).then((res) => {
             if (res.data.code === 200) {
-              _self.videoMsg.isUserCollect = true
-              _self.videoMsg.collectCount += 1
+              if (type == 'cancel') {
+                _self.videoMsg.isUserCollect = false
+                _self.videoMsg.collectCount -= 1
+                wepy.showToast({
+                  title: '取消收藏成功', //提示的内容,
+                  icon: 'none', //图标,
+                  duration: 2000, //延迟时间,
+                  mask: true, //显示透明蒙层，防止触摸穿透,
+                  success: res => {}
+                });
+              } else {
+                _self.videoMsg.isUserCollect = true
+                _self.videoMsg.collectCount += 1
+                wepy.showToast({
+                  title: '收藏成功', //提示的内容,
+                  icon: 'none', //图标,
+                  duration: 2000, //延迟时间,
+                  mask: true, //显示透明蒙层，防止触摸穿透,
+                  success: res => {}
+                });
+              }
               _self.$apply()
             }
           })
@@ -254,15 +288,17 @@
             _self.videoMsg.isUserLike = true
             _self.videoMsg.likeCount += 1
             wepy.showToast({
-              title: '点赞成功',
-              icon: 'success',
-              duration: 1000
-            })
+              title: '点赞成功', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
             _self.$apply()
           }
         })
       },
-      async unlike(){
+      async unlike() {
         let _self = this
         let userId = await wepy.getStorageSync('userId');
         api.video.likeVideo({
@@ -286,14 +322,20 @@
           if (res.data.code === 200) {
             _self.getVideoComment(_self.videoId)
             wepy.showToast({
-              title: '点赞成功',
-              icon: 'success',
-            })
+              title: '点赞成功', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
           } else {
             wepy.showToast({
-              title: res.data.message,
-              icon: 'none',
-            })
+              title: res.data.message, //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
           }
         })
       }
@@ -306,18 +348,15 @@
       let userId = await wepy.getStorageSync('userId');
       let userInfo = await wepy.getStorageSync('userInfo');
       this.permission = JSON.parse(userInfo).permission
-      if (options.url.split('ttp:').length > 1) {
-        this.videoSrc = options.url
-      } else {
-        this.videoSrc = encodeURI('http://183.62.42.146:24602' + options.url)
-      }
+      this.videoSrc = encodeURI(options.url)
       this.getVideoComment(options.id)
       this.getVideoDetail(options.id, userId)
       this.imgList = this.$parent.globalData.imgList
       console.log(this.videoSrc)
       this.$apply()
-      wepy.showShareMenu({ withShareTicket: true });
-      
+      wepy.showShareMenu({
+        withShareTicket: true
+      });
     };
     onShow() {};
     getVideoComment(id) {
@@ -359,12 +398,12 @@
     .show {
       width: 100%;
     }
-    .videoTitle{
+    .videoTitle {
       height: 1.8rem;
       line-height: 1.8rem;
       background: #fff;
       padding-left: 1rem;
-      color:#000;
+      color: #000;
       font-size: 16px;
     }
     .ctrl {
