@@ -89,7 +89,7 @@
       }
     };
     onReachBottom() {
-      console.log('bottom');
+      //console.log('bottom');
       this.pageNumber += 1
       this.getVideoList()
     };

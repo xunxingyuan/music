@@ -31,7 +31,7 @@
     methods = {};
     events = {
       'reachBottom': () => {
-        console.log('bottom');
+        //console.log('bottom');
         this.pageNumber += 1
         this.getLearn();
       }
@@ -49,7 +49,7 @@
       let searchData = {
         pageNumber: this.pageNumber
       }
-      // console.log(userData);
+      // //console.log(userData);
       if (role == 'student') {
         searchData['ccode'] == userData.vipUser.ccode
       }

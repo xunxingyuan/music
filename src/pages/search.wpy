@@ -88,7 +88,7 @@
       top: Top
     };
     onReachBottom() {
-      console.log('bottom');
+      //console.log('bottom');
       this.loadMore()
     };
     loadMore() {
@@ -194,7 +194,7 @@
         this.showSearch = true
       },
       checkboxChange(e) {
-        console.log(e.detail.value);
+        //console.log(e.detail.value);
       },
       setType(val) {
         this.selectType = val

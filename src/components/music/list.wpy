@@ -195,11 +195,11 @@
             url: music.url, // 下载资源的 url
             header: header,
             success: res => {
-              console.log(res.tempFilePath);
+              //console.log(res.tempFilePath);
               wepy.saveFile({
                 tempFilePath: res.tempFilePath, //需要保存的文件的临时路径,
                 success: resp => {
-                  console.log(resp);
+                  //console.log(resp);
                   let downloadSrc = {
                     name: music.title,
                     musicId: music.id,
@@ -218,7 +218,7 @@
                   });
                 },
                 fail: (error) => {
-                  console.log(error);
+                  //console.log(error);
                   wepy.showToast({
                     title: '下载失败', //提示的内容,
                     icon: 'none', //图标,
@@ -260,7 +260,7 @@
     };
     onShow() {};
     audioPlay(item) {
-      console.log(item)
+      //console.log(item)
       this.selectMusic = item.url
       // this.$broadcast('srcChange', {
       //   name: item.title,

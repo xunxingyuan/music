@@ -110,7 +110,7 @@
     };
     methods = {
       addComment() {
-        console.log(this.permission);
+        //console.log(this.permission);
         if (this.permission.comment == 'yes') {
           this.showInput = true
         } else {
@@ -154,7 +154,7 @@
       async downloadSrc() {
         let _self = this
         let userId = await wepy.getStorageSync('userId');
-        console.log('add download')
+        //console.log('add download')
         if (this.permission.download == 'yes') {
           api.video.saveDownload({
             userId: userId,
@@ -177,12 +177,12 @@
             url: _self.videoSrc, // 下载资源的 url
             header: header,
             success: res => {
-              console.log(res)
+              //console.log(res)
               let downloadData = JSON.parse(downloadFile)
               wepy.saveFile({
                 tempFilePath: res.tempFilePath, //需要保存的文件的临时路径,
                 success: resp => {
-                  console.log(resp.savedFilePath)
+                  //console.log(resp.savedFilePath)
                   let downloadSrc = {
                     name: _self.videoTitle,
                     videoId: _self.videoId,
@@ -194,7 +194,7 @@
                   wepy.setStorageSync('downloadFile', JSON.stringify(downloadData))
                 },
                 fail: (error) => {
-                  console.log(error);
+                  //console.log(error);
                   wepy.showToast({
                     title: '下载失败', //提示的内容,
                     icon: 'none', //图标,
@@ -229,9 +229,9 @@
           });
         }
         // downloadTask.onProgressUpdate((res) => {
-        //   console.log('下载进度', res.progress)
-        //   console.log('已经下载的数据长度', res.totalBytesWritten)
-        //   console.log('预期需要下载的数据总长度', res.totalBytesExpectedToWrite)
+        //   //console.log('下载进度', res.progress)
+        //   //console.log('已经下载的数据长度', res.totalBytesWritten)
+        //   //console.log('预期需要下载的数据总长度', res.totalBytesExpectedToWrite)
         // })
       },
       async collectVideo(type) {
@@ -349,14 +349,17 @@
       let userInfo = await wepy.getStorageSync('userInfo');
       this.permission = JSON.parse(userInfo).permission
       this.videoSrc = encodeURI(options.url)
+      
+      if(options.url.split('ttp://').length>1){
+        wepy.showShareMenu({ withShareTicket: true });
+      }else{
+        wepy.hideShareMenu();
+      }
       this.getVideoComment(options.id)
       this.getVideoDetail(options.id, userId)
       this.imgList = this.$parent.globalData.imgList
-      console.log(this.videoSrc)
       this.$apply()
-      wepy.showShareMenu({
-        withShareTicket: true
-      });
+      
     };
     onShow() {};
     getVideoComment(id) {

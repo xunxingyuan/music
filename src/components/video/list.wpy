@@ -27,7 +27,7 @@
     components = {};
     methods = {
       async viewVideo(item) {
-        console.log(item);
+        //console.log(item);
         let userInfo = await wepy.getStorageSync('userInfo');
         let permission = JSON.parse(userInfo).permission
         let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id

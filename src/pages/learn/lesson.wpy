@@ -111,7 +111,7 @@
         this.lessonData = result.data.data
         this.$apply()
       }
-      console.log(result);
+      //console.log(result);
     };
     onShow() {};
   }

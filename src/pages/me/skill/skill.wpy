@@ -388,7 +388,7 @@
         this.ctrlSkill(item)
       },
       pushData(item, level, choseIndex) {
-        console.log(item, level);
+        //console.log(item, level);
         let _self = this
         let len = this.detailList.length
         if (item.childrenNodeList.length !== 0) {
@@ -436,7 +436,7 @@
     async onLoad(options) {
       let _self = this
       let icon = await wepy.getStorageSync('viewUser');
-      console.log(icon);
+      //console.log(icon);
       this.imgSrc = icon
       this.name = options.name
       this.userId = options.id

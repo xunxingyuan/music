@@ -73,7 +73,7 @@ export default class Student extends wepy.page {
           _self.classListData = [];
           _self.studentList = [];
           Object.keys(result).forEach(function(key, index) {
-            // console.log(key,index, result[key]);
+            // //console.log(key,index, result[key]);
             _self.classListData.push(key);
             result[key].forEach(e => {
               if (e.appUser === '' || e.appUser.avatarUrl === '') {

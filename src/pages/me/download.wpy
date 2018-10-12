@@ -120,7 +120,7 @@
       let downloadFile = await wepy.getStorageSync('downloadFile');
       let downloadData = JSON.parse(downloadFile)
       this.downloadList = downloadData
-      console.log(downloadData);
+      //console.log(downloadData);
       // let result = await api.user.getDownload({
       //   userId: id
       // })
@@ -135,7 +135,7 @@
       _self.$apply();
       wepy.getSavedFileList({
         success: res => {
-          console.log(res);
+          //console.log(res);
           res.fileList.forEach((e) => {
             downloadData.forEach((ele) => {
               if (ele.url == e.filePath) {

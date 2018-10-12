@@ -54,7 +54,7 @@
         })
       },
       reachBottom() {
-        console.log('reach Bottom');
+        //console.log('reach Bottom');
       },
       viewDetail(item) {
         wepy.setStorageSync('selectResource', JSON.stringify(item))

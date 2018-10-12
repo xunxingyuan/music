@@ -55,7 +55,7 @@
           confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
           confirmColor: '#3CC51F', //确定按钮的文字颜色,
           success: res => {
-            console.log(res);
+            //console.log(res);
             if (res.confirm) {
               wepy.setStorageSync('role', null);
               wepy.setStorageSync('token', null);

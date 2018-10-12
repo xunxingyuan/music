@@ -53,7 +53,7 @@
       top: Top
     };
     onReachBottom() {
-      console.log('bottom');
+      //console.log('bottom');
     };
     methods = {
       audioPlay(item) {
@@ -83,12 +83,12 @@
       let id = options.id
       // let resultData = wepy.getStorageSync('selectResource');
       // let albumData = JSON.parse(resultData)
-      // console.log(albumData)
+      // //console.log(albumData)
       // this.videolistdata = albumData.videoList
       // this.musicListdata = albumData.musicList
       // this.notationListdata = albumData.notationList
       // this.$apply()
-      // console.log(this.musicListdata);
+      // //console.log(this.musicListdata);
       // let res = await api.music.getAlbumByID({
       //   id: id
       // })

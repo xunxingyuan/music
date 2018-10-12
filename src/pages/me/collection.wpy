@@ -37,7 +37,7 @@
     };
     methods = {
       viewVideo(item) {
-        console.log(item);
+        //console.log(item);
         if (item.type == 0) {
           let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
           wepy.navigateTo({
@@ -83,7 +83,7 @@
         _self.list.push(element)
       });
       _self.$apply()
-      console.log(result);
+      //console.log(result);
     };
     onShow() {};
   }

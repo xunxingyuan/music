@@ -46,7 +46,7 @@
     onLoad() {
       let userInfo = wepy.getStorageSync('userInfo');
       let userData = JSON.parse(userInfo)
-      console.log(userData);
+      //console.log(userData);
       
       let _self = this
       api.user.getSkill({
