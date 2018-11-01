@@ -1,30 +1,34 @@
 <!--  -->
 <template>
   <view class='login'>
-    <view>
-      <button @tap="login">VIP登录</button>
-      <view class='normal' @tap="auth(3)" open-type="getUserInfo">游客登录</view>
-    </view>
-    <view class='coverBox' wx:if="{{showLogin}}" @tap="hide">
-      <view class='loginCheck' @tap.stop="show">
-        <text>律声云课堂</text>
-        <view class='msg'>
-          <input type='number' bindinput='setPhone' placeholder='输入VIP手机号码' />
-          <view class='authCode'>
-            <input type='number' bindinput='setAuthCode' class='authInput' placeholder='输入验证码' />
-            <button class='getCode' wx:if="{{!showTimeCount}}" @tap='getAuthCode'>获取验证码</button>
-            <button class='getCode' wx:if="{{showTimeCount}}">再次发送({{timeLeft}}s)</button>
+    <view class='loginContent'>
+      <view>
+        <text class='logoText'>律声云课堂</text>
+        <button @tap="login" type='primary'>VIP登录</button>
+        <view class='normal' @tap="auth(3)" open-type="getUserInfo">游客登录</view>
+      </view>
+      <view class='coverBox' wx:if="{{showLogin}}" @tap="hide">
+        <view class='loginCheck' @tap.stop="show">
+          <text>律声云课堂</text>
+          <view class='msg'>
+            <input type='number' bindinput='setPhone' placeholder='输入VIP手机号码' />
+            <view class='authCode'>
+              <input type='number' bindinput='setAuthCode' class='authInput' placeholder='输入验证码' />
+              <button class='getCode' wx:if="{{!showTimeCount}}" @tap='getAuthCode'>获取验证码</button>
+              <button class='getCode' wx:if="{{showTimeCount}}">再次发送({{timeLeft}}s)</button>
+            </view>
           </view>
+          <button type="primary" class='auth' @tap="auth(1)">VIP登录</button>
         </view>
-        <button type="primary" class='auth' @tap="auth(1)">VIP登录</button>
+      </view>
+      <view class='coverBox second' wx:if="{{showAuth}}">
+        <view class='loginCheck'>
+          <text class='tips'>为提供更优质的服务，小程序需要您的授权</text>
+          <button type="primary" open-type="getUserInfo" bindgetuserinfo="getAuth">授权</button>
+        </view>
       </view>
     </view>
-    <view class='coverBox second' wx:if="{{showAuth}}">
-      <view class='loginCheck'>
-        <text class='tips'>为提供更优质的服务，小程序需要您的授权</text>
-        <button type="primary" open-type="getUserInfo" bindgetuserinfo="getAuth">授权</button>
-      </view>
-    </view>
+    <image class='loginBg' src="../resource/login_bg.jpg" mode="scaleToFill" lazy-load="false"/>
   </view>
 </template>
 
@@ -233,6 +237,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    .loginContent{
+       z-index: 6;
+    }
+    .loginBg{
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 5;
+    }
     .coverBox {
       position: absolute;
       width: 100%;
@@ -243,6 +258,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 6;
       .loginCheck {
         width: 80%;
         height: 600rpx;
@@ -285,7 +301,7 @@
     }
     .normal {
       margin-top: 1rem;
-      color: #666;
+      color: #fff;
       text-align: center;
       font-size: 14px;
     }
@@ -295,6 +311,12 @@
         height: 400rpx;
         border-radius: 4px;
       }
+    }
+    .logoText{
+      font-size: 42px;
+      color: #fff;
+      margin-bottom: 8rem;
+      display: block;
     }
   }
 </style>

@@ -38,6 +38,10 @@ export default {
       let reqUrl = url + '/api/course/getByPage'
       return requestData(reqUrl, data, 'GET')
     },
+    searchCourseNew: (data) => {
+      let reqUrl = url + '/api/course/search'
+      return requestData(reqUrl, data, 'GET')
+    },
   },
   //视频
   video: {

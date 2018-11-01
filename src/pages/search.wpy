@@ -127,10 +127,18 @@
           })
           break;
         case 'learn':
-          api.course.searchCourse({
-            pageNumber: this.pageNumber,
+          let userInfo = wepy.getStorageSync('userInfo');
+          let role = wepy.getStorageSync('role');
+          let info = JSON.parse(userInfo)
+          let reqData ={
+            page: this.pageNumber,
             title: this.searchValue
-          }).then((res) => {
+          }
+          if(role == 'student'){
+            reqData.ccode = info.vipUser.ccode
+          }
+          
+          api.course.searchCourseNew(reqData).then((res) => {
             if (res.data.code === 200) {
               res.data.data.forEach(element => {
                 let date = element.schedule;

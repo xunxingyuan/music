@@ -5,12 +5,16 @@
       <view class="listItem" @tap='toLesson({{item}})'>
         <view class='msgTop flex'>
           <view class='time'>
-            <view class='date'>{{item.schedule}} <text>/ {{item.day}}</text>
+            <!-- <view class='date'>{{item.schedule}} <text>/ {{item.day}}</text>
+            </view> -->
+            <view class='date'>
+              {{item.name}}
             </view>
           </view>
           <view class='count'>
-            <text>曲谱 {{item.notationList.length}}</text>
+            <text>视频 {{item.videoList.length}}</text>
             <text>音频 {{item.musicList.length}}</text>
+            <text>曲谱 {{item.notationList.length}}</text>
           </view>
         </view>
         <view class="skillBox" wx:if="{{index == 0}}">
@@ -75,7 +79,7 @@
           font-size: 12px;
           color: #666;
           .date {
-            font-size: 30px;
+            font-size: 24px;
             color: rgba(0, 0, 0, 0.8);
             font-weight: 600;
             text{

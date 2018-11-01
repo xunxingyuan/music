@@ -177,12 +177,12 @@
             url: _self.videoSrc, // 下载资源的 url
             header: header,
             success: res => {
-              //console.log(res)
+              // console.log(res)
               let downloadData = JSON.parse(downloadFile)
               wepy.saveFile({
                 tempFilePath: res.tempFilePath, //需要保存的文件的临时路径,
                 success: resp => {
-                  //console.log(resp.savedFilePath)
+                  console.log(resp.savedFilePath)
                   let downloadSrc = {
                     name: _self.videoTitle,
                     videoId: _self.videoId,
@@ -194,9 +194,9 @@
                   wepy.setStorageSync('downloadFile', JSON.stringify(downloadData))
                 },
                 fail: (error) => {
-                  //console.log(error);
+                  // console.log(error);
                   wepy.showToast({
-                    title: '下载失败', //提示的内容,
+                    title: '已下载文件大小超过10M，下载失败，请删除部分已下载内容后再试', //提示的内容,
                     icon: 'none', //图标,
                     duration: 2000, //延迟时间,
                     mask: true, //显示透明蒙层，防止触摸穿透,
@@ -207,13 +207,13 @@
               
             },
             fail: () => {
-              wepy.showToast({
-                title: '下载失败', //提示的内容,
-                icon: 'none', //图标,
-                duration: 2000, //延迟时间,
-                mask: true, //显示透明蒙层，防止触摸穿透,
-                success: res => {}
-              });
+              // wepy.showToast({
+              //   title: '下载失败', //提示的内容,
+              //   icon: 'none', //图标,
+              //   duration: 2000, //延迟时间,
+              //   mask: true, //显示透明蒙层，防止触摸穿透,
+              //   success: res => {}
+              // });
             },
             complete: () => {
               

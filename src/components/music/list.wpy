@@ -209,18 +209,18 @@
                   }
                   downloadData.push(downloadSrc)
                   wepy.setStorageSync('downloadFile', JSON.stringify(downloadData))
-                  wepy.showToast({
-                    title: '下载完成', //提示的内容,
-                    icon: 'success', //图标,
-                    duration: 2000, //延迟时间,
-                    mask: true, //显示透明蒙层，防止触摸穿透,
-                    success: res => {}
-                  });
+                  // wepy.showToast({
+                  //   title: '下载完成', //提示的内容,
+                  //   icon: 'success', //图标,
+                  //   duration: 2000, //延迟时间,
+                  //   mask: true, //显示透明蒙层，防止触摸穿透,
+                  //   success: res => {}
+                  // });
                 },
                 fail: (error) => {
                   //console.log(error);
-                  wepy.showToast({
-                    title: '下载失败', //提示的内容,
+                 wepy.showToast({
+                    title: '已下载文件大小超过10M，下载失败，请删除部分已下载内容后再试', //提示的内容,
                     icon: 'none', //图标,
                     duration: 2000, //延迟时间,
                     mask: true, //显示透明蒙层，防止触摸穿透,

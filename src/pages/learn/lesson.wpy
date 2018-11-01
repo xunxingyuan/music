@@ -17,18 +17,11 @@
       <text class='tips' wx:if="{{lessonData.knowledgePoints.length === 0}}">暂无相关知识点</text>
     </view>
     <view class='block'>
-      <text class='title'>曲谱</text>
-      <view class='imgBox flex'>
-        <repeat for="{{lessonData.notationList}}" key="index" index="index" item="item">
-          <view class='img'>
-            <image src="{{item.url}}" @tap="viewScore({{item.url}})"></image>
-            <view>{{item.title}}</view>
-          </view>
-        </repeat>
-        <text class='tips' wx:if="{{lessonData.notationList.length === 0}}">暂无相关曲谱</text>
-      </view>
+      <text class='title'>视频</text>
+      <list :list.sync="videoList"></list>
+      <text class='tips' wx:if="{{videoList.length === 0}}">暂无相关视频</text>
     </view>
-    <view class='block last'>
+    <view class='block'>
       <text class='title'>音频</text>
       <repeat for="{{lessonData.musicList}}" key="index" index="index" item="item">
         <view class='flex musicItem'>
@@ -41,6 +34,18 @@
       </repeat>
       <text class='tips' wx:if="{{lessonData.musicList.length === 0}}">暂无相关曲谱</text>
     </view>
+    <view class='block last'>
+      <text class='title'>曲谱</text>
+      <view class='imgBox flex'>
+        <repeat for="{{lessonData.notationList}}" key="index" index="index" item="item">
+          <view class='img'>
+            <image src="{{item.url}}" @tap="viewScore({{item.url}})"></image>
+            <view>{{item.title}}</view>
+          </view>
+        </repeat>
+        <text class='tips' wx:if="{{lessonData.notationList.length === 0}}">暂无相关曲谱</text>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -49,6 +54,7 @@
   import wepy from 'wepy';
   import api from '@/tools/api.js';
   import Top from '@/components/common/top';
+  import List from '@/components/video/list';
   export default class Lesson extends wepy.page {
     config = {
       navigationBarTitleText: "详情",
@@ -56,10 +62,12 @@
     data = {
       imgSrc: "../../resource/pu.png",
       lessonData: [],
-      selectMusic: ''
+      selectMusic: '',
+      videoList: []
     };
     components = {
-      top:Top
+      top:Top,
+      list: List,
     };
     methods = {
       viewScore(item) {
@@ -109,6 +117,7 @@
       })
       if (result.data.code === 200) {        
         this.lessonData = result.data.data
+        this.videoList = result.data.data.videoList
         this.$apply()
       }
       //console.log(result);
@@ -149,6 +158,7 @@
         color: #888;
         font-size: 13px;
         display: block;
+        margin-bottom: 10px;
       }
       .time {
         font-size: 24px;
