@@ -437,7 +437,11 @@
       let _self = this
       let icon = await wepy.getStorageSync('viewUser');
       //console.log(icon);
-      this.imgSrc = icon
+      let len = icon.split('resource')
+
+      if(len.length = 0){
+        this.imgSrc = icon
+      }
       this.name = options.name
       this.userId = options.id
       this.imgList = this.$parent.globalData.imgList

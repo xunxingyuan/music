@@ -84,6 +84,7 @@
     events = {
       'changeTab': (data, $event) => {
         this.activeTab = data;
+        this.$broadcast('reachBottom');
         this.$apply();
       }
     };
