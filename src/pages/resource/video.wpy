@@ -3,7 +3,7 @@
   <view class='video mainPage'>
     <top title='视频' backColor="black" back='yes'></top>
     <search :type="video"></search>
-    <view class='topBox'>
+    <view class='topBox' wx:if="{{recommend.length>0}}">
       <swiper indicator-dots autoplay circular>
         <block wx:for="{{recommend}}" wx:key="">
           <swiper-item>
@@ -14,14 +14,6 @@
           </swiper-item>
         </block>
       </swiper>
-      <!-- <image class='topImg' src="{{imgSrc}}" mode="aspectFill" lazy-load="false" @tap="viewVideo"/> -->
-      <!-- <view class='intro'>{{choseItem.title}}</view> -->
-      <!-- <view class='detail'>
-                  <view class='number'><i class='iconfont icon-download'></i> 2</view>
-                  <view class='number'><i class='iconfont icon-collect'></i> 2</view>
-                  <view class='number'><i class='iconfont icon-dyncomments'></i> 2</view>
-                  <view class='number'><i class='iconfont icon-heart'></i> 2</view>
-                </view> -->
     </view>
     <view class='videoTitle'>
       全部视频
@@ -90,7 +82,11 @@
     };
     onReachBottom() {
       //console.log('bottom');
-      this.pageNumber += 1
+
+      let num = Math.floor(this.listdata.length/10) + 1
+      if(this.pageNumber != num){
+        this.pageNumber  = num
+      }
       this.getVideoList()
     };
     events = {};
@@ -115,10 +111,21 @@
         this.listdata = res.data
       } else {
         res.data.forEach(element => {
-          this.listdata.push(element)
+          if(this.checkId(element.id,this.listdata)){
+            this.listdata.push(element)
+          }
         });
       }
       this.$apply()
+    };
+    checkId(id,arr){
+      let flag = true
+      arr.forEach(element => {
+        if(element.id === id){
+          flag = false
+        }
+      });
+      return flag
     }
   }
 </script>

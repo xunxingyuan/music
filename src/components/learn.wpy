@@ -5,7 +5,6 @@
       <search :type="learn"></search>
     </view>
     <learnList :listData.sync="lists" class='uptop'></learnList>
-
     <text class='listNone' wx:if="{{lists.length === 0}}">暂无相关课程</text>
   </view>
 </template>
@@ -31,8 +30,10 @@
     methods = {};
     events = {
       'reachBottom': () => {
-        //console.log('bottom');
-        this.pageNumber += 1
+        let num = Math.floor(this.lists.length / 10) + 1
+        if (this.pageNumber != num) {
+          this.pageNumber = num
+        }
         this.getLearn();
       }
     };
@@ -59,7 +60,9 @@
             this.lists = res.data.data;
           } else {
             res.data.data.forEach(element => {
-              this.lists.push(element)
+              if(this.checkId(element.id,this.lists)){
+                this.lists.push(element)
+              }
             });
           }
           this.lists.forEach(element => {
@@ -101,7 +104,16 @@
         }
       });
     }
-    onShow() {}
+    onShow() {};
+    checkId(id, arr) {
+      let flag = true
+      arr.forEach(element => {
+        if (element.id === id) {
+          flag = false
+        }
+      });
+      return flag
+    }
   }
 </script>
 
@@ -122,7 +134,7 @@
       width: 50%;
       z-index: 8;
     }
-    .listNone{
+    .listNone {
       position: absolute;
       top: 50%;
       width: 100%;

@@ -3,7 +3,7 @@
   <view class='lesson mainPage'>
     <top title='返回' backColor="black" back='yes'></top>
     <view class='block'>
-      <view><text class='time'>{{lessonData.schedule}}</text></view>
+      <view><text class='time'>{{lessonData.name}}</text></view>
       <view class='flex msg'>
         <text class='name'>{{lessonData.className}}</text>
         <text class='teacher'>{{lessonData.teacherName}}</text>
@@ -32,7 +32,7 @@
           </view>
         </view>
       </repeat>
-      <text class='tips' wx:if="{{lessonData.musicList.length === 0}}">暂无相关曲谱</text>
+      <text class='tips' wx:if="{{lessonData.musicList.length === 0}}">暂无相关音频</text>
     </view>
     <view class='block last'>
       <text class='title'>曲谱</text>
@@ -82,14 +82,6 @@
         });
       },
       audioPlay(item) {
-        // this.$broadcast('srcChange', {
-        //   name: item.title,
-        //   url: this.selectMusic
-        // })
-        
-        // backgroundAudioManager.epname = '此时此刻'
-        // backgroundAudioManager.singer = '许巍'
-        // backgroundAudioManager.coverImgUrl = 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000'
         let backgroundAudioManager = wx.getBackgroundAudioManager()
         backgroundAudioManager.title = item.title
         wepy.showModal({
@@ -120,7 +112,6 @@
         this.videoList = result.data.data.videoList
         this.$apply()
       }
-      //console.log(result);
     };
     onShow() {};
   }

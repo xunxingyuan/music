@@ -1,6 +1,6 @@
 import wepy from 'wepy'
 
-const url = 'http://183.62.42.146:24602'
+const url = 'https://music.gzjtit.com:9501'
 
 export default {
   //微信验证

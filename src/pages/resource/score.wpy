@@ -27,7 +27,10 @@
     };
     onReachBottom() {
       //console.log('bottom');
-      this.pageNumber += 1
+      let num = Math.floor(this.imgList.length / 10) + 1
+      if (this.pageNumber != num) {
+        this.pageNumber = num
+      }
       this.loadMore()
     };
     methods = {};
@@ -50,9 +53,20 @@
         pageNumber: _self.pageNumber
       })
       res.data.forEach(element => {
-        _self.imgList.push(element)
+        if (this.checkId(element.id, _self.imgList)) {
+          _self.imgList.push(element)
+        }
       });
       _self.$apply()
+    };
+    checkId(id, arr) {
+      let flag = true
+      arr.forEach(element => {
+        if (element.id === id) {
+          flag = false
+        }
+      });
+      return flag
     }
   }
 </script>

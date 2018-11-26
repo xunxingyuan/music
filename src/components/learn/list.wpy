@@ -6,10 +6,8 @@
         <view class='msgTop flex'>
           <view class='time'>
             <!-- <view class='date'>{{item.schedule}} <text>/ {{item.day}}</text>
-            </view> -->
-            <view class='date'>
-              {{item.name}}
-            </view>
+                    </view> -->
+            {{item.name}}
           </view>
           <view class='count'>
             <text>视频 {{item.videoList.length}}</text>
@@ -19,7 +17,7 @@
         </view>
         <view class="skillBox" wx:if="{{index == 0}}">
           <repeat for="{{item.knowledgePoints}}" key="index" index="index" item="item">
-              <text>{{item.name}}</text>
+            <text>{{item.name}}</text>
           </repeat>
         </view>
         <view class='msgBot flex'>
@@ -70,27 +68,24 @@
       padding: 0.5rem 0 0 0;
       background: #fff;
       border-radius: 3px;
-      box-shadow: 0 0 5px 4px rgba(0,0,0,0.04);
+      box-shadow: 0 0 5px 4px rgba(0, 0, 0, 0.04);
       .msgTop {
         padding: 0 1rem;
         justify-content: space-between;
         margin-bottom: 0.5rem;
         .time {
-          font-size: 12px;
-          color: #666;
-          .date {
-            font-size: 24px;
-            color: rgba(0, 0, 0, 0.8);
-            font-weight: 600;
-            text{
-              font-size: 13px;
-              font-weight: 500;
-              color: rgba(0, 0, 0, 1);
-            }
-          }
+          font-size: 20px;
+          color: rgba(0, 0, 0, 0.8);
+          font-weight: 600;
+          width: 6rem;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
         }
         .count {
           font-size: 15px;
+          min-width: 10rem;
+          text-align: center;
           text {
             margin-left: 0.5rem;
           }
@@ -100,20 +95,19 @@
         height: 70rpx;
         border-top: solid 1px #f7f7f7;
         font-size: 12px;
-        color: #999;
-        // width: 100%;
+        color: #999; // width: 100%;
         justify-content: flex-start;
         padding: 0 1rem;
         .line {
           margin: 0 0.5rem;
         }
       }
-      .skillBox{
+      .skillBox {
         display: flex;
         flex-flow: column;
         font-size: 16px;
         padding: 0 1rem;
-        text{
+        text {
           line-height: 2;
         }
       }

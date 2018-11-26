@@ -144,7 +144,8 @@
           }
         }
       });
-      let url = 'http://183.62.42.146:24602/static/icons/';
+      // let url = 'http://47.106.81.2:9501/static/icons/';
+      let url = 'https://music.gzjtit.com:9501/static/icons/';
       for (var val in this.globalData.imgList) {
         this.globalData.imgList[val] = url + this.globalData.imgList[val];
       }

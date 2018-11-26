@@ -2,7 +2,7 @@
 <template>
   <view class='videoPlay mainPage'>
     <top title='视频' backColor="black" back='yes'></top>
-    <video hidden="{{showInput}}" class='show' src="{{videoSrc}}" controls="true" objectFit="contain"></video>
+    <video @tap.stop='controlVideo' id='myVideo' bindplay='videoPlay' bindpause='videoPause' bindended='videoEnd' hidden="{{showInput}}" class='show' poster="{{videoImg}}" src="{{videoSrc}}" objectFit="contain"></video>
     <view class='videoTitle'>{{videoTitle}}</view>
     <view hidden="{{showInput}}" class='ctrl'>
       <view class='item' @tap="downloadSrc">
@@ -90,7 +90,8 @@
       imgList: '',
       videoId: '',
       videoTitle: '',
-      videoSrc: 'http://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f0201690402534804102ca905ce620b1241b726bc41dcff44e00204012882540400&bizid=1023&hy=SH&fileparam=302c020101042530230204136ffd93020457e3c4ff02024ef202031e8d7f02030f42400204045a320a0201000400',
+      videoImg: '',
+      videoSrc: '',
       icon: '../../../resource/images.png',
       commentList: [],
       showInput: false,
@@ -103,12 +104,37 @@
         isUserLike: false,
         likeCount: 0,
       },
-      permission: ''
+      permission: '',
+      videoContext: '',
+      playState: false
     };
     components = {
       top: Top
     };
     methods = {
+      controlVideo() {
+        if (this.playState) {
+          this.videoContext.play()
+          this.playState = false
+          this.$apply()
+        } else {
+          this.videoContext.pause()
+          this.playState = true
+          this.$apply()
+        }
+      },
+      videoPlay() {
+        this.playState = true
+        this.$apply()
+      },
+      videoPause() {
+        this.playState = false
+        this.$apply()
+      },
+      videoEnd() {
+        this.playState = false
+        this.$apply()
+      },
       addComment() {
         //console.log(this.permission);
         if (this.permission.comment == 'yes') {
@@ -204,7 +230,6 @@
                   });
                 }
               });
-              
             },
             fail: () => {
               // wepy.showToast({
@@ -215,9 +240,7 @@
               //   success: res => {}
               // });
             },
-            complete: () => {
-              
-            }
+            complete: () => {}
           });
         } else {
           wepy.showToast({
@@ -315,51 +338,69 @@
       async likeComment(item) {
         let _self = this
         let userId = await wepy.getStorageSync('userId');
-        api.video.likeVideoComments({
-          userId: userId,
-          commentId: item.id
-        }).then((res) => {
-          if (res.data.code === 200) {
-            _self.getVideoComment(_self.videoId)
-            wepy.showToast({
-              title: '点赞成功', //提示的内容,
-              icon: 'none', //图标,
-              duration: 2000, //延迟时间,
-              mask: true, //显示透明蒙层，防止触摸穿透,
-              success: res => {}
-            });
-          } else {
-            wepy.showToast({
-              title: res.data.message, //提示的内容,
-              icon: 'none', //图标,
-              duration: 2000, //延迟时间,
-              mask: true, //显示透明蒙层，防止触摸穿透,
-              success: res => {}
-            });
-          }
-        })
+        if (item.liked) {
+          wepy.showToast({
+            title: '已经点赞过了哦', //提示的内容,
+            icon: 'none', //图标,
+            duration: 2000, //延迟时间,
+            mask: true, //显示透明蒙层，防止触摸穿透,
+            success: res => {}
+          });
+        } else {
+          api.video.likeVideoComments({
+            userId: userId,
+            commentId: item.id
+          }).then((res) => {
+            if (res.data.code === 200) {
+              // _self.getVideoComment(_self.videoId)
+              _self.commentList.forEach(element => {
+                if (element.id === item.id) {
+                  element.likeCount += 1
+                  element.liked = true
+                  this.$apply()
+                }
+              });
+              wepy.showToast({
+                title: '点赞成功', //提示的内容,
+                icon: 'none', //图标,
+                duration: 2000, //延迟时间,
+                mask: true, //显示透明蒙层，防止触摸穿透,
+                success: res => {}
+              });
+            } else {
+              wepy.showToast({
+                title: res.data.message, //提示的内容,
+                icon: 'none', //图标,
+                duration: 2000, //延迟时间,
+                mask: true, //显示透明蒙层，防止触摸穿透,
+                success: res => {}
+              });
+            }
+          })
+        }
       }
     };
     events = {};
     watch = {};
     computed = {};
-    async onLoad(options) {
+    onLoad(options) {
+      this.videoContext = wx.createVideoContext('myVideo')
       this.videoId = options.id
-      let userId = await wepy.getStorageSync('userId');
-      let userInfo = await wepy.getStorageSync('userInfo');
+      let userId = wepy.getStorageSync('userId');
+      let userInfo = wepy.getStorageSync('userInfo');
       this.permission = JSON.parse(userInfo).permission
-      this.videoSrc = encodeURI(options.url)
-      
-      if(options.url.split('ttp://').length>1){
-        wepy.showShareMenu({ withShareTicket: true });
-      }else{
+      this.videoSrc = options.url
+      this.imgList = this.$parent.globalData.imgList
+      this.$apply()
+      if (options.url.split('ttp://').length > 1) {
+        wepy.showShareMenu({
+          withShareTicket: true
+        });
+      } else {
         wepy.hideShareMenu();
       }
       this.getVideoComment(options.id)
       this.getVideoDetail(options.id, userId)
-      this.imgList = this.$parent.globalData.imgList
-      this.$apply()
-      
     };
     onShow() {};
     getVideoComment(id) {
@@ -369,6 +410,9 @@
       }).then((res) => {
         if (res.data.code === 200) {
           _self.commentList = res.data.data
+          _self.commentList.forEach(element => {
+            element.liked = false
+          });
         }
         _self.$apply()
       })
@@ -387,6 +431,7 @@
           _self.videoMsg.isUserLike = res.data.isUserLike
           _self.videoMsg.likeCount = res.data.likeCount
           _self.videoTitle = res.data.video.title
+          _self.videoImg = res.data.video.thumbnail
           _self.$apply()
         }
       })
