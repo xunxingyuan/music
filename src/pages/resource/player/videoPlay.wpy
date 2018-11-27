@@ -2,7 +2,7 @@
 <template>
   <view class='videoPlay mainPage'>
     <top title='视频' backColor="black" back='yes'></top>
-    <video @tap.stop='controlVideo' id='myVideo' bindplay='videoPlay' bindpause='videoPause' bindended='videoEnd' hidden="{{showInput}}" class='show' poster="{{videoImg}}" src="{{videoSrc}}" objectFit="contain"></video>
+    <video @tap.stop='controlVideo' custom-cache="{{false}}" id='myVideo' bindplay='videoPlay' bindpause='videoPause' bindended='videoEnd' hidden="{{showInput}}" class='show' poster="{{videoImg}}" src="{{videoSrc}}" objectFit="contain"></video>
     <view class='videoTitle'>{{videoTitle}}</view>
     <view hidden="{{showInput}}" class='ctrl'>
       <view class='item' @tap="downloadSrc">

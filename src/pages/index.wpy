@@ -85,7 +85,7 @@
             //游客登录
             api.login.vistorLogin({
               avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
-              nickname: this.$parent.globalData.userInfo.nickName,
+              nickName: this.$parent.globalData.userInfo.nickName,
               openid: this.$parent.globalData.openId,
             }).then((res) => {
               if (res.data.code == 200) {
@@ -117,10 +117,10 @@
             }).then((res) => {
               if (res.data.code == 200) {
                 clearInterval(this.countUtil)
-                if (res.data.data.permission.role == '老师') {
-                  wepy.setStorageSync('role', 'teacher')
-                } else {
+                if (res.data.data.permission.role == '学生'||res.data.data.permission.role == '学生家长') {
                   wepy.setStorageSync('role', 'student')
+                } else {
+                   wepy.setStorageSync('role', 'teacher')
                 }
                 wepy.setStorageSync('token', res.data.data.token)
                 wepy.setStorageSync('userId', res.data.data.appUser.id)
