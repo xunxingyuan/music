@@ -21,9 +21,9 @@
           </repeat>
         </view>
         <view class='msgBot flex'>
-          <text>{{item.className}}</text>
-          <text class='line'>|</text>
-          <text>{{item.teacherName}}更新</text>
+          <text wx:if="{{item.className!=='[]'}}">{{item.className}}</text>
+          <text class='line' wx:if="{{item.teacherName!==''&&item.className!=='[]'}}">|</text>
+          <text wx:if="{{item.teacherName!==''}}">{{item.teacherName}}更新</text>
         </view>
       </view>
     </repeat>
