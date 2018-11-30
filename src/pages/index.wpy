@@ -3,13 +3,13 @@
   <view class='login'>
     <view class='loginContent'>
       <view>
-        <text class='logoText'>律声云课堂</text>
+        <text class='logoText'>LS艺术界</text>
         <button @tap="login" type='primary'>VIP登录</button>
         <view class='normal' @tap="auth(3)" open-type="getUserInfo">游客登录</view>
       </view>
       <view class='coverBox' wx:if="{{showLogin}}" @tap="hide">
         <view class='loginCheck' @tap.stop="show">
-          <text>律声云课堂</text>
+          <text>LS艺术界</text>
           <view class='msg'>
             <input type='number' bindinput='setPhone' placeholder='输入VIP手机号码' />
             <view class='authCode'>

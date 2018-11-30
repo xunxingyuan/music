@@ -24,7 +24,7 @@
       window: {
         backgroundTextStyle: 'light',
         navigationBarBackgroundColor: '#D0B485',
-        navigationBarTitleText: '律声云课堂',
+        navigationBarTitleText: 'LS艺术界',
         navigationBarTextStyle: 'write',
         navigationStyle: 'custom'
       }
