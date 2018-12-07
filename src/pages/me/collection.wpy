@@ -1,97 +1,103 @@
 <!--  -->
 <template>
-  <view class='collection mainPage'>
-    <top title='我的收藏' backColor="black" back='yes'></top>
+  <view class="collection mainPage">
+    <top title="我的收藏" backColor="black" back="yes"></top>
     <repeat for="{{list}}" key="index" index="index" item="item">
-      <view class='blockItem' @tap="viewVideo({{item}})">
-        <view class='top'>
-          <text class='title'>{{item.title}}</text>
-          <text wx:if="{{item.type === 0}}" class='type'>视频</text>
-          <text wx:if="{{item.type === 1}}" class='type'>音频</text>
+      <view class="blockItem" @tap="viewVideo({{item}})">
+        <view class="top">
+          <text class="title">{{item.title}}</text>
+          <text wx:if="{{item.type === 0}}" class="type">视频</text>
+          <text wx:if="{{item.type === 1}}" class="type">音频</text>
         </view>
-        <view class='bot'>
+        <view class="bot">
           <text></text>
           <text>{{item.editTime}}</text>
         </view>
       </view>
     </repeat>
-    <view class='tips' wx:if="{{list.length == 0}}">暂无收藏</view>
-
+    <view class="tips" wx:if="{{list.length == 0}}">暂无收藏</view>
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import api from '@/tools/api.js';
-  import Top from '@/components/common/top';
-
-  export default class Collection extends wepy.page {
-    config = {
-      navigationBarTitleText: "我的收藏",
-    };
-    data = {
-      list: []
-    };
-    components = {
-      top:Top
-    };
-    methods = {
-      viewVideo(item) {
-        //console.log(item);
-        if (item.type == 0) {
-          let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id
-          wepy.navigateTo({
-            url: url
-          })
-        } else {
-          const backgroundAudioManager = wx.getBackgroundAudioManager()
-          backgroundAudioManager.title = item.title
-          wepy.showModal({
-          title: '播放音乐', //提示的标题,
-          content: '是否开始播放音乐：' + item.title, //提示的内容,
-          showCancel: true, //是否显示取消按钮,
-          cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
-          cancelColor: '#000000', //取消按钮的文字颜色,
-          confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
-          confirmColor: '#3CC51F', //确定按钮的文字颜色,
-          success: res => {
-            if (res.confirm){
-              backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
-            }
-          }
+import wepy from 'wepy';
+import api from '@/tools/api.js';
+import Top from '@/components/common/top';
+export default class Collection extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的收藏'
+  };
+  data = {
+    list: []
+  };
+  components = {
+    top: Top
+  };
+  methods = {
+    viewVideo(item) {
+      //console.log(item);
+      if (item.type == 0) {
+        let url =
+          '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id;
+        wepy.navigateTo({
+          url: url
         });
-
-          // this.playState = 'show'
-        }
-      },
-    };
-    events = {};
-    watch = {};
-    computed = {};
-    async onLoad() {
-      let _self = this
-      let id = await wepy.getStorageSync('userId');
-      let result = await api.collect.getUserCollect({
-        userId: id
-      })
-      result.data.video.forEach(element => {
-        element.type = 0
-        _self.list.push(element)
-      });
-      result.data.music.forEach(element => {
-        element.type = 1
-        _self.list.push(element)
-      });
-      _self.$apply()
-      //console.log(result);
-    };
-    onShow() {};
+      } else {
+        let url =
+          '/pages/resource/player/musicPlay?url=' +
+          item.url +
+          '&name=' +
+          item.title;
+        wepy.navigateTo({
+          url: url
+        });
+        //   const backgroundAudioManager = wx.getBackgroundAudioManager()
+        //   backgroundAudioManager.title = item.title
+        //   wepy.showModal({
+        //   title: '播放音乐', //提示的标题,
+        //   content: '是否开始播放音乐：' + item.title, //提示的内容,
+        //   showCancel: true, //是否显示取消按钮,
+        //   cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
+        //   cancelColor: '#000000', //取消按钮的文字颜色,
+        //   confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
+        //   confirmColor: '#3CC51F', //确定按钮的文字颜色,
+        //   success: res => {
+        //     if (res.confirm){
+        //       backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
+        //     }
+        //   }
+        // });
+        // this.playState = 'show'
+      }
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  async onLoad() {
+    let _self = this;
+    let id = await wepy.getStorageSync('userId');
+    let result = await api.collect.getUserCollect({
+      userId: id
+    });
+    result.data.video.forEach(element => {
+      element.type = 0;
+      _self.list.push(element);
+    });
+    result.data.music.forEach(element => {
+      element.type = 1;
+      _self.list.push(element);
+    });
+    _self.$apply();
+    //console.log(result);
   }
+  onShow() {}
+}
 </script>
 
 <style lang='less'>
-.collection{
-  .tips{
+.collection {
+  .tips {
     text-align: center;
     line-height: 3rem;
     width: 100%;

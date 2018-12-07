@@ -1,227 +1,229 @@
 <script>
-  import wepy from 'wepy';
-  import api from './tools/api.js';
-  import 'wepy-async-function';
-  export default class extends wepy.app {
-    config = {
-      pages: [
-        'pages/index',
-        'pages/home',
-        'pages/search',
-        'pages/learn/lesson',
-        'pages/resource/resource',
-        'pages/resource/video',
-        'pages/resource/score',
-        'pages/resource/music',
-        'pages/resource/player/videoPlay',
-        'pages/me/collection',
-        'pages/me/download',
-        'pages/me/comment',
-        'pages/me/myStudent',
-        'pages/me/mySkill',
-        'pages/me/skill/skill'
-      ],
-      window: {
-        backgroundTextStyle: 'light',
-        navigationBarBackgroundColor: '#D0B485',
-        navigationBarTitleText: 'LS艺术界',
-        navigationBarTextStyle: 'write',
-        navigationStyle: 'custom'
-      }
-    };
-    globalData = {
-      userInfo: null,
-      openId: null,
-      imgList: {
-        home: 'home.png',
-        home2: 'home2.png',
-        download1: 'download1.png',
-        collect: 'collect.png',
-        collect1: 'collect1.png',
-        edit: 'edit.png',
-        like: 'like.png',
-        like2: 'like2.png',
-        like3: 'like3.png',
-        message: 'message.png',
-        message1: 'message1.png',
-        message2: 'message2.png',
-        mine: 'mine.png',
-        music: 'music.png',
-        music1: 'music1.png',
-        play: 'play.png',
-        score: 'score.png',
-        search: 'search.png',
-        type1: 'type1.png',
-        type2: 'type2.png',
-        type3: 'type3.png',
-        type4: 'type4.png',
-        type5: 'type5.png',
-        user: 'user.png',
-        user1: 'user1.png',
-        user2: 'user2.png',
-        voice: 'voice.png',
-        voice1: 'voice1.png',
-        learnTop: 'learnTop.png',
-        meTop: 'meTop.png',
-        resourceTop: 'resourceTop.png',
-        back: 'back.png'
-      }
-    };
-    constructor() {
-      super();
-      this.use('requestfix');
-      // 拦截request请求
-      this.intercept('request', {
-        // 发出请求时的回调函数
-        config(p) {
-          // 对所有request请求中的OBJECT参数对象统一附加时间戳属性
-          wepy.showLoading({
-            title: 'Loading...', //提示的内容,
-            mask: true, //显示透明蒙层，防止触摸穿透,
-            success: res => {}
+import wepy from 'wepy';
+import api from './tools/api.js';
+import 'wepy-async-function';
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/index',
+      'pages/home',
+      'pages/search',
+      'pages/learn/lesson',
+      'pages/resource/resource',
+      'pages/resource/video',
+      'pages/resource/score',
+      'pages/resource/music',
+      'pages/resource/player/videoPlay',
+      'pages/resource/player/musicPlay',
+      'pages/me/collection',
+      'pages/me/download',
+      'pages/me/comment',
+      'pages/me/myStudent',
+      'pages/me/mySkill',
+      'pages/me/skill/skill'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#D0B485',
+      navigationBarTitleText: 'LS艺术界',
+      navigationBarTextStyle: 'write',
+      navigationStyle: 'custom'
+    }
+  };
+  globalData = {
+    userInfo: null,
+    openId: null,
+    imgList: {
+      home: 'home.png',
+      home2: 'home2.png',
+      download1: 'download1.png',
+      collect: 'collect.png',
+      collect1: 'collect1.png',
+      edit: 'edit.png',
+      like: 'like.png',
+      like2: 'like2.png',
+      like3: 'like3.png',
+      message: 'message.png',
+      message1: 'message1.png',
+      message2: 'message2.png',
+      mine: 'mine.png',
+      music: 'music.png',
+      music1: 'music1.png',
+      play: 'play.png',
+      score: 'score.png',
+      search: 'search.png',
+      type1: 'type1.png',
+      type2: 'type2.png',
+      type3: 'type3.png',
+      type4: 'type4.png',
+      type5: 'type5.png',
+      user: 'user.png',
+      user1: 'user1.png',
+      user2: 'user2.png',
+      voice: 'voice.png',
+      voice1: 'voice1.png',
+      learnTop: 'learnTop.png',
+      meTop: 'meTop.png',
+      resourceTop: 'resourceTop.png',
+      back: 'back.png'
+    }
+  };
+  constructor() {
+    super();
+    this.use('requestfix');
+    // 拦截request请求
+    this.intercept('request', {
+      // 发出请求时的回调函数
+      config(p) {
+        // 对所有request请求中的OBJECT参数对象统一附加时间戳属性
+        wepy.showLoading({
+          title: 'Loading...', //提示的内容,
+          mask: true, //显示透明蒙层，防止触摸穿透,
+          success: res => {}
+        });
+        p.timestamp = +new Date();
+        // //console.log('config request: ', p);
+        // 必须返回OBJECT参数对象，否则无法发送请求到服务端
+        return p;
+      },
+      // 请求成功后的回调函数
+      success(p) {
+        // 可以在这里对收到的响应数据对象进行加工处理
+        // //console.log('request success: ', p);
+        // 必须返回响应数据对象，否则后续无法对响应数据进行处理
+        console.log('request success: ', p);
+        if (p.data.code && p.data.code === 98) {
+          wepy.setStorageSync('role', null);
+          wepy.setStorageSync('token', null);
+          wepy.setStorageSync('userId', null);
+          wepy.setStorageSync('vipId', null);
+          wepy.setStorageSync('userInfo', null);
+          wepy.redirectTo({
+            url: '/pages/index'
           });
-          p.timestamp = +new Date();
-          // //console.log('config request: ', p);
-          // 必须返回OBJECT参数对象，否则无法发送请求到服务端
+        } else {
           return p;
-        },
-        // 请求成功后的回调函数
-        success(p) {
-          // 可以在这里对收到的响应数据对象进行加工处理
-          // //console.log('request success: ', p);
-          // 必须返回响应数据对象，否则后续无法对响应数据进行处理
-          console.log('request success: ', p);
-          if (p.data.code && p.data.code === 98) {
-            wepy.setStorageSync('role', null);
-            wepy.setStorageSync('token', null);
-            wepy.setStorageSync('userId', null);
-            wepy.setStorageSync('vipId', null);
-            wepy.setStorageSync('userInfo', null);
-            wepy.redirectTo({
-              url: '/pages/index'
+        }
+      },
+      //请求失败后的回调函数
+      fail(p) {
+        //console.log('request fail: ', p);
+        // 必须返回响应数据对象，否则后续无法对响应数据进行处理
+        return p;
+      },
+      // 请求完成时的回调函数(请求成功或失败都会被执行)
+      complete(p) {
+        // //console.log('request complete: ', p);
+        wepy.hideLoading();
+      }
+    });
+  }
+  async onLaunch() {
+    let _self = this;
+    await wepy.login({
+      success: function(res) {
+        if (res.code) {
+          //发起网络请求
+          api
+            .auth({
+              code: res.code
+            })
+            .then(res => {
+              if (res.data.code == 200) {
+                _self.globalData.openId = res.data.data.openid;
+              }
             });
-          } else {
-            return p;
-          }
-        },
-        //请求失败后的回调函数
-        fail(p) {
-          //console.log('request fail: ', p);
-          // 必须返回响应数据对象，否则后续无法对响应数据进行处理
-          return p;
-        },
-        // 请求完成时的回调函数(请求成功或失败都会被执行)
-        complete(p) {
-          // //console.log('request complete: ', p);
-          wepy.hideLoading();
+        } else {
+          //console.log('登录失败！' + res.errMsg);
         }
-      });
-    }
-    async onLaunch() {
-      let _self = this;
-      await wepy.login({
-        success: function(res) {
-          if (res.code) {
-            //发起网络请求
-            api
-              .auth({
-                code: res.code
-              })
-              .then(res => {
-                if (res.data.code == 200) {
-                  _self.globalData.openId = res.data.data.openid;
-                }
-              });
-          } else {
-            //console.log('登录失败！' + res.errMsg);
-          }
-        }
-      });
-      await wx.getSetting({
-        success: res => {
-          if (res.authSetting['scope.userInfo']) {
-            this.getUserInfo();
-          }
-        }
-      });
-      // let url = 'http://47.106.81.2:9501/static/icons/';
-      let url = 'https://music.gzjtit.com:9501/static/icons/';
-      for (var val in this.globalData.imgList) {
-        this.globalData.imgList[val] = url + this.globalData.imgList[val];
       }
-    }
-    getUserInfo(cb) {
-      const that = this;
-      if (this.globalData.userInfo) {
-        return this.globalData.userInfo;
-      }
-      wepy.getUserInfo({
-        success(res) {
-          that.globalData.userInfo = res.userInfo;
-          //console.log(that.globalData.userInfo);
-          cb && cb(res.userInfo);
+    });
+    await wx.getSetting({
+      success: res => {
+        if (res.authSetting['scope.userInfo']) {
+          this.getUserInfo();
         }
-      });
+      }
+    });
+    // let url = 'http://47.106.81.2:9501/static/icons/';
+    let url = 'https://music.gzjtit.com:9501/static/icons/';
+    for (var val in this.globalData.imgList) {
+      this.globalData.imgList[val] = url + this.globalData.imgList[val];
     }
   }
+  getUserInfo(cb) {
+    const that = this;
+    if (this.globalData.userInfo) {
+      return this.globalData.userInfo;
+    }
+    wepy.getUserInfo({
+      success(res) {
+        that.globalData.userInfo = res.userInfo;
+        //console.log(that.globalData.userInfo);
+        cb && cb(res.userInfo);
+      }
+    });
+  }
+}
 </script>
 
 <style lang="less">
-  @import './styles/icons.less';
-  page {
-    height: 100%;
-    background: rgba(227, 227, 230, 1);
-    position: relative;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-  .container {
-    height: 100%;
+@import './styles/icons.less';
+page {
+  height: 100%;
+  background: rgba(227, 227, 230, 1);
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+.mainPage {
+  padding-top: 150rpx;
+}
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.blockItem {
+  padding: 0.8rem 1rem;
+  background: #fff;
+  border-bottom: solid 1px #e5e5e5;
+  .top {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: space-between;
-    box-sizing: border-box;
-  }
-  .mainPage {
-    padding-top: 150rpx;
-  }
-  .flex {
-    display: flex;
     align-items: center;
-    justify-content: center;
-  }
-  .blockItem {
-    padding: 0.8rem 1rem;
-    background: #fff;
-    border-bottom: solid 1px #e5e5e5;
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      .title {
-        font-size: 18px;
-        color: #000;
-        width: 80%;
-      }
-      .type {
-        font-size: 14px;
-        color: #353535;
-      }
+    .title {
+      font-size: 18px;
+      color: #000;
+      width: 80%;
     }
-    .bot {
-      display: flex;
+    .type {
+      font-size: 14px;
+      color: #353535;
+    }
+  }
+  .bot {
+    display: flex;
+    margin-top: 5px;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #a9a9a9;
+  }
+  .botCol {
+    display: block;
+    font-size: 12px;
+    color: #a9a9a9;
+    view {
       margin-top: 5px;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #a9a9a9;
-    }
-    .botCol {
-      display: block;
-      font-size: 12px;
-      color: #a9a9a9;
-      view {
-        margin-top: 5px;
-      }
     }
   }
+}
 </style>

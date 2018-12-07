@@ -1,128 +1,114 @@
 <!--  -->
 <template>
-  <view class='download mainPage'>
-    <top title='我的下载' backColor="black" back='yes'></top>
+  <view class="download mainPage">
+    <top title="我的下载" backColor="black" back="yes"></top>
     <repeat for="{{videoList}}" key="index" index="index" item="item">
-      <view class='blockItem' @tap="viewDownloadVideo({{item}})">
-        <view class='top'>
-          <text class='title'>{{item.name}}</text>
-          <text class='type'>视频</text>
+      <view class="blockItem" @tap="viewDownloadVideo({{item}})">
+        <view class="top">
+          <text class="title">{{item.name}}</text>
+          <text class="type">视频</text>
         </view>
-        <view class='bot'>
-          <text>{{item.downloadTime}}</text><text class="del" @tap.stop="del({{item}},{{index}})">删除</text>
+        <view class="bot">
+          <text>{{item.downloadTime}}</text>
+          <text class="del" @tap.stop="del({{item}},{{index}})">删除</text>
         </view>
       </view>
     </repeat>
     <repeat for="{{musicList}}" key="index" index="index" item="item">
-      <view class='blockItem' @tap="viewDownloadMusic({{item}})">
-        <view class='top'>
-          <text class='title'>{{item.name}}</text>
-          <text class='type'>音频</text>
+      <view class="blockItem" @tap="viewDownloadMusic({{item}})">
+        <view class="top">
+          <text class="title">{{item.name}}</text>
+          <text class="type">音频</text>
         </view>
-        <view class='bot'>
-          <text>{{item.downloadTime}}</text><text class="del" @tap.stop="del({{item}},{{index}})">删除</text>
+        <view class="bot">
+          <text>{{item.downloadTime}}</text>
+          <text class="del" @tap.stop="del({{item}},{{index}})">删除</text>
         </view>
       </view>
     </repeat>
-    <view class='tips' wx:if="{{videoList.length == 0&&musicList.length == 0}}">暂无下载内容</view>
+    <view class="tips" wx:if="{{videoList.length == 0&&musicList.length == 0}}">暂无下载内容</view>
     <!-- <repeat for="{{downloadList}}" key="index" index="index" item="item">
-                        <view class='blockItem' @tap="viewDownload({{item}})">
-                          <view class='top'>
-                            <text class='title'>{{item.name}}</text>
-                            <text wx:if="{{item.type=='music'}}" class='type'>音频</text>
-                            <text wx:if="{{item.type=='video'}}" class='type'>视频</text>
+                          <view class='blockItem' @tap="viewDownload({{item}})">
+                            <view class='top'>
+                              <text class='title'>{{item.name}}</text>
+                              <text wx:if="{{item.type=='music'}}" class='type'>音频</text>
+                              <text wx:if="{{item.type=='video'}}" class='type'>视频</text>
+                            </view>
+                            <view class='bot'>
+                              <text>{{item.downloadTime}}</text>
+                            </view>
                           </view>
-                          <view class='bot'>
-                            <text>{{item.downloadTime}}</text>
-                          </view>
-                        </view>
-                      </repeat> -->
+    </repeat>-->
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import api from '@/tools/api.js';
-  import Top from '@/components/common/top';
-  export default class Download extends wepy.page {
-    config = {
-      navigationBarTitleText: "我的下载",
-    };
-    data = {
-      videoList: [],
-      musicList: [],
-      downloadList: []
-    };
-    components = {
-      top: Top
-    };
-    methods = {
-      del(item, index) {
-        let _self = this
-        wepy.showModal({
-          title: '删除下载文件', //提示的标题,
-          content: '是否开始删除该内容：' + item.name, //提示的内容,
-          showCancel: true, //是否显示取消按钮,
-          cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
-          cancelColor: '#000000', //取消按钮的文字颜色,
-          confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
-          confirmColor: '#3CC51F', //确定按钮的文字颜色,
-          success: res => {
-            if (res.confirm) {
-              wepy.removeSavedFile({
-                filePath: item.url, //文件路径,
-                success: res => {
-                  if (item.type === 'video') {
-                    _self.videoList.splice(index, 1)
-                  }
-                  if (item.type === 'music') {
-                    _self.musicList.splice(index, 1)
-                  }
-                  _self.$apply()
-                  wepy.showToast({
-                    title: '删除成功', //提示的内容,
-                    icon: 'success', //图标,
-                    duration: 2000, //延迟时间,
-                    mask: true, //显示透明蒙层，防止触摸穿透,
-                    success: res => {
-                      // _self.getDownloadFile()
-                    }
-                  });
+import wepy from 'wepy';
+import api from '@/tools/api.js';
+import Top from '@/components/common/top';
+export default class Download extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的下载'
+  };
+  data = {
+    videoList: [],
+    musicList: [],
+    downloadList: []
+  };
+  components = {
+    top: Top
+  };
+  methods = {
+    del(item, index) {
+      let _self = this;
+      wepy.showModal({
+        title: '删除下载文件', //提示的标题,
+        content: '是否开始删除该内容：' + item.name, //提示的内容,
+        showCancel: true, //是否显示取消按钮,
+        cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
+        cancelColor: '#000000', //取消按钮的文字颜色,
+        confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
+        confirmColor: '#3CC51F', //确定按钮的文字颜色,
+        success: res => {
+          if (res.confirm) {
+            wepy.removeSavedFile({
+              filePath: item.url, //文件路径,
+              success: res => {
+                if (item.type === 'video') {
+                  _self.videoList.splice(index, 1);
                 }
-              });
-            }
-          }
-        });
-      },
-      viewDownload(item) {
-        if (item.type == 'video') {
-          let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.videoId
-          wepy.navigateTo({
-            url: url
-          })
-        } else {
-          const backgroundAudioManager = wx.getBackgroundAudioManager()
-          backgroundAudioManager.title = item.name
-          wepy.showModal({
-            title: '播放音乐', //提示的标题,
-            content: '是否开始播放音乐：' + item.name, //提示的内容,
-            showCancel: true, //是否显示取消按钮,
-            cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
-            cancelColor: '#000000', //取消按钮的文字颜色,
-            confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
-            confirmColor: '#3CC51F', //确定按钮的文字颜色,
-            success: res => {
-              if (res.confirm) {
-                backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
+                if (item.type === 'music') {
+                  _self.musicList.splice(index, 1);
+                }
+                _self.$apply();
+                wepy.showToast({
+                  title: '删除成功', //提示的内容,
+                  icon: 'success', //图标,
+                  duration: 2000, //延迟时间,
+                  mask: true, //显示透明蒙层，防止触摸穿透,
+                  success: res => {
+                    // _self.getDownloadFile()
+                  }
+                });
               }
-            }
-          });
+            });
+          }
         }
-      },
-      viewDownloadMusic(item) {
-        let url = item.url
-        const backgroundAudioManager = wx.getBackgroundAudioManager()
-        backgroundAudioManager.title = item.name
+      });
+    },
+    viewDownload(item) {
+      if (item.type == 'video') {
+        let url =
+          '/pages/resource/player/videoPlay?url=' +
+          item.url +
+          '&id=' +
+          item.videoId;
+        wepy.navigateTo({
+          url: url
+        });
+      } else {
+        const backgroundAudioManager = wx.getBackgroundAudioManager();
+        backgroundAudioManager.title = item.name;
         wepy.showModal({
           title: '播放音乐', //提示的标题,
           content: '是否开始播放音乐：' + item.name, //提示的内容,
@@ -133,66 +119,98 @@
           confirmColor: '#3CC51F', //确定按钮的文字颜色,
           success: res => {
             if (res.confirm) {
-              backgroundAudioManager.src = url // 设置了 src 之后会自动播放
+              backgroundAudioManager.src = item.url; // 设置了 src 之后会自动播放
             }
           }
         });
-      },
-      viewDownloadVideo(item) {
-        let url = '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.videoId
-        wepy.navigateTo({
-          url: url
-        })
       }
-    };
-    events = {};
-    watch = {};
-    computed = {};
-    onLoad() {
-      this.getDownloadFile()
-    };
-    getDownloadFile() {
-      let _self = this
-      _self.videoList = []
-      _self.musicList = []
-      _self.downloadList = []
-      let id = wepy.getStorageSync('userId');
-      let downloadFile = wepy.getStorageSync('downloadFile');
-      let downloadData = JSON.parse(downloadFile)
-      this.downloadList = downloadData
-      _self.$apply();
-      wepy.getSavedFileList({
-        success: res => {
-          console.log(res);
-          res.fileList.forEach((e) => {
-            downloadData.forEach((ele) => {
-              if (ele.url == e.filePath) {
-                if (ele.type === 'video') {
-                  _self.videoList.push(ele)
-                }
-                if (ele.type === 'music') {
-                  _self.musicList.push(ele)
-                }
-              }
-            })
-          })
-        }
+    },
+    viewDownloadMusic(item) {
+      let url =
+        '/pages/resource/player/musicPlay?url=' +
+        item.url +
+        '&name=' +
+        item.title;
+      wepy.navigateTo({
+        url: url
       });
-    };
-    onShow() {};
+      // let url = item.url
+      // const backgroundAudioManager = wx.getBackgroundAudioManager()
+      // backgroundAudioManager.title = item.name
+      // wepy.showModal({
+      //   title: '播放音乐', //提示的标题,
+      //   content: '是否开始播放音乐：' + item.name, //提示的内容,
+      //   showCancel: true, //是否显示取消按钮,
+      //   cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
+      //   cancelColor: '#000000', //取消按钮的文字颜色,
+      //   confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
+      //   confirmColor: '#3CC51F', //确定按钮的文字颜色,
+      //   success: res => {
+      //     if (res.confirm) {
+      //       backgroundAudioManager.src = url // 设置了 src 之后会自动播放
+      //     }
+      //   }
+      // });
+    },
+    viewDownloadVideo(item) {
+      let url =
+        '/pages/resource/player/videoPlay?url=' +
+        item.url +
+        '&id=' +
+        item.videoId;
+      wepy.navigateTo({
+        url: url
+      });
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad() {
+    this.getDownloadFile();
   }
+  getDownloadFile() {
+    let _self = this;
+    _self.videoList = [];
+    _self.musicList = [];
+    _self.downloadList = [];
+    let id = wepy.getStorageSync('userId');
+    let downloadFile = wepy.getStorageSync('downloadFile');
+    let downloadData = JSON.parse(downloadFile);
+    this.downloadList = downloadData;
+    _self.$apply();
+    wepy.getSavedFileList({
+      success: res => {
+        console.log(res);
+        res.fileList.forEach(e => {
+          downloadData.forEach(ele => {
+            if (ele.url == e.filePath) {
+              if (ele.type === 'video') {
+                _self.videoList.push(ele);
+              }
+              if (ele.type === 'music') {
+                _self.musicList.push(ele);
+              }
+            }
+          });
+        });
+      }
+    });
+  }
+  onShow() {}
+}
 </script>
 
 <style lang='less'>
-  .download {
-    .tips {
-      text-align: center;
-      line-height: 3rem;
-      width: 100%;
-      font-size: 14px;
-    }
-    .del {
-      color: coral;
-    }
+.download {
+  .tips {
+    text-align: center;
+    line-height: 3rem;
+    width: 100%;
+    font-size: 14px;
   }
+  .del {
+    color: coral;
+  }
+}
 </style>

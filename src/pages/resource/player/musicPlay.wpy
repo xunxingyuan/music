@@ -1,0 +1,279 @@
+<!--  -->
+<template>
+  <view class="mainPage musicPlay">
+    <top title="音频" backColor="black" back="yes"></top>
+    <view class="musicBox">
+      <view class="musicInner">
+        <view class="title">
+          <text>{{musicName}}</text>
+        </view>
+        <view class="logo">
+          <view>
+            <image class='icon' animation="{{animationData}}" src="../../../resource/music.png" mode="scaleToFill" lazy-load="false">
+            </image>
+          </view>
+        </view>
+        <view class="ctrl">
+          <view class="stepView">
+            <view class="step">
+              <text wx:if="{{getTime!=='00:00'}}">{{getTime}}</text>
+            </view>
+            <view class="stepShow">
+              <slider @change="sliderChange" min="0" max="{{musicLen}}" block-size="12" value="{{musicStep}}" backgroundColor="#999" />
+            </view>
+            <view class="step">
+              <text wx:if="{{totalTime!=='00:00'}}">{{totalTime}}</text>
+            </view>
+          </view>
+          <view class="flex">
+            <!-- <view class="btn">后退</view> -->
+            <view class="btn" @tap="play" wx:if="{{!playStatus}}">
+              <image class='icon' src="../../../resource/play.png" mode="scaleToFill" lazy-load="false">
+              </image>
+            </view>
+            <view class="btn" @tap="pause" wx:if="{{playStatus}}">
+              <image class='icon' src="../../../resource/pause.png" mode="scaleToFill" lazy-load="false">
+              </image>
+            </view>
+            <!-- <view
+                    class="btn"
+                    @longpress="beginForward"
+                    @touchend="stopForward"
+                    @touchcancel="stopForward"
+                    >快进</view>-->
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import Top from '@/components/common/top';
+  export default class musicPlay extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    };
+    data = {
+      musicName: '',
+      musicPlayer: '',
+      musicLen: 0,
+      musicStep: 0,
+      playStatus: false,
+      stepCtrl: '',
+      stepValue: 0,
+      stepTime: 0,
+      stepSpeed: 1,
+      animation:'',
+      animationData: {},
+      animationCtrl: ''
+    };
+    components = {
+      top: Top
+    };
+    methods = {
+      sliderChange: function(val) {
+        console.log(val);
+        this.musicPlayer.play();
+        this.musicPlayer.seek(val.detail.value);
+      },
+      play: function() {
+        this.musicPlayer.play();
+      },
+      pause: function() {
+        this.musicPlayer.pause();
+      }
+      // beginForward: function() {
+      //   this.stepTime = 0;
+      //   this.stepValue = 0;
+      //   this.stepSpeed = 1;
+      //   this.musicPlayer.play();
+      //   this.musicPlayer.pause();
+      //   this.stepCtrl = setInterval(() => {
+      //     this.stepTime += 1;
+      //     if (this.stepTime > 5) {
+      //       this.stepSpeed = 5;
+      //     } else if (this.stepTime > 10) {
+      //       this.stepSpeed = 10;
+      //     } else {
+      //       this.stepSpeed = 1;
+      //     }
+      //     this.$apply();
+      //     this.stepValue += this.stepSpeed;
+      //     this.musicStep += this.stepValue;
+      //     if (this.musicStep === this.musicLen) {
+      //       clearInterval(this.stepCtrl);
+      //     }
+      //     this.$apply();
+      //   }, 1000);
+      //   this.$apply();
+      // },
+      // stopForward: function() {
+      //   clearInterval(this.stepCtrl);
+      //   this.musicPlayer.play();
+      //   let val = this.musicStep + this.stepValue;
+      //   this.musicPlayer.seek(val);
+      // }
+    };
+    events = {
+      'routerchange': () => {
+        this.musicPlayer.destroy()
+      }
+    };
+    watch = {};
+    computed = {
+      getTime() {
+        let m = Math.floor(this.musicStep / 60);
+        let s = this.musicStep % 60;
+        if (m < 10) {
+          m = '0' + m;
+        }
+        if (s < 10) {
+          s = '0' + s;
+        }
+        let str = m + ':' + s;
+        return str;
+      },
+      totalTime() {
+        let m = Math.floor(this.musicLen / 60);
+        let s = this.musicLen % 60;
+        if (s < 10) {
+          s = '0' + s;
+        }
+        if (m < 10) {
+          m = '0' + m;
+        }
+        let str = m + ':' + s;
+        return str;
+      }
+    };
+    onLoad(options) {
+      let _self = this;
+      // this.videoId = options.url
+      const musicPlayer = wx.createInnerAudioContext();
+      this.musicPlayer = musicPlayer
+      let innerAudioContext = this.musicPlayer;
+      innerAudioContext.autoplay = true;
+      innerAudioContext.src = options.url
+      this.musicName = options.name
+      innerAudioContext.onPlay(() => {
+        console.log('开始播放');
+        _self.playStatus = true;
+        // _self.animationCtrl = setInterval(()=>{
+        //   _self.createAnimation()
+        // },1000)
+        _self.$apply();
+      });
+      innerAudioContext.onPause(() => {
+        console.log('播放暂停');
+        _self.playStatus = false;
+        // clearInterval(this.animationCtrl);
+        _self.$apply();
+      });
+      innerAudioContext.onTimeUpdate(() => {
+        _self.musicLen = Math.floor(innerAudioContext.duration);
+        _self.musicStep = Math.floor(innerAudioContext.currentTime);
+        _self.$apply();
+      });
+      innerAudioContext.onError(res => {
+        console.log(res.errMsg);
+        console.log(res.errCode);
+      });
+      // let animation = wx.createAnimation({
+      //   duration: 1000,
+      //   timingFunction: 'ease',
+      // })
+      // _self.animation = animation
+      _self.$apply();
+    }
+    onShow() {};
+    createAnimation() {
+      let _self = this
+      _self.animation.rotate(45)
+      _self.animationData = _self.animation.export();
+      _self.$apply();
+    }
+  }
+</script>
+
+<style lang='less'>
+  .musicPlay {
+    position: relative;
+    box-sizing: border-box;
+    text-align: center;
+    .musicBox {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      box-sizing: border-box;
+      background: #fff;
+      padding: 1rem;
+      padding-top: 190rpx;
+      .musicInner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+        border: solid 1px #999;
+        background: #eee;
+        border-radius: 3px; // padding: 1rem;
+        .title {
+          font-size: 18px;
+          height: 150rpx;
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 2rem;
+          width: 60%;
+        }
+        .logo {
+          height: 30vh;
+          width: 100%; // border: solid 1px #ddd;
+          margin: 3rem 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          .icon {
+            width: 200px;
+            height: 200px;
+          }
+        }
+        .ctrl {
+          width: 100%;
+          .stepView {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            .stepShow {
+              flex: 1;
+            }
+            .step {
+              width: 3rem;
+              min-width: 3rem;
+              font-size: 14px;
+            }
+          }
+          .flex {
+            display: flex;
+            margin-top: 1.5rem;
+            .btn {
+              margin: 0 2rem;
+              .icon {
+                width: 60px;
+                height: 60px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+</style>
