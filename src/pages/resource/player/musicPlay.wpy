@@ -121,6 +121,9 @@
         this.musicPlayer.destroy()
       }
     };
+    onUnload(){
+      this.musicPlayer.destroy()
+    };
     watch = {};
     computed = {
       getTime() {
