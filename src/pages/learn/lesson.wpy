@@ -5,8 +5,8 @@
     <view class='block'>
       <view><text class='time'>{{lessonData.name}}</text></view>
       <view class='flex msg'>
-        <text class='name'>{{lessonData.className}}</text>
-        <text class='teacher'>{{lessonData.teacherName}}</text>
+        <text class='name' wx:if="{{lessonData.className!=='[]'}}">{{lessonData.className}}</text>
+        <text class='teacher' wx:if="{{lessonData.teacherName!==''}}">{{lessonData.teacherName}}</text>
       </view>
     </view>
     <view class='block'>
