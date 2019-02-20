@@ -3,8 +3,9 @@
   <scroll-view id="homeContain" class='home mainPage'>
     <!-- <top :title.sync='title' backColor="no" back='no'></top> -->
     <view class='topBox {{activeTab}}'>
-      <image class='bg' src="{{bgSrc}}" mode="aspectFill" lazy-load="false">
+      <image wx:if="{{activeTab !== 'learn'}}" class='bg' src="{{bgSrc}}" mode="aspectFill" lazy-load="false">
       </image>
+      <view wx:if="{{activeTab == 'learn'}}" class="homeTop"></view>
     </view>
     <view class="searchTop" wx:if="{{activeTab == 'learn'||activeTab == 'resource'}}">
       <search :type="video"></search>
@@ -178,6 +179,10 @@
         width: 100%;
         height: 100%;
       }
+      .homeTop{
+        height: 150rpx;
+        background: #000000;
+      }
     }
     .searchTop {
       position: fixed;
@@ -227,7 +232,7 @@
       z-index: 12;
     }
     .learn{
-      z-index: 12;
+      height: 150rpx;
     }
   }
 </style>

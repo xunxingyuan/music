@@ -1,146 +1,298 @@
 <!--  -->
 <template>
-  <view class='learn'>
-    <view class='searchTop'>
+  <view class="learnContain">
+    <view class="typeChose">
+      <repeat for="{{typeList}}" key="index" index="index" item="item">
+        <text
+          :class="{'active': choseIndex == index}"
+          @tap="choseType({{item}},{{index}})"
+        >{{item.name}}</text>
+        <text wx:if="{{index!==2}}" class="point">.</text>
+      </repeat>
+    </view>
+    <view class="searchTop">
       <search :type="learn"></search>
     </view>
-    <learnList :listData.sync="lists" class='uptop'></learnList>
-    <text class='listNone' wx:if="{{lists.length === 0}}">暂无相关课程</text>
+    <learnList wx:if="{{showContain}}" :listData.sync="lists" class="uptop"></learnList>
+    <view wx:if="{{!showContain&&choseIndex==1}}" class="categoryList">
+      <repeat for="{{categoryList}}" key="index" index="index" item="item">
+        <view class="categoryBlock" @tap="getCategoryContent({{item}})">
+          <view class="blockInner">
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <text class="listNone" wx:if="{{lists.length === 0&&showContain}}">暂无相关课程</text>
+    <text class="listNone" wx:if="{{categoryList.length === 0&&choseIndex==1&&!showContain}}">暂无相关分类</text>
+    <text
+      class="listNone"
+      wx:if="{{lessonCategory.length === 0&&choseIndex==2&&!showContain}}"
+    >暂无相关专题</text>
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import Search from '@/components/common/search';
-  import LearnList from '@/components/learn/list';
-  import api from '@/tools/api.js';
-  export default class Learn extends wepy.component {
-    config = {
-      navigationBarTitleText: '学习'
-    };
-    props = {};
-    data = {
-      lists: [],
-      pageNumber: 1
-    };
-    components = {
-      learnList: LearnList,
-      search: Search
-    };
-    methods = {};
-    events = {
-      'reachBottom': () => {
-        let num = Math.floor(this.lists.length / 10) + 1
-        if (this.pageNumber != num) {
-          this.pageNumber = num
-        }
+import wepy from 'wepy';
+import Search from '@/components/common/search';
+import LearnList from '@/components/learn/list';
+import api from '@/tools/api.js';
+export default class Learn extends wepy.component {
+  config = {
+    navigationBarTitleText: '学习'
+  };
+  props = {};
+  data = {
+    lists: [],
+    pageNumber: 1,
+    typeList: [
+      {
+        name: '最新课程'
+      },
+      {
+        name: '分类'
+      },
+      {
+        name: '专题'
+      }
+    ],
+    choseIndex: 0,
+    showContain: true,
+    categoryList: [],
+    typeParam: {
+      pageNumber: 1,
+      type: ''
+    },
+    selectItem: '',
+    lessonCategory: []
+  };
+  components = {
+    learnList: LearnList,
+    search: Search
+  };
+  methods = {
+    choseType(item, index) {
+      console.log(index);
+      this.choseIndex = index;
+      if (index == 0) {
+        this.showContain = true;
+        this.pageNumber = 1;
         this.getLearn();
+      } else if (index == 1) {
+        this.typeParam.pageNumber = 1;
+        this.getCategory();
+        this.lists = [];
+      } else if (index == 2) {
+        this.showContain = false;
+        this.lists = [];
       }
-    };
-    watch = {};
-    computed = {};
-    onLoad() {
-      this.getLearn();
+      this.$apply();
+    },
+    getCategoryContent(item) {
+      this.selectItem = item;
+      this.getCategoryLesson(item);
     }
-    getLearn() {
-      let id = wepy.getStorageSync('userId');
-      let role = wepy.getStorageSync('role');
-      let userInfo = wepy.getStorageSync('userInfo');
-      let userData = JSON.parse(userInfo)
-      let searchData = {
-        pageNumber: this.pageNumber
-      }
-      // //console.log(userData);
-      if (role == 'student') {
-        searchData['ccode'] == userData.vipUser.ccode
-      }
-      api.course.searchCourse(searchData).then(res => {
-        if (res.data.code === 200) {
-          if (this.pageNumber === 1) {
-            this.lists = res.data.data;
-          } else {
-            res.data.data.forEach(element => {
-              if(this.checkId(element.id,this.lists)){
-                this.lists.push(element)
-              }
-            });
+  };
+  events = {
+    reachBottom: () => {
+      let num = Math.floor(this.lists.length / 10) + 1;
+      if (this.showContain) {
+        if (this.choseIndex == 0) {
+          if (this.pageNumber != num) {
+            this.pageNumber = num;
           }
-          this.lists.forEach(element => {
-            if (element.schedule.length > 8) {
-              let date = element.schedule;
-              let day = new Date(date).getDay();
-              switch (day) {
-                case 1:
-                  element['day'] = '周一';
-                  break;
-                case 2:
-                  element['day'] = '周二';
-                  break;
-                case 3:
-                  element['day'] = '周三';
-                  break;
-                case 4:
-                  element['day'] = '周四';
-                  break;
-                case 5:
-                  element['day'] = '周五';
-                  break;
-                case 6:
-                  element['day'] = '周六';
-                  break;
-                case 0:
-                  element['day'] = '周日';
-                  break;
-                default:
-                  break;
-              }
-              if (element.schedule.length > 5) {
-                element.schedule = element.schedule.slice(5, 10)
-                // element.schedule = element.schedule.replace('-', '-')
-              }
+          this.getLearn();
+        } else if (this.choseIndex == 1) {
+          if (this.typeParam.pageNumber != num) {
+            this.typeParam.pageNumber = num;
+          }
+          this.getCategoryLesson(this.selectItem);
+        } else if (this.choseIndex == 2) {
+        }
+      }
+    }
+  };
+  watch = {};
+  computed = {};
+  onLoad() {
+    this.getLearn();
+  }
+  getLearn() {
+    let id = wepy.getStorageSync('userId');
+    let role = wepy.getStorageSync('role');
+    let userInfo = wepy.getStorageSync('userInfo');
+    let userData = JSON.parse(userInfo);
+    let searchData = {
+      pageNumber: this.pageNumber
+    };
+    // //console.log(userData);
+    if (role == 'student') {
+      searchData['ccode'] == userData.vipUser.ccode;
+    }
+    api.course.searchCourse(searchData).then(res => {
+      if (res.data.code === 200) {
+        if (this.pageNumber === 1) {
+          this.lists = res.data.data;
+        } else {
+          res.data.data.forEach(element => {
+            if (this.checkId(element.id, this.lists)) {
+              this.lists.push(element);
             }
           });
-          this.$apply();
         }
-      });
-    }
-    onShow() {};
-    checkId(id, arr) {
-      let flag = true
-      arr.forEach(element => {
-        if (element.id === id) {
-          flag = false
-        }
-      });
-      return flag
-    }
+        this.lists.forEach(element => {
+          if (element.schedule.length > 8) {
+            let date = element.schedule;
+            let day = new Date(date).getDay();
+            switch (day) {
+              case 1:
+                element['day'] = '周一';
+                break;
+              case 2:
+                element['day'] = '周二';
+                break;
+              case 3:
+                element['day'] = '周三';
+                break;
+              case 4:
+                element['day'] = '周四';
+                break;
+              case 5:
+                element['day'] = '周五';
+                break;
+              case 6:
+                element['day'] = '周六';
+                break;
+              case 0:
+                element['day'] = '周日';
+                break;
+              default:
+                break;
+            }
+            if (element.schedule.length > 5) {
+              element.schedule = element.schedule.slice(5, 10);
+              // element.schedule = element.schedule.replace('-', '-')
+            }
+          }
+        });
+        this.$apply();
+      }
+    });
   }
+  onShow() {}
+  checkId(id, arr) {
+    let flag = true;
+    arr.forEach(element => {
+      if (element.id === id) {
+        flag = false;
+      }
+    });
+    return flag;
+  }
+  getCategoryLesson(item) {
+    let role = wepy.getStorageSync('role');
+    let userInfo = wepy.getStorageSync('userInfo');
+    let userData = JSON.parse(userInfo);
+    if (role == 'student') {
+      this.typeParam['ccode'] == userData.vipUser.ccode;
+    }
+    this.typeParam.type = item.name;
+    api.course.getCategoryLesson(this.typeParam).then(res => {
+      if (res.data.code === 200) {
+        let listData = res.data.data[this.typeParam.type];
+        if (this.typeParam.pageNumber === 1) {
+          this.lists = listData;
+        } else {
+          listData.forEach(element => {
+            if (this.checkId(element.id, this.lists)) {
+              this.lists.push(element);
+            }
+          });
+        }
+        this.showContain = true;
+        this.$apply();
+      }
+    });
+  }
+  getCategory() {
+    api.course.getCategory().then(res => {
+      if (res.data.code === 200) {
+        this.categoryList = res.data.data;
+        this.showContain = false;
+        this.$apply();
+      }
+    });
+  }
+}
 </script>
 
 <style lang='less'>
-  .learn {
+.learnContain {
+  width: 100%;
+  height: 100%;
+  min-height: 10rem;
+  position: relative;
+  .uptop {
+    margin-top: 0.5rem;
+    margin-bottom: 140rpx;
+  }
+  .searchTop {
+    position: fixed;
+    top: 1.5rem;
+    left: 0;
+    width: 50%;
+    z-index: 8;
+  }
+  .listNone {
+    position: absolute;
+    top: 50%;
     width: 100%;
-    height: 100%;
-    min-height: 10rem;
-    position: relative;
-    .uptop {
-      margin-top: 0.5rem;
-      margin-bottom: 140rpx;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+  }
+  .typeChose {
+    display: flex;
+    align-items: center;
+    height: 100rpx;
+    padding: 0 1rem;
+    color: #666;
+    font-size: 14px;
+    .point {
+      margin-bottom: 0.7rem;
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
     }
-    .searchTop {
-      position: fixed;
-      top: 1.5rem;
-      left: 0;
-      width: 50%;
-      z-index: 8;
-    }
-    .listNone {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      text-align: center;
-      font-size: 14px;
-      color: #666;
+    .active {
+      font-size: 20px;
+      color: #333;
     }
   }
+  .categoryList {
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    padding: 0 0.5rem;
+    .categoryBlock {
+      width: 50%;
+      height: 250rpx;
+      padding: 0.5rem;
+      box-sizing: border-box;
+      .blockInner {
+        width: 100%;
+        height: 100%;
+        background: #010101;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        padding: 5px;
+        box-sizing: border-box;
+        text-align: center;
+        border-radius: 2px;
+      }
+    }
+  }
+}
 </style>
