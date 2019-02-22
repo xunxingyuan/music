@@ -19,6 +19,15 @@
         <view class="categoryBlock" @tap="getCategoryContent({{item}})">
           <view class="blockInner">
             <text>{{item.name}}</text>
+            <image wx:if="{{item.id == 780}}" src="../resource/guitar.jpg" mode="aspectFill"
+              lazy-load="true">
+            </image>
+            <image wx:if="{{item.id == 779}}" src="../resource/piano.jpg" mode="aspectFill"
+              lazy-load="true">
+            </image>
+            <image wx:if="{{item.id == 781}}" src="../resource/common.jpg" mode="aspectFill"
+              lazy-load="true">
+            </image>
           </view>
         </view>
       </repeat>
@@ -259,7 +268,7 @@ export default class Learn extends wepy.component {
     color: #666;
     font-size: 14px;
     .point {
-      margin-bottom: 0.7rem;
+      margin-bottom: 0.5rem;
       margin-left: 0.5rem;
       margin-right: 0.5rem;
     }
@@ -275,22 +284,37 @@ export default class Learn extends wepy.component {
     padding: 0 0.5rem;
     .categoryBlock {
       width: 50%;
-      height: 250rpx;
+      height: auto;
       padding: 0.5rem;
       box-sizing: border-box;
       .blockInner {
         width: 100%;
-        height: 100%;
+        height: 250rpx;
         background: #010101;
         color: #fff;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: flex-start;
+        overflow: hidden;
+        justify-content: flex-start;
         font-size: 16px;
         padding: 5px;
         box-sizing: border-box;
         text-align: center;
-        border-radius: 2px;
+        border-radius: 3px;
+        position: relative;
+        image {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 250rpx;
+          z-index: 5;
+        }
+        text {
+          z-index: 10;
+          margin-left: 10px;
+          margin-top: 5px;
+        }
       }
     }
   }

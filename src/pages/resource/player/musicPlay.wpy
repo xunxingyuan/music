@@ -158,7 +158,8 @@
       this.musicPlayer = musicPlayer
       let innerAudioContext = this.musicPlayer;
       innerAudioContext.autoplay = true;
-      innerAudioContext.src = options.url
+      innerAudioContext.src = options.url;
+
       this.musicName = options.name
       innerAudioContext.onPlay(() => {
         console.log('开始播放');
