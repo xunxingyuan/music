@@ -19,6 +19,9 @@
         <view class="categoryBlock" @tap="getCategoryContent({{item}})">
           <view class="blockInner">
             <text>{{item.name}}</text>
+            <image wx:if="{{item.id != 780&&item.id != 779&&item.id != 781}}" src="../resource/piano.jpg" mode="aspectFill"
+              lazy-load="true">
+            </image>
             <image wx:if="{{item.id == 780}}" src="../resource/guitar.jpg" mode="aspectFill"
               lazy-load="true">
             </image>

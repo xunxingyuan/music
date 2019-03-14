@@ -6,19 +6,35 @@
         <text class="logoText">LS艺术界</text>
         <button @tap="login" type="primary">VIP登录</button>
         <view class="normal" @tap="auth(3)" open-type="getUserInfo">游客登录</view>
+        <view class="normal regist" @tap="regist">没有账号，马上注册</view>
       </view>
       <view class="coverBox" wx:if="{{showLogin}}" @tap="hide">
         <view class="loginCheck" @tap.stop="show">
           <text>LS艺术界</text>
           <view class="msg">
-            <input type="number" bindinput="setPhone" placeholder="输入VIP手机号码" />
+            <input type="number" bindinput="setPhone" placeholder="输入VIP手机号码">
             <view class="authCode">
-              <input type="number" bindinput="setAuthCode" class="authInput" placeholder="输入验证码" />
+              <input type="number" bindinput="setAuthCode" class="authInput" placeholder="输入验证码">
               <button class="getCode" wx:if="{{!showTimeCount}}" @tap="getAuthCode">获取验证码</button>
               <button class="getCode" wx:if="{{showTimeCount}}">再次发送({{timeLeft}}s)</button>
             </view>
           </view>
           <button type="primary" class="auth" @tap="auth(1)">VIP登录</button>
+        </view>
+      </view>
+      <view class="coverBox" wx:if="{{showRegist}}" @tap="hide">
+        <view class="loginCheck" @tap.stop="regist">
+          <text>用户注册</text>
+          <view class="msg">
+            <input class="username" bindinput="setName" placeholder="输入用户名/学员姓名">
+            <input type="number" bindinput="setPhone" placeholder="输入手机号码">
+            <view class="authCode">
+              <input type="number" bindinput="setAuthCode" class="authInput" placeholder="输入验证码">
+              <button class="getCode" wx:if="{{!showTimeCount}}" @tap="getAuthCode">获取验证码</button>
+              <button class="getCode" wx:if="{{showTimeCount}}">再次发送({{timeLeft}}s)</button>
+            </view>
+          </view>
+          <button type="primary" class="auth" @tap="registSubmit">提交注册</button>
         </view>
       </view>
       <view class="coverBox second" wx:if="{{showAuth}}">
@@ -28,46 +44,138 @@
         </view>
       </view>
     </view>
-    <image class="loginBg" src="../resource/login_bg.jpg" mode="scaleToFill" lazy-load="false" />
+    <image class="loginBg" src="../resource/login_bg.jpg" mode="scaleToFill" lazy-load="false">
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import api from '../tools/api.js';
-  export default class Index extends wepy.page {
-    props = {};
-    data = {
-      showLogin: false,
-      showAuth: false,
-      phoneNumber: '',
-      authCode: '',
-      showTimeCount: false,
-      timeLeft: 60,
-      countUtil: ''
-    };
-    components = {};
-    methods = {
-      show() {
+import wepy from 'wepy';
+import api from '../tools/api.js';
+export default class Index extends wepy.page {
+  props = {};
+  data = {
+    showLogin: false,
+    showRegist: false,
+    showAuth: false,
+    phoneNumber: '',
+    authCode: '',
+    username: '',
+    showTimeCount: false,
+    timeLeft: 60,
+    countUtil: ''
+  };
+  components = {};
+  methods = {
+    show() {
+      this.showLogin = true;
+    },
+    hide() {
+      this.showLogin = false;
+      this.showRegist = false;
+    },
+    regist() {
+      this.showRegist = true;
+    },
+    registSubmit() {
+      console.log(this.$parent.globalData.userInfo);
+
+      if (this.username == '') {
+        wepy.showToast({
+          title: '用户名不能为空',
+          icon: 'none',
+          duration: 1000
+        });
+        return;
+      }
+      if (this.phoneNumber == '') {
+        wepy.showToast({
+          title: '手机号码不能为空',
+          icon: 'none',
+          duration: 1000
+        });
+        return;
+      }
+      if (this.authCode == '') {
+        wepy.showToast({
+          title: '验证码不能为空',
+          icon: 'none',
+          duration: 1000
+        });
+        return;
+      }
+      api.login
+        .regist({
+          avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
+          name: this.username,
+          nickname: this.$parent.globalData.userInfo.nickName,
+          openid: this.$parent.globalData.openId,
+          phone: this.phoneNumber,
+          verificationCode: this.authCode,
+          sex: this.$parent.globalData.userInfo.gender
+        })
+        .then(res => {
+          if (res.data.code == 200) {
+            wepy.showToast({
+              title: '注册成功！',
+              icon: 'none',
+              duration: 1000
+            });
+            this.showTimeCount = false;
+            this.timeLeft = 60;
+            this.showRegist = false;
+          } else {
+            wepy.showToast({
+              title: res.data.message,
+              icon: 'none',
+              duration: 1000
+            });
+          }
+        });
+    },
+    async login() {
+      let vipId = await wepy.getStorageSync('vipId');
+      if (!vipId || vipId == 'null') {
         this.showLogin = true;
-      },
-      hide() {
-        this.showLogin = false;
-      },
-      async login() {
-        let vipId = await wepy.getStorageSync('vipId');
-        if (!vipId || vipId == 'null') {
-          this.showLogin = true;
-          this.$apply();
-        } else {
+        this.$apply();
+      } else {
+        api.login
+          .refresh({
+            openid: this.$parent.globalData.openId
+          })
+          .then(res => {
+            // wepy.setStorageSync('role', 'teacher')
+            if (res.data.code === 200) {
+              wepy.setStorageSync('token', res.data.data);
+              wepy.redirectTo({
+                url: '/pages/home'
+              });
+            } else {
+              wepy.showToast({
+                title: res.data.message,
+                icon: 'none',
+                duration: 1000
+              });
+            }
+          });
+      }
+    },
+    auth(num) {
+      switch (num) {
+        case '3':
+          //游客登录
           api.login
-            .refresh({
+            .vistorLogin({
+              avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
+              nickName: this.$parent.globalData.userInfo.nickName,
               openid: this.$parent.globalData.openId
             })
             .then(res => {
-              // wepy.setStorageSync('role', 'teacher')
-              if (res.data.code === 200) {
-                wepy.setStorageSync('token', res.data.data);
+              if (res.data.code == 200) {
+                wepy.setStorageSync('role', 'vistor');
+                wepy.setStorageSync('token', res.data.data.token);
+                wepy.setStorageSync('userId', res.data.data.appUser.id);
+                wepy.setStorageSync('vipId', null);
+                wepy.setStorageSync('userInfo', JSON.stringify(res.data.data));
                 wepy.redirectTo({
                   url: '/pages/home'
                 });
@@ -79,99 +187,80 @@
                 });
               }
             });
-        }
-      },
-      auth(num) {
-        switch (num) {
-          case '3':
-            //游客登录
-            api.login
-              .vistorLogin({
-                avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
-                nickName: this.$parent.globalData.userInfo.nickName,
-                openid: this.$parent.globalData.openId
-              })
-              .then(res => {
-                if (res.data.code == 200) {
-                  wepy.setStorageSync('role', 'vistor');
-                  wepy.setStorageSync('token', res.data.data.token);
-                  wepy.setStorageSync('userId', res.data.data.appUser.id);
-                  wepy.setStorageSync('vipId', null);
-                  wepy.setStorageSync('userInfo', JSON.stringify(res.data.data));
-                  wepy.redirectTo({
-                    url: '/pages/home'
-                  });
+          break;
+        case '1':
+          //VIP登录
+          api.login
+            .vipLogin({
+              avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
+              nickname: this.$parent.globalData.userInfo.nickName,
+              openid: this.$parent.globalData.openId,
+              phone: this.phoneNumber,
+              verificationCode: this.authCode
+            })
+            .then(res => {
+              if (res.data.code == 200) {
+                clearInterval(this.countUtil);
+                if (
+                  res.data.data.permission.role == '学生' ||
+                  res.data.data.permission.role == '学生家长' ||
+                  res.data.data.permission.role == '普通用户'
+                ) {
+                  wepy.setStorageSync('role', 'student');
                 } else {
-                  wepy.showToast({
-                    title: res.data.message,
-                    icon: 'none',
-                    duration: 1000
-                  });
+                  wepy.setStorageSync('role', 'teacher');
                 }
-              });
-            break;
-          case '1':
-            //VIP登录
-            api.login
-              .vipLogin({
-                avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
-                nickname: this.$parent.globalData.userInfo.nickName,
-                openid: this.$parent.globalData.openId,
-                phone: this.phoneNumber,
-                verificationCode: this.authCode
-              })
-              .then(res => {
-                if (res.data.code == 200) {
-                  clearInterval(this.countUtil);
-                  if (
-                    res.data.data.permission.role == '学生' ||
-                    res.data.data.permission.role == '学生家长'
-                  ) {
-                    wepy.setStorageSync('role', 'student');
-                  } else {
-                    wepy.setStorageSync('role', 'teacher');
-                  }
-                  wepy.setStorageSync('token', res.data.data.token);
-                  wepy.setStorageSync('userId', res.data.data.appUser.id);
-                  wepy.setStorageSync('vipId', res.data.data.appUser.vipUserId);
-                  wepy.setStorageSync('userInfo', JSON.stringify(res.data.data));
-                  wepy.redirectTo({
-                    url: '/pages/home'
-                  });
-                } else {
-                  wepy.showToast({
-                    title: res.data.message,
-                    icon: 'none',
-                    duration: 1000
-                  });
-                }
-              });
-            break;
-          case '2':
-            wepy.setStorageSync('role', 'student');
-            wepy.redirectTo({
-              url: '/pages/home'
+                wepy.setStorageSync('token', res.data.data.token);
+                wepy.setStorageSync('userId', res.data.data.appUser.id);
+                wepy.setStorageSync('vipId', res.data.data.appUser.vipUserId);
+                wepy.setStorageSync('userInfo', JSON.stringify(res.data.data));
+                wepy.redirectTo({
+                  url: '/pages/home'
+                });
+              } else {
+                wepy.showToast({
+                  title: res.data.message,
+                  icon: 'none',
+                  duration: 1000
+                });
+              }
             });
-            break;
-          default:
-            break;
-        }
-      },
-      //获取鉴权
-      getAuth(e) {
-        if (e.detail.userInfo) {
-          this.$parent.globalData.userInfo = e.detail.userInfo;
-          this.showAuth = false;
-        }
-      },
-      setPhone(e) {
-        this.phoneNumber = e.detail.value;
-      },
-      setAuthCode(e) {
-        this.authCode = e.detail.value;
-      },
-      //获取验证码
-      async getAuthCode() {
+          break;
+        case '2':
+          wepy.setStorageSync('role', 'student');
+          wepy.redirectTo({
+            url: '/pages/home'
+          });
+          break;
+        default:
+          break;
+      }
+    },
+    //获取鉴权
+    getAuth(e) {
+      if (e.detail.userInfo) {
+        this.$parent.globalData.userInfo = e.detail.userInfo;
+        this.showAuth = false;
+      }
+    },
+    setPhone(e) {
+      this.phoneNumber = e.detail.value;
+    },
+    setAuthCode(e) {
+      this.authCode = e.detail.value;
+    },
+    setName(e) {
+      this.username = e.detail.value;
+    },
+    //获取验证码
+    async getAuthCode() {
+      if (this.phoneNumber == '') {
+        wepy.showToast({
+          title: '手机号码不能为空',
+          icon: 'none',
+          duration: 1000
+        });
+      } else {
         let result = await api.login.getCode({
           phone: this.phoneNumber
         });
@@ -195,137 +284,149 @@
           this.$apply();
         }
       }
-    };
-    countLeft() {
-      let _self = this;
-      _self.countUtil = setInterval(() => {
-        if (_self.timeLeft > 1) {
-          _self.timeLeft -= 1;
-          this.$apply();
-        } else {
-          clearInterval(_self.countUtil);
-          this.showTimeCount = false;
-          this.$apply();
-        }
-      }, 1000);
-      this.$apply();
     }
-    events = {};
-    watch = {};
-    computed = {};
-    async onLoad() {
-      let _self = this;
-      let downloadFile = await wepy.getStorageSync('downloadFile');
-      if (downloadFile == '') {
-        wepy.setStorageSync('downloadFile', '[]');
+  };
+  countLeft() {
+    let _self = this;
+    _self.countUtil = setInterval(() => {
+      if (_self.timeLeft > 1) {
+        _self.timeLeft -= 1;
+        this.$apply();
+      } else {
+        clearInterval(_self.countUtil);
+        this.showTimeCount = false;
+        this.$apply();
       }
-      await wx.getSetting({
-        success: res => {
-          if (res.authSetting['scope.userInfo']) {
-            _self.showAuth = false;
-          } else {
-            _self.showAuth = true;
-          }
-          this.$apply();
-          /*
-           * res.authSetting = {
-           *   "scope.userInfo": true,
-           *   "scope.userLocation": true
-           * }
-           */
-        }
-      });
-    }
-    onShow() {}
+    }, 1000);
+    this.$apply();
   }
+  events = {};
+  watch = {};
+  computed = {};
+  async onLoad() {
+    let _self = this;
+    let downloadFile = await wepy.getStorageSync('downloadFile');
+    if (downloadFile == '') {
+      wepy.setStorageSync('downloadFile', '[]');
+    }
+    await wx.getSetting({
+      success: res => {
+        if (res.authSetting['scope.userInfo']) {
+          _self.showAuth = false;
+        } else {
+          _self.showAuth = true;
+        }
+        this.$apply();
+        /*
+         * res.authSetting = {
+         *   "scope.userInfo": true,
+         *   "scope.userLocation": true
+         * }
+         */
+      }
+    });
+  }
+  onShow() {}
+}
 </script>
 
 <style lang='less'>
-  .login {
+.login {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .loginContent {
+    z-index: 6;
+  }
+  .loginBg {
+    position: absolute;
+    width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 5;
+  }
+  .coverBox {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
-    .loginContent {
-      z-index: 6;
-    }
-    .loginBg {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      z-index: 5;
-    }
-    .coverBox {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      background: rgba(0, 0, 0, 0.7);
+    z-index: 6;
+    .loginCheck {
+      width: 80%;
+      height: 600rpx;
+      background: #fff;
       display: flex;
+      flex-flow: column;
+      justify-content: space-around;
       align-items: center;
-      justify-content: center;
-      z-index: 6;
-      .loginCheck {
-        width: 80%;
-        height: 600rpx;
-        background: #fff;
-        display: flex;
-        flex-flow: column;
-        justify-content: space-around;
-        align-items: center;
-        .msg {
-          padding: 0 12%;
-          input {
-            height: 2rem;
-            border: solid 1px #ddd;
-            padding: 0 0.5rem;
-            font-size: 14px;
-          }
-          .authCode {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 0.5rem;
-            height: 2rem;
-            .getCode {
-              font-size: 12px;
-              width: 7rem;
-            }
-            .authInput {
-              flex: 1;
-              margin-right: 0.5rem;
-              height: 2rem;
-            }
-          }
-        }
-        .tips {
-          padding: 1rem;
+      .msg {
+        padding: 0 12%;
+        input {
+          height: 2rem;
+          border: solid 1px #ddd;
+          padding: 0 0.5rem;
           font-size: 14px;
-          color: #353535;
+        }
+        .username {
+          margin-bottom: 0.5rem;
+        }
+        .authCode {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 0.5rem;
+          height: 2rem;
+          .getCode {
+            font-size: 12px;
+            width: 7rem;
+          }
+          .authInput {
+            flex: 1;
+            margin-right: 0.5rem;
+            height: 2rem;
+          }
         }
       }
-    }
-    .normal {
-      margin-top: 1rem;
-      color: #fff;
-      text-align: center;
-      font-size: 14px;
-    }
-    .second {
-      .loginCheck {
-        width: 68%;
-        height: 400rpx;
-        border-radius: 4px;
+      .tips {
+        padding: 1rem;
+        font-size: 14px;
+        color: #353535;
       }
-    }
-    .logoText {
-      font-size: 42px;
-      color: #fff;
-      margin-bottom: 8rem;
-      display: block;
     }
   }
+  .normal {
+    margin-top: 1rem;
+    color: #fff;
+    text-align: center;
+    font-size: 14px;
+  }
+  .regist {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    bottom: 100rpx;
+    color: #999;
+    left: 0;
+  }
+  .second {
+    .loginCheck {
+      width: 68%;
+      height: 400rpx;
+      border-radius: 4px;
+    }
+  }
+  .logoText {
+    font-size: 42px;
+    color: #fff;
+    margin-bottom: 8rem;
+    display: block;
+  }
+}
 </style>

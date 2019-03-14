@@ -26,6 +26,11 @@ export default {
     refresh: data => {
       let reqUrl = url + '/api/login/refreshToken';
       return requestData(reqUrl, data, 'GET', true);
+    },
+    //用户注册
+    regist: data => {
+      let reqUrl = url + '/api/login/register';
+      return requestData(reqUrl, data, 'GET', true);
     }
   },
   //课程
