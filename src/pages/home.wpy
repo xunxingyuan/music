@@ -192,12 +192,14 @@
       z-index: 20;
     }
     .searchItem {
-      background: transparent;
-      position: fixed;
-      width: 100%;
-      top: 4.3rem;
-      z-index: 12;
-      left: 0;
+      background:transparent;
+position:fixed;
+width:100%;
+top:160rpx;
+z-index:12;
+left:0;
+height:80rpx;
+
       .searchInner {
         background: #e5e5e5;
         border-radius: 14px;

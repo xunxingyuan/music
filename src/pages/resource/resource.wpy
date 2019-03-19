@@ -16,9 +16,9 @@
         index="index"
         item="item"
       >
-        <view class="flex musicItem">
+        <view class="flex musicItem" @tap="audioPlay({{item}})">
           <text>{{item.title}}</text>
-          <view @tap="audioPlay({{item}})">
+          <view>
             <i class="iconfont icon-shipin"></i>
             <text></text>
           </view>
