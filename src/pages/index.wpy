@@ -24,7 +24,7 @@
       </view>
       <view class="coverBox" wx:if="{{showRegist}}" @tap="hide">
         <view class="loginCheck" @tap.stop="regist">
-          <text>用户注册</text>
+          <text class="registTitle">用户注册</text>
           <view class="msg">
             <input class="username" bindinput="setName" placeholder="输入用户名/学员姓名">
             <input type="number" bindinput="setPhone" placeholder="输入手机号码">
@@ -305,6 +305,13 @@ export default class Index extends wepy.page {
   computed = {};
   async onLoad() {
     let _self = this;
+    wepy.setStorageSync(
+      'playState',
+      JSON.stringify({
+        name: '',
+        url: ''
+      })
+    );
     let downloadFile = await wepy.getStorageSync('downloadFile');
     if (downloadFile == '') {
       wepy.setStorageSync('downloadFile', '[]');
@@ -366,6 +373,9 @@ export default class Index extends wepy.page {
       flex-flow: column;
       justify-content: space-around;
       align-items: center;
+      .registTitle {
+        font-size: 20px;
+      }
       .msg {
         padding: 0 12%;
         input {

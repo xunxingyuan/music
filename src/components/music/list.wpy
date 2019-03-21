@@ -48,15 +48,15 @@
         </view>
       </view>
     </repeat>
-    <view class="musicCtrlBox" wx:if="{{showCtrl != 1}}">
+    <view class="musicCtrlBox" wx:if="{{showCtrl != 1}}" @tap="cancelShowMusicCtrl">
       <view class="flex">
         <view class="ctrl vip" @tap.stop="downloadMusic({{selectItem}})">VIP-下载歌曲</view>
         <view class="ctrl vip" @tap.stop="collectMusic({{selectItem}})">VIP-收藏歌曲</view>
-        <view class="ctrl" @tap="showIntro">歌曲简介</view>
+        <view class="ctrl" @tap.stop="showIntro">歌曲简介</view>
         <view class="ctrl cancel" @tap="cancelShowMusicCtrl">取消</view>
       </view>
     </view>
-    <!-- <musicPlay :musicSrc.sync="selectMusic" wx:if="{{playState == 'show'}}"></musicPlay> -->
+    <musicPlay wx:if="{{showMusicPlay}}" :music.sync="choseMusic" :url.sync="choseMusicUrl"></musicPlay>
   </view>
 </template>
 
@@ -87,6 +87,7 @@ Date.prototype.Format = function(fmt) {
 };
 import wepy from 'wepy';
 import api from '@/tools/api.js';
+import MusicPlay from './play';
 export default class musicList extends wepy.component {
   props = {
     musicList: Array
@@ -96,9 +97,14 @@ export default class musicList extends wepy.component {
     showCtrl: 1,
     selectMusic: '',
     selectItem: '',
-    imgList: ''
+    imgList: '',
+    showMusicPlay: false,
+    choseMusic: '',
+    choseMusicUrl: ''
   };
-  components = {};
+  components = {
+    musicPlay: MusicPlay
+  };
   methods = {
     async collectMusic(item) {
       let userId = await wepy.getStorageSync('userId');
@@ -183,84 +189,121 @@ export default class musicList extends wepy.component {
         showCancel: false
       });
     },
-    async downloadMusic(music) {
+    async downloadMusic(item) {
+      // console.log(this.$parent);
       let userId = await wepy.getStorageSync('userId');
       let userInfo = await wepy.getStorageSync('userInfo');
       let permission = JSON.parse(userInfo).permission;
       if (permission.download == 'yes') {
-        api.music
-          .saveDownload({
-            musicId: music.id,
-            userId: userId
-          })
-          .then(res => {
-            wepy.showToast({
-              title: '添加下载成功', //提示的内容,
-              icon: 'success', //图标,
-              duration: 2000, //延迟时间,
-              mask: true, //显示透明蒙层，防止触摸穿透,
-              success: res => {}
-            });
-          });
         let header = {};
         let token = await wepy.getStorageSync('token');
         let downloadFile = await wepy.getStorageSync('downloadFile');
-        let downloadData = JSON.parse(downloadFile);
+        let downloadData = [];
+        if (downloadFile) {
+          downloadData = JSON.parse(downloadFile);
+        }
         header['Authorization'] = 'Bearer ' + token;
-        header['Content-Type'] = 'video/mp4';
-        wepy.downloadFile({
-          url: music.url, // 下载资源的 url
-          header: header,
-          success: res => {
-            //console.log(res.tempFilePath);
-            wepy.saveFile({
-              tempFilePath: res.tempFilePath, //需要保存的文件的临时路径,
-              success: resp => {
-                //console.log(resp);
-                let downloadSrc = {
-                  name: music.title,
-                  musicId: music.id,
-                  url: resp.savedFilePath,
-                  downloadTime: new Date().Format('yyyy-MM-dd hh:mm:ss'),
-                  type: 'music'
-                };
-                downloadData.push(downloadSrc);
-                wepy.setStorageSync(
-                  'downloadFile',
-                  JSON.stringify(downloadData)
-                );
-                // wepy.showToast({
-                //   title: '下载完成', //提示的内容,
-                //   icon: 'success', //图标,
-                //   duration: 2000, //延迟时间,
-                //   mask: true, //显示透明蒙层，防止触摸穿透,
-                //   success: res => {}
-                // });
-              },
-              fail: error => {
-                //console.log(error);
-                wepy.showToast({
-                  title:
-                    '已下载文件大小超过10M，下载失败，请删除部分已下载内容后再试', //提示的内容,
-                  icon: 'none', //图标,
-                  duration: 2000, //延迟时间,
-                  mask: true, //显示透明蒙层，防止触摸穿透,
-                  success: res => {}
-                });
-              }
-            });
-          },
-          fail: () => {
-            wepy.showToast({
-              title: '下载失败', //提示的内容,
-              icon: 'none', //图标,
-              duration: 2000, //延迟时间,
-              mask: true, //显示透明蒙层，防止触摸穿透,
-              success: res => {}
-            });
-          },
-          complete: res => {}
+        // header['Content-Type'] = 'video/mp4';
+        let downloadSrc = {
+          name: item.title,
+          musicId: item.id,
+          url: '',
+          downloadTime: new Date().Format('yyyy-MM-dd hh:mm:ss'),
+          type: 'music',
+          state: 'download'
+        };
+        let flag = false;
+        downloadData.forEach(element => {
+          if (element.musicId == downloadSrc.musicId) {
+            flag = true;
+          }
         });
+        if (!flag) {
+          api.music
+            .saveDownload({
+              musicId: item.id,
+              userId: userId
+            })
+            .then(res => {
+              wepy.showToast({
+                title: '添加下载成功', //提示的内容,
+                icon: 'success', //图标,
+                duration: 2000, //延迟时间,
+                mask: true, //显示透明蒙层，防止触摸穿透,
+                success: res => {}
+              });
+            });
+          downloadData.push(downloadSrc);
+          wepy.setStorageSync('downloadFile', JSON.stringify(downloadData));
+          wepy.downloadFile({
+            url: item.url, // 下载资源的 url
+            header: header,
+            success: res => {
+              //console.log(res.tempFilePath);
+              wepy.saveFile({
+                tempFilePath: res.tempFilePath, //需要保存的文件的临时路径,
+                success: resp => {
+                  downloadData.forEach(element => {
+                    if (element.musicId === downloadSrc.musicId) {
+                      element.url = resp.savedFilePath;
+                      element.state = 'finish';
+                    }
+                  });
+                  wepy.setStorageSync(
+                    'downloadFile',
+                    JSON.stringify(downloadData)
+                  );
+                  // wepy.showToast({
+                  //   title: '下载完成', //提示的内容,
+                  //   icon: 'success', //图标,
+                  //   duration: 2000, //延迟时间,
+                  //   mask: true, //显示透明蒙层，防止触摸穿透,
+                  //   success: res => {}
+                  // });
+                },
+                fail: error => {
+                  //console.log(error);
+                  downloadData.forEach(element => {
+                    if (element.musicId === downloadSrc.musicId) {
+                      element.url = '';
+                      element.state = 'error';
+                    }
+                  });
+                  wepy.setStorageSync(
+                    'downloadFile',
+                    JSON.stringify(downloadData)
+                  );
+                  wepy.showToast({
+                    title:
+                      '已下载文件大小超过10M，下载失败，请删除部分已下载内容后再试', //提示的内容,
+                    icon: 'none', //图标,
+                    duration: 2000, //延迟时间,
+                    mask: true, //显示透明蒙层，防止触摸穿透,
+                    success: res => {}
+                  });
+                }
+              });
+            },
+            fail: () => {
+              wepy.showToast({
+                title: '下载失败', //提示的内容,
+                icon: 'none', //图标,
+                duration: 2000, //延迟时间,
+                mask: true, //显示透明蒙层，防止触摸穿透,
+                success: res => {}
+              });
+            },
+            complete: res => {}
+          });
+        } else {
+          wepy.showToast({
+            title: '该文件已在下载列表中,如需下载请删除后重试', //提示的内容,
+            icon: 'none', //图标,
+            duration: 2000, //延迟时间,
+            mask: true, //显示透明蒙层，防止触摸穿透,
+            success: res => {}
+          });
+        }
       } else {
         wepy.showToast({
           title: '权限不足', //提示的内容,
@@ -272,49 +315,31 @@ export default class musicList extends wepy.component {
       }
     }
   };
-  events = {};
+  events = {
+    closePlay: function() {
+      this.showMusicPlay = false;
+      this.choseMusicUrl = '';
+      this.$apply();
+    }
+  };
   watch = {};
   computed = {};
   onLoad() {
     this.imgList = this.$parent.$parent.globalData.imgList;
+    let music = wepy.getStorageSync('playState');
+    let detail = JSON.parse(music);
+    if (detail.name && detail.url) {
+      this.showMusicPlay = true;
+      this.$apply();
+    }
+
     this.$apply();
   }
-  onShow() {}
   audioPlay(item) {
-    let url =
-      '/pages/resource/player/musicPlay?url=' +
-      item.url +
-      '&name=' +
-      item.title;
-    wepy.navigateTo({
-      url: url
-    });
-    //console.log(item)
-    // this.selectMusic = item.url
-    // // this.$broadcast('srcChange', {
-    // //   name: item.title,
-    // //   url: this.selectMusic
-    // // })
-    // // backgroundAudioManager.epname = '此时此刻'
-    // // backgroundAudioManager.singer = '许巍'
-    // // backgroundAudioManager.coverImgUrl = 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000'
-    // const backgroundAudioManager = wx.getBackgroundAudioManager()
-    // backgroundAudioManager.title = item.title
-    // wepy.showModal({
-    //   title: '播放音乐', //提示的标题,
-    //   content: '是否开始播放音乐：' + item.title, //提示的内容,
-    //   showCancel: true, //是否显示取消按钮,
-    //   cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
-    //   cancelColor: '#000000', //取消按钮的文字颜色,
-    //   confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
-    //   confirmColor: '#3CC51F', //确定按钮的文字颜色,
-    //   success: res => {
-    //     if (res.confirm) {
-    //       backgroundAudioManager.src = this.selectMusic // 设置了 src 之后会自动播放
-    //     }
-    //   }
-    // });
-    // this.playState = 'show'
+    this.choseMusic = item.title;
+    this.choseMusicUrl = item.url;
+    this.showMusicPlay = true;
+    this.$apply();
   }
 }
 </script>
@@ -323,6 +348,8 @@ export default class musicList extends wepy.component {
 .musicList {
   width: 100%;
   height: auto;
+  margin-bottom: 150rpx;
+
   .musicItem {
     background: #fff;
     border-bottom: solid 1px #ddd;

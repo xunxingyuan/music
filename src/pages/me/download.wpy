@@ -9,7 +9,13 @@
           <text class="type">视频</text>
         </view>
         <view class="bot">
-          <text>{{item.downloadTime}}</text>
+          <view>
+            <text>{{item.downloadTime}}</text>
+            <text wx:if="{{item.size}}">| {{item.size}}M |</text>
+            <text wx:if="{{item.state == 'download'}}">下载中</text>
+            <text class="finish" wx:if="{{item.state == 'finish'}}">下载完成</text>
+            <text class="del" wx:if="{{item.state == 'error'}}">下载失败</text>
+          </view>
           <text class="del" @tap.stop="del({{item}},{{index}})">删除</text>
         </view>
       </view>
@@ -21,24 +27,19 @@
           <text class="type">音频</text>
         </view>
         <view class="bot">
-          <text>{{item.downloadTime}}</text>
+          <view>
+            <text>{{item.downloadTime}}</text>
+            <text wx:if="{{item.size}}">| {{item.size}}M |</text>
+            <text wx:if="{{item.state == 'download'}}">下载中</text>
+            <text class="finish" wx:if="{{item.state == 'finish'}}">下载完成</text>
+            <text class="del" wx:if="{{item.state == 'error'}}">下载失败</text>
+          </view>
           <text class="del" @tap.stop="del({{item}},{{index}})">删除</text>
         </view>
       </view>
     </repeat>
     <view class="tips" wx:if="{{videoList.length == 0&&musicList.length == 0}}">暂无下载内容</view>
-    <!-- <repeat for="{{downloadList}}" key="index" index="index" item="item">
-                          <view class='blockItem' @tap="viewDownload({{item}})">
-                            <view class='top'>
-                              <text class='title'>{{item.name}}</text>
-                              <text wx:if="{{item.type=='music'}}" class='type'>音频</text>
-                              <text wx:if="{{item.type=='video'}}" class='type'>视频</text>
-                            </view>
-                            <view class='bot'>
-                              <text>{{item.downloadTime}}</text>
-                            </view>
-                          </view>
-    </repeat>-->
+    <musicPlay wx:if="{{showMusicPlay}}" :music.sync="choseMusic" :url.sync="choseMusicUrl"></musicPlay>
   </view>
 </template>
 
@@ -46,6 +47,8 @@
 import wepy from 'wepy';
 import api from '@/tools/api.js';
 import Top from '@/components/common/top';
+import MusicPlay from '../../components/music/play';
+
 export default class Download extends wepy.page {
   config = {
     navigationBarTitleText: '我的下载'
@@ -53,14 +56,20 @@ export default class Download extends wepy.page {
   data = {
     videoList: [],
     musicList: [],
-    downloadList: []
+    downloadList: [],
+    showMusicPlay: false,
+    choseMusic: '',
+    choseMusicUrl: ''
   };
   components = {
-    top: Top
+    top: Top,
+    musicPlay: MusicPlay
   };
   methods = {
-    del(item, index) {
+    async del(item, index) {
       let _self = this;
+      let downloadData = [];
+
       wepy.showModal({
         title: '删除下载文件', //提示的标题,
         content: '是否开始删除该内容：' + item.name, //提示的内容,
@@ -71,33 +80,90 @@ export default class Download extends wepy.page {
         confirmColor: '#3CC51F', //确定按钮的文字颜色,
         success: res => {
           if (res.confirm) {
-            wepy.removeSavedFile({
-              filePath: item.url, //文件路径,
-              success: res => {
-                if (item.type === 'video') {
-                  _self.videoList.splice(index, 1);
-                }
-                if (item.type === 'music') {
-                  _self.musicList.splice(index, 1);
-                }
-                _self.$apply();
-                wepy.showToast({
-                  title: '删除成功', //提示的内容,
-                  icon: 'success', //图标,
-                  duration: 2000, //延迟时间,
-                  mask: true, //显示透明蒙层，防止触摸穿透,
-                  success: res => {
-                    // _self.getDownloadFile()
-                  }
-                });
-              }
+            if (item.type === 'video') {
+              _self.videoList.splice(index, 1);
+            }
+            if (item.type === 'music') {
+              _self.musicList.splice(index, 1);
+            }
+            _self.$apply();
+            _self.videoList.forEach(element => {
+              downloadData.push(element);
             });
+            _self.musicList.forEach(element => {
+              downloadData.push(element);
+            });
+
+            if (item.url) {
+              wepy.removeSavedFile({
+                filePath: item.url, //文件路径,
+                success: res => {
+                  wepy.setStorageSync(
+                    'downloadFile',
+                    JSON.stringify(downloadData)
+                  );
+
+                  wepy.showToast({
+                    title: '删除成功', //提示的内容,
+                    icon: 'success', //图标,
+                    duration: 2000, //延迟时间,
+                    mask: true, //显示透明蒙层，防止触摸穿透,
+                    success: res => {
+                      // _self.getDownloadFile()
+                    }
+                  });
+                }
+              });
+            } else {
+              wepy.setStorageSync('downloadFile', JSON.stringify(downloadData));
+            }
           }
         }
       });
     },
-    viewDownload(item) {
-      if (item.type == 'video') {
+    viewDownloadMusic(item) {
+      if (item.state == 'finish') {
+        wepy.openDocument({
+          filePath: item.url, //文件路径，可通过 downFile 获得,
+          success: res => {
+            console.log(res);
+          },
+          fail: res => {
+            this.choseMusic = item.name;
+            this.choseMusicUrl = item.url;
+            this.showMusicPlay = true;
+            this.$apply();
+
+            // let url =
+            //   '/pages/resource/player/musicPlay?url=' +
+            //   item.url +
+            //   '&name=' +
+            //   item.name;
+            // wepy.navigateTo({
+            //   url: url
+            // });
+          }
+        });
+      } else {
+        wepy.showToast({
+          title: '该文件处于下载中或者下载失败，不能打开', //提示的内容,
+          icon: 'none', //图标,
+          duration: 2000, //延迟时间,
+          mask: true, //显示透明蒙层，防止触摸穿透,
+          success: res => {}
+        });
+      }
+    },
+    viewDownloadVideo(item) {
+      // let fileSystem = wx.getFileSystemManager()
+      // console.log(item);
+      // wepy.openDocument({
+      //   filePath: item.url, //文件路径，可通过 downFile 获得,
+      //   success: res => {
+      //     console.log(res);
+      //   }
+      // });
+      if (item.state == 'finish') {
         let url =
           '/pages/resource/player/videoPlay?url=' +
           item.url +
@@ -107,67 +173,122 @@ export default class Download extends wepy.page {
           url: url
         });
       } else {
-        const backgroundAudioManager = wx.getBackgroundAudioManager();
-        backgroundAudioManager.title = item.name;
-        wepy.showModal({
-          title: '播放音乐', //提示的标题,
-          content: '是否开始播放音乐：' + item.name, //提示的内容,
-          showCancel: true, //是否显示取消按钮,
-          cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
-          cancelColor: '#000000', //取消按钮的文字颜色,
-          confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
-          confirmColor: '#3CC51F', //确定按钮的文字颜色,
-          success: res => {
-            if (res.confirm) {
-              backgroundAudioManager.src = item.url; // 设置了 src 之后会自动播放
-            }
-          }
+        wepy.showToast({
+          title: '该文件处于下载中或者下载失败，不能打开', //提示的内容,
+          icon: 'none', //图标,
+          duration: 2000, //延迟时间,
+          mask: true, //显示透明蒙层，防止触摸穿透,
+          success: res => {}
         });
       }
     },
-    viewDownloadMusic(item) {
-      let url =
-        '/pages/resource/player/musicPlay?url=' +
-        item.url +
-        '&name=' +
-        item.title;
-      wepy.navigateTo({
-        url: url
+    async addDownload(item) {
+      let header = {};
+      let token = await wepy.getStorageSync('token');
+      let downloadFile = await wepy.getStorageSync('downloadFile');
+      let downloadData = JSON.parse(downloadFile);
+      header['Authorization'] = 'Bearer ' + token;
+      header['Content-Type'] = 'video/mp4';
+      let downloadSrc = {
+        name: item.title,
+        musicId: item.id,
+        url: '',
+        downloadTime: new Date().Format('yyyy-MM-dd hh:mm:ss'),
+        type: 'music',
+        state: 'download'
+      };
+
+      let flag = true;
+      downloadData.forEach(element => {
+        if (element.id === downloadSrc.id) {
+          flag = false;
+        }
       });
-      // let url = item.url
-      // const backgroundAudioManager = wx.getBackgroundAudioManager()
-      // backgroundAudioManager.title = item.name
-      // wepy.showModal({
-      //   title: '播放音乐', //提示的标题,
-      //   content: '是否开始播放音乐：' + item.name, //提示的内容,
-      //   showCancel: true, //是否显示取消按钮,
-      //   cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
-      //   cancelColor: '#000000', //取消按钮的文字颜色,
-      //   confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
-      //   confirmColor: '#3CC51F', //确定按钮的文字颜色,
-      //   success: res => {
-      //     if (res.confirm) {
-      //       backgroundAudioManager.src = url // 设置了 src 之后会自动播放
-      //     }
-      //   }
-      // });
-    },
-    viewDownloadVideo(item) {
-      let url =
-        '/pages/resource/player/videoPlay?url=' +
-        item.url +
-        '&id=' +
-        item.videoId;
-      wepy.navigateTo({
-        url: url
-      });
+      if (!flag) {
+        downloadData.push(downloadSrc);
+        wepy.setStorageSync('downloadFile', JSON.stringify(downloadData));
+
+        wepy.downloadFile({
+          url: item.url, // 下载资源的 url
+          header: header,
+          success: res => {
+            //console.log(res.tempFilePath);
+            wepy.saveFile({
+              tempFilePath: res.tempFilePath, //需要保存的文件的临时路径,
+              success: resp => {
+                //console.log(resp);
+                let downloadSrc = {
+                  name: item.title,
+                  musicId: item.id,
+                  url: resp.savedFilePath,
+                  downloadTime: new Date().Format('yyyy-MM-dd hh:mm:ss'),
+                  type: 'music'
+                };
+                downloadData.push(downloadSrc);
+                wepy.setStorageSync(
+                  'downloadFile',
+                  JSON.stringify(downloadData)
+                );
+                // wepy.showToast({
+                //   title: '下载完成', //提示的内容,
+                //   icon: 'success', //图标,
+                //   duration: 2000, //延迟时间,
+                //   mask: true, //显示透明蒙层，防止触摸穿透,
+                //   success: res => {}
+                // });
+              },
+              fail: error => {
+                //console.log(error);
+                wepy.showToast({
+                  title:
+                    '已下载文件大小超过10M，下载失败，请删除部分已下载内容后再试', //提示的内容,
+                  icon: 'none', //图标,
+                  duration: 2000, //延迟时间,
+                  mask: true, //显示透明蒙层，防止触摸穿透,
+                  success: res => {}
+                });
+              }
+            });
+          },
+          fail: () => {
+            wepy.showToast({
+              title: '下载失败', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          },
+          complete: res => {}
+        });
+      } else {
+        wepy.showToast({
+          title: '该文件已在下载列表中', //提示的内容,
+          icon: 'none', //图标,
+          duration: 2000, //延迟时间,
+          mask: true, //显示透明蒙层，防止触摸穿透,
+          success: res => {}
+        });
+      }
     }
   };
-  events = {};
+  events = {
+    closePlay: function() {
+      this.showMusicPlay = false;
+      this.choseMusicUrl = '';
+      this.$apply();
+    }
+  };
   watch = {};
   computed = {};
   onLoad() {
     this.getDownloadFile();
+    let music = wepy.getStorageSync('playState');
+    let detail = JSON.parse(music);
+    if (detail.name && detail.url) {
+      this.showMusicPlay = true;
+      this.$apply();
+    }
   }
   getDownloadFile() {
     let _self = this;
@@ -177,6 +298,7 @@ export default class Download extends wepy.page {
     let id = wepy.getStorageSync('userId');
     let downloadFile = wepy.getStorageSync('downloadFile');
     let downloadData = JSON.parse(downloadFile);
+
     this.downloadList = downloadData;
     _self.$apply();
     wepy.getSavedFileList({
@@ -185,15 +307,32 @@ export default class Download extends wepy.page {
         res.fileList.forEach(e => {
           downloadData.forEach(ele => {
             if (ele.url == e.filePath) {
-              if (ele.type === 'video') {
-                _self.videoList.push(ele);
-              }
-              if (ele.type === 'music') {
-                _self.musicList.push(ele);
-              }
+              ele.size = Math.floor(e.size / 1024 / 102.4) / 10;
             }
           });
         });
+        downloadData.forEach(ele => {
+          if (ele.type === 'video') {
+            _self.videoList.push(ele);
+          }
+          if (ele.type === 'music') {
+            _self.musicList.push(ele);
+          }
+        });
+        _self.$apply();
+        console.log(downloadData);
+      },
+      fail: res => {
+        downloadData.forEach(ele => {
+          ele.size = 0;
+          if (ele.type === 'video') {
+            _self.videoList.push(ele);
+          }
+          if (ele.type === 'music') {
+            _self.musicList.push(ele);
+          }
+        });
+        _self.$apply();
       }
     });
   }
@@ -203,14 +342,20 @@ export default class Download extends wepy.page {
 
 <style lang='less'>
 .download {
+  padding-bottom: 150rpx;
   .tips {
     text-align: center;
     line-height: 3rem;
     width: 100%;
     font-size: 14px;
+    margin-top: 100rpx;
   }
   .del {
     color: coral;
+  }
+  .finish {
+    color: green;
+    margin-left: 5px;
   }
 }
 </style>

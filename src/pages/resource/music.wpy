@@ -1,7 +1,7 @@
 <!--  -->
 <template>
-  <view class='music mainPage'>
-    <top title='音频' backColor="black" back='yes'></top>
+  <view class="music mainPage">
+    <top title="音频" backColor="black" back="yes"></top>
     <search :type="music"></search>
     <!-- <view class='searchFilter'>
               <text>节拍器</text>
@@ -10,119 +10,123 @@
               <text>钢琴</text>
               <text>鼓</text>
               <text>...</text>
-            </view> -->
+    </view>-->
     <list :musicList.sync="musicList"></list>
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import Search from '@/components/common/search'
-  import api from '@/tools/api.js'
-  import list from '@/components/music/list'
-  import Top from '@/components/common/top';
-  export default class Music extends wepy.page {
-    config = {
-      navigationBarTitleText: "音频",
-    };
-    data = {
-      playState: 'hidden',
-      showCtrl: 1,
-      musicList: [],
-      pageNumber: 1
-    };
-    components = {
-      search: Search,
-      list: list,
-      top: Top
-    };
-    methods = {};
-    onReachBottom() {
-      //console.log('bottom');
-      let num = Math.floor(this.musicList.length / 10) + 1
-      if (this.pageNumber != num) {
-        this.pageNumber = num
-      }
-      this.loadMore()
-    };
-    events = {};
-    watch = {};
-    computed = {};
-    async onLoad() {
-      let _self = this
-      let res = await api.music.searchMusic({
-        pageNumber: _self.pageNumber
-      })
-      if (res.data.code === 200) {
-        _self.musicList = res.data.data
-        _self.musicList.forEach((e, index) => {
-          if (index === 0) {
-            e.show = 0
-          } else {
-            e.show = 1
-          }
-        })
-        _self.$apply()
-      } else {
-        wepy.showToast({
-          title: res.data.message,
-          icon: 'none',
-          duration: 1000
-        })
-      }
-    };
-    onShow() {};
-    async loadMore() {
-      let _self = this
-      let res = await api.music.searchMusic({
-        pageNumber: _self.pageNumber
-      })
-      if (res.data.code === 200) {
-        res.data.data.forEach(element => {
-          if (this.checkId(element.id,_self.musicList)) {
-            _self.musicList.push(element)
-          }
-        });
-        _self.$apply()
-      } else {
-        wepy.showToast({
-          title: res.data.message,
-          icon: 'none',
-          duration: 1000
-        })
-      }
-    };
-    checkId(id,arr){
-      let flag = true
-      arr.forEach(element => {
-        if(element.id === id){
-          flag = false
+import wepy from 'wepy';
+import Search from '@/components/common/search';
+import api from '@/tools/api.js';
+import list from '@/components/music/list';
+import Top from '@/components/common/top';
+export default class Music extends wepy.page {
+  config = {
+    navigationBarTitleText: '音频'
+  };
+  data = {
+    playState: 'hidden',
+    showCtrl: 1,
+    musicList: [],
+    pageNumber: 1
+  };
+  components = {
+    search: Search,
+    list: list,
+    top: Top
+  };
+  methods = {};
+  onReachBottom() {
+    //console.log('bottom');
+    let num = Math.floor(this.musicList.length / 10) + 1;
+    if (this.pageNumber != num) {
+      this.pageNumber = num;
+    }
+    this.loadMore();
+  }
+  events = {
+    download: item => {
+      console.log(item);
+    }
+  };
+  watch = {};
+  computed = {};
+  async onLoad() {
+    let _self = this;
+    let res = await api.music.searchMusic({
+      pageNumber: _self.pageNumber
+    });
+    if (res.data.code === 200) {
+      _self.musicList = res.data.data;
+      _self.musicList.forEach((e, index) => {
+        if (index === 0) {
+          e.show = 0;
+        } else {
+          e.show = 1;
         }
       });
-      return flag
+      _self.$apply();
+    } else {
+      wepy.showToast({
+        title: res.data.message,
+        icon: 'none',
+        duration: 1000
+      });
     }
   }
+  onShow() {}
+  async loadMore() {
+    let _self = this;
+    let res = await api.music.searchMusic({
+      pageNumber: _self.pageNumber
+    });
+    if (res.data.code === 200) {
+      res.data.data.forEach(element => {
+        if (this.checkId(element.id, _self.musicList)) {
+          _self.musicList.push(element);
+        }
+      });
+      _self.$apply();
+    } else {
+      wepy.showToast({
+        title: res.data.message,
+        icon: 'none',
+        duration: 1000
+      });
+    }
+  }
+  checkId(id, arr) {
+    let flag = true;
+    arr.forEach(element => {
+      if (element.id === id) {
+        flag = false;
+      }
+    });
+    return flag;
+  }
+}
 </script>
 
 <style lang='less'>
-  .music {
+.music {
+  display: flex;
+  flex-flow: column;
+  padding-bottom: 130rpx;
+  .searchFilter {
     display: flex;
-    flex-flow: column;
-    padding-bottom: 130rpx;
-    .searchFilter {
-      display: flex;
-      flex-wrap: wrap;
-      background: #D0B485;
-      padding: 0 1rem;
-      text {
-        padding: 2px 10px;
-        display: block;
-        border: solid 1px #ECECEC;
-        color: #fff;
-        margin: 0 0.5rem 0.5rem 0.5rem;
-        font-size: 13px;
-        border-radius: 13px;
-      }
+    flex-wrap: wrap;
+    background: #d0b485;
+    padding: 0 1rem;
+    text {
+      padding: 2px 10px;
+      display: block;
+      border: solid 1px #ececec;
+      color: #fff;
+      margin: 0 0.5rem 0.5rem 0.5rem;
+      font-size: 13px;
+      border-radius: 13px;
     }
   }
+}
 </style>

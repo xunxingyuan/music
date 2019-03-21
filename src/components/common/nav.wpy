@@ -54,7 +54,7 @@
           break;
         case 'teacher':
           this.menu = [{
-            name: '学习',
+            name: '课程',
             icon: 'home',
             icon_src: 'home2',
             active_src: 'home',
@@ -76,7 +76,7 @@
           break;
         case 'student':
           this.menu = [{
-            name: '学习',
+            name: '课程',
             icon: 'home',
             icon_src: 'home',
             active_src: 'home2',

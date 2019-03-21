@@ -16,6 +16,7 @@
       </view>
     </repeat>
     <view class="tips" wx:if="{{list.length == 0}}">暂无收藏</view>
+    <musicPlay wx:if="{{showMusicPlay}}" :music.sync="choseMusic" :url.sync="choseMusicUrl"></musicPlay>
   </view>
 </template>
 
@@ -23,15 +24,21 @@
 import wepy from 'wepy';
 import api from '@/tools/api.js';
 import Top from '@/components/common/top';
+import MusicPlay from '../../components/music/play';
+
 export default class Collection extends wepy.page {
   config = {
     navigationBarTitleText: '我的收藏'
   };
   data = {
-    list: []
+    list: [],
+    showMusicPlay: false,
+    choseMusic: '',
+    choseMusicUrl: ''
   };
   components = {
-    top: Top
+    top: Top,
+    musicPlay: MusicPlay
   };
   methods = {
     viewVideo(item) {
@@ -43,14 +50,19 @@ export default class Collection extends wepy.page {
           url: url
         });
       } else {
-        let url =
-          '/pages/resource/player/musicPlay?url=' +
-          item.url +
-          '&name=' +
-          item.title;
-        wepy.navigateTo({
-          url: url
-        });
+        this.choseMusic = item.title;
+        this.choseMusicUrl = item.url;
+        this.showMusicPlay = true;
+        this.$apply();
+
+        // let url =
+        //   '/pages/resource/player/musicPlay?url=' +
+        //   item.url +
+        //   '&name=' +
+        //   item.title;
+        // wepy.navigateTo({
+        //   url: url
+        // });
         //   const backgroundAudioManager = wx.getBackgroundAudioManager()
         //   backgroundAudioManager.title = item.title
         //   wepy.showModal({
@@ -71,11 +83,24 @@ export default class Collection extends wepy.page {
       }
     }
   };
-  events = {};
+  events = {
+    closePlay: function() {
+      this.showMusicPlay = false;
+      this.choseMusicUrl = '';
+      this.$apply();
+    }
+  };
   watch = {};
   computed = {};
   async onLoad() {
     let _self = this;
+    let music = wepy.getStorageSync('playState');
+    let detail = JSON.parse(music);
+    if (detail.name && detail.url) {
+      this.showMusicPlay = true;
+      this.$apply();
+    }
+
     let id = await wepy.getStorageSync('userId');
     let result = await api.collect.getUserCollect({
       userId: id
@@ -97,6 +122,8 @@ export default class Collection extends wepy.page {
 
 <style lang='less'>
 .collection {
+  padding-bottom: 150rpx;
+
   .tips {
     text-align: center;
     line-height: 3rem;

@@ -1,0 +1,250 @@
+<!--  -->
+<template>
+    <view class='musicPlay'>
+        <view>
+            <image class='icon' animation="{{animationData}}" src="../../resource/music.png" mode="scaleToFill" lazy-load="false"></image>
+        </view>
+        <view class="ctrl">
+            <text class="title">{{musicName}}</text>
+            <view class="stepView">
+                <view class="step">
+                    <text>{{getTime}}</text>
+                </view>
+                <view class="stepShow">
+                    <slider @change="sliderChange" min="0" max="{{musicLen}}" block-size="12" value="{{musicStep}}" backgroundColor="#999" />
+                </view>
+                <view class="step">
+                    <text wx:if="{{totalTime!=='00:00'}}">{{totalTime}}</text>
+                </view>
+            </view>
+        </view>
+        <view class="close">
+            <text @tap="closePlay">关闭</text>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    export default class Player extends wepy.component {
+        props = {
+            music: String,
+            url: String
+        };
+        data = {
+            musicName: '',
+            musicPlayer: '',
+            musicLen: 190,
+            musicStep: 0,
+            playStatus: false,
+            stepCtrl: '',
+            stepValue: 0,
+            stepTime: 0,
+            stepSpeed: 1,
+            animation: '',
+            animationData: {},
+            rotateIndex: 0,
+            timeInterval: '',
+        };
+        components = {};
+        methods = {
+            sliderChange: function(val) {
+                console.log(val);
+                this.musicPlayer.play();
+                this.musicPlayer.seek(val.detail.value);
+            },
+            play: function() {
+                this.musicPlayer.play();
+            },
+            pause: function() {
+                this.musicPlayer.pause();
+            },
+            closePlay: function() {
+                wepy.setStorageSync('playState', JSON.stringify({
+                    name: '',
+                    url: ''
+                }));
+                clearInterval(this.timeInterval)
+                this.musicPlayer.stop()
+                this.$emit('closePlay')
+            }
+        };
+        watch = {
+            url: () => {
+                let _self = this;
+                this.musicName = this.music;
+                wepy.setStorageSync('playState', JSON.stringify({
+                    name: this.music,
+                    url: this.url
+                }));
+                _self.$apply();
+                if (this.url) {
+                    let _self = this;
+                    let innerAudioContext = this.musicPlayer;
+                    innerAudioContext.autoplay = true;
+                    innerAudioContext.title = this.music
+                    innerAudioContext.src = this.url;
+                    // innerAudioContext.onPlay(() => {
+                    //     console.log('开始播放');
+                    //     _self.playStatus = true;
+                    //     _self.$apply();
+                    // });
+                    // innerAudioContext.onPause(() => {
+                    //     console.log('播放暂停');
+                    //     _self.playStatus = false;
+                    //     _self.$apply();
+                    // });
+                    innerAudioContext.onTimeUpdate(() => {
+                        _self.musicLen = Math.floor(innerAudioContext.duration);
+                        _self.musicStep = Math.floor(innerAudioContext.currentTime);
+                        _self.$apply();
+                    });
+                    innerAudioContext.onError(res => {
+                        console.log(res.errMsg);
+                        console.log(res.errCode);
+                        wepy.setStorageSync('playState', JSON.stringify({
+                            name: '',
+                            url: ''
+                        }));
+                        clearInterval(this.timeInterval)
+                        this.$emit('closePlay');
+                    });
+                    innerAudioContext.onStop(() => {
+                        wepy.setStorageSync('playState', JSON.stringify({
+                            name: '',
+                            url: ''
+                        }));
+                        clearInterval(this.timeInterval)
+                        this.$emit('closePlay')
+                    })
+                    _self.$apply();
+                }
+            }
+        };
+        computed = {
+            getTime() {
+                let m = Math.floor(this.musicStep / 60);
+                let s = this.musicStep % 60;
+                if (m < 10) {
+                    m = '0' + m;
+                }
+                if (s < 10) {
+                    s = '0' + s;
+                }
+                let str = m + ':' + s;
+                return str;
+            },
+            totalTime() {
+                let m = Math.floor(this.musicLen / 60);
+                let s = this.musicLen % 60;
+                if (s < 10) {
+                    s = '0' + s;
+                }
+                if (m < 10) {
+                    m = '0' + m;
+                }
+                let str = m + ':' + s;
+                return str;
+            }
+        };
+        onLoad() {
+            clearInterval(this.timeInterval)
+            this.rotateIndex = 0
+            this.animation = wx.createAnimation({
+                duration: 1000,
+                timingFunction: "linear"
+            })
+            this.$apply()
+            this.refreshList()
+            let _self = this
+            let music = wepy.getStorageSync('playState');
+            let detail = JSON.parse(music)
+            this.musicName = this.music ? this.music : detail.name;
+            const musicPlay = wx.getBackgroundAudioManager();
+            this.musicPlayer = musicPlay;
+            console.log(detail)
+            if (detail.url != '') {
+                this.musicPlayer.autoplay = true
+                this.musicPlayer.title = detail.name
+                this.musicPlayer.url = detail.url
+                this.musicPlayer.play()
+                this.musicPlayer.onTimeUpdate(() => {
+                    _self.musicLen = Math.floor(this.musicPlayer.duration);
+                    _self.musicStep = Math.floor(this.musicPlayer.currentTime);
+                    _self.$apply();
+                });
+            }
+            this.$apply()
+        };
+        onShow() {};
+        refreshList() {
+            let _self = this
+            let animation = _self.animation 
+            //连续动画需要添加定时器,所传参数每次+1就行
+            this.timeInterval = setInterval(function() {
+                _self.rotateIndex = _self.rotateIndex + 1;
+                animation.rotate(120 * (_self.rotateIndex)).step()
+                _self.animationData = animation.export()
+                _self.$apply()
+            }, 1000)
+        }
+    }
+</script>
+
+<style lang='less'>
+    .musicPlay {
+        width: 100%;
+        height: 140rpx;
+        background: #f7f7f7;
+        border-top: solid 1px #ddd;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        padding: 10rpx;
+        display: flex;
+        box-sizing: border-box;
+        .icon {
+            width: 120rpx;
+            height: 120rpx;
+            margin-right: 3px;
+        }
+        .ctrl {
+            flex: 1;
+            .title {
+                display: block;
+                overflow: hidden;
+                word-break: break-all;
+                text-overflow: ellipsis;
+                font-size: 16px;
+                padding: 0 10px;
+                padding-top: 5rpx;
+                height: 40rpx;
+                line-height: 40rpx;
+            }
+            .stepView {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 10px;
+                .stepShow {
+                    flex: 1;
+                }
+                .step {
+                    width: 2rem;
+                    min-width: 2rem;
+                    font-size: 14px;
+                }
+            }
+        }
+        .close {
+            width: 40px;
+            min-width: 40px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: red;
+            font-size: 12px;
+        }
+    }
+</style>

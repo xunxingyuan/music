@@ -32,6 +32,7 @@
       <scorelist wx:if="{{notationListdata.length!==0}}" :imgList.sync="notationListdata"></scorelist>
       <view wx:if="{{notationListdata.length==0}}" class="tips">当前曲集曲谱列表为空</view>
     </view>
+    <musicPlay wx:if="{{showMusicPlay}}" :music.sync="choseMusic" :url.sync="choseMusicUrl"></musicPlay>
   </view>
 </template>
 
@@ -42,6 +43,8 @@ import ScoreList from '@/components/score/list';
 import VideoList from '@/components/video/list';
 import Top from '@/components/common/top';
 import api from '@/tools/api.js';
+import MusicPlay from '../../components/music/play';
+
 export default class Resource extends wepy.page {
   config = {
     navigationBarTitleText: '曲集详情'
@@ -50,27 +53,36 @@ export default class Resource extends wepy.page {
     albumData: {},
     videolistdata: [],
     musicListdata: [],
-    notationListdata: []
+    notationListdata: [],
+    showMusicPlay: false,
+    choseMusic: '',
+    choseMusicUrl: ''
   };
   components = {
     musiclist: MusicList,
     scorelist: ScoreList,
     videolist: VideoList,
-    top: Top
+    top: Top,
+    musicPlay: MusicPlay
   };
   onReachBottom() {
     //console.log('bottom');
   }
   methods = {
     audioPlay(item) {
-      let url =
-        '/pages/resource/player/musicPlay?url=' +
-        item.url +
-        '&name=' +
-        item.title;
-      wepy.navigateTo({
-        url: url
-      });
+      this.choseMusic = item.title;
+      this.choseMusicUrl = item.url;
+      this.showMusicPlay = true;
+      this.$apply();
+
+      // let url =
+      //   '/pages/resource/player/musicPlay?url=' +
+      //   item.url +
+      //   '&name=' +
+      //   item.title;
+      // wepy.navigateTo({
+      //   url: url
+      // });
       // let backgroundAudioManager = wx.getBackgroundAudioManager()
       // backgroundAudioManager.title = item.title
       // wepy.showModal({
@@ -90,7 +102,16 @@ export default class Resource extends wepy.page {
       // this.playState = 'show'
     }
   };
-  events = {};
+  events = {
+    download: item => {
+      console.log(item);
+    },
+    closePlay: function() {
+      this.showMusicPlay = false;
+      this.choseMusicUrl = '';
+      this.$apply();
+    }
+  };
   watch = {};
   computed = {};
   onLoad(options) {
@@ -118,6 +139,13 @@ export default class Resource extends wepy.page {
           this.$apply();
         }
       });
+
+    let music = wepy.getStorageSync('playState');
+    let detail = JSON.parse(music);
+    if (detail.name && detail.url) {
+      this.showMusicPlay = true;
+      this.$apply();
+    }
   }
   onShow() {}
 }
@@ -125,7 +153,7 @@ export default class Resource extends wepy.page {
 
 <style lang='less'>
 .resourceData {
-  // padding-bottom: 140rpx;
+  padding-bottom: 150rpx;
   .resBox {
     background: #fff;
     margin-bottom: 20rpx;
