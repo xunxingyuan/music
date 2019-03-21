@@ -28,7 +28,8 @@ export default class extends wepy.app {
       navigationBarTitleText: 'LS艺术界',
       navigationBarTextStyle: 'write',
       navigationStyle: 'custom'
-    }
+    },
+    requiredBackgroundModes: ['audio']
   };
   globalData = {
     userInfo: null,
