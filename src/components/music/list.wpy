@@ -29,8 +29,8 @@
         </view>
         <view class="detail" hidden="{{item.show === 1}}">
           <repeat for="{{item.musicList}}" key="index" index="index" item="detail">
-            <view class="detailBox flex" @tap.stop="checkPermission({{detail}},{{item.isFree}})">
-              <view class="detailContent">
+            <view class="detailBox flex">
+              <view class="detailContent" @tap.stop="checkPermission({{detail}},{{item.isFree}})">
                 <view class="title">{{detail.title}}</view>
                 <view class="info">
                   <!-- <text>{{detail.music}}</text> -->
