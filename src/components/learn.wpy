@@ -121,9 +121,6 @@
     onLoad() {
       this.getLearn();
     };
-    onUnload() {
-      innerAudioContext.destroy();
-    };
     getLearn() {
       let id = wepy.getStorageSync('userId');
       let role = wepy.getStorageSync('role');

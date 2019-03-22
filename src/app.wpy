@@ -140,32 +140,11 @@ export default class extends wepy.app {
         }
       }
     });
-    await wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          this.getUserInfo();
-        }
-      }
-    });
     // let url = 'http://47.106.81.2:9501/static/icons/';
     let url = 'https://music.gzjtit.com:9501/static/icons/';
     for (var val in this.globalData.imgList) {
       this.globalData.imgList[val] = url + this.globalData.imgList[val];
     }
-  }
-  getUserInfo(cb) {
-    const that = this;
-    if (this.globalData.userInfo) {
-      console.log(this.globalData.userInfo);
-      return this.globalData.userInfo;
-    }
-    wepy.getUserInfo({
-      success(res) {
-        that.globalData.userInfo = res.userInfo;
-        //console.log(that.globalData.userInfo);
-        cb && cb(res.userInfo);
-      }
-    });
   }
 }
 </script>

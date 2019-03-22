@@ -4,8 +4,8 @@
     <view class="loginContent">
       <view>
         <text class="logoText">LS艺术界</text>
-        <button @tap="login" type="primary">VIP登录</button>
-        <view class="normal" @tap="auth(3)" open-type="getUserInfo">游客登录</view>
+        <button type="primary" open-type="getUserInfo" bindgetuserinfo="vipLogin">VIP登录</button>
+        <button class="vistorBtn" open-type="getUserInfo" bindgetuserinfo="vistorLogin">游客登录</button>
         <view class="normal regist" @tap="regist">没有账号，马上注册</view>
       </view>
       <view class="coverBox" wx:if="{{showLogin}}" @tap="hide">
@@ -19,7 +19,7 @@
               <button class="getCode" wx:if="{{showTimeCount}}">再次发送({{timeLeft}}s)</button>
             </view>
           </view>
-          <button type="primary" class="auth" @tap="auth(1)">VIP登录</button>
+          <button type="primary" class="auth" @tap="auth()">VIP登录</button>
         </view>
       </view>
       <view class="coverBox" wx:if="{{showRegist}}" @tap="hide">
@@ -34,13 +34,12 @@
               <button class="getCode" wx:if="{{showTimeCount}}">再次发送({{timeLeft}}s)</button>
             </view>
           </view>
-          <button type="primary" class="auth" @tap="registSubmit">提交注册</button>
-        </view>
-      </view>
-      <view class="coverBox second" wx:if="{{showAuth}}">
-        <view class="loginCheck">
-          <text class="tips">为提供更优质的服务，小程序需要您的授权</text>
-          <button type="primary" open-type="getUserInfo" bindgetuserinfo="getAuth">授权</button>
+          <button
+            type="primary"
+            class="auth"
+            open-type="getUserInfo"
+            bindgetuserinfo="registSubmit"
+          >提交注册</button>
         </view>
       </view>
     </view>
@@ -66,6 +65,24 @@ export default class Index extends wepy.page {
   };
   components = {};
   methods = {
+    //游客登录
+    vistorLogin(val) {
+      this.$parent.globalData.userInfo = val.detail.userInfo;
+      this.$apply();
+      this.vistorSubmit();
+    },
+    //vip登录
+    vipLogin(val) {
+      this.$parent.globalData.userInfo = val.detail.userInfo;
+      this.$apply();
+      this.login();
+    },
+    //提交注册
+    registSubmit(val) {
+      this.$parent.globalData.userInfo = val.detail.userInfo;
+      this.$apply();
+      this.registSubmit();
+    },
     show() {
       this.showLogin = true;
     },
@@ -78,7 +95,6 @@ export default class Index extends wepy.page {
     },
     registSubmit() {
       console.log(this.$parent.globalData.userInfo);
-
       if (this.username == '') {
         wepy.showToast({
           title: '用户名不能为空',
@@ -132,116 +148,44 @@ export default class Index extends wepy.page {
           }
         });
     },
-    async login() {
-      let vipId = await wepy.getStorageSync('vipId');
-      if (!vipId || vipId == 'null') {
-        this.showLogin = true;
-        this.$apply();
-      } else {
-        api.login
-          .refresh({
-            openid: this.$parent.globalData.openId
-          })
-          .then(res => {
-            // wepy.setStorageSync('role', 'teacher')
-            if (res.data.code === 200) {
-              wepy.setStorageSync('token', res.data.data);
-              wepy.redirectTo({
-                url: '/pages/home'
-              });
+
+    auth() {
+      //VIP登录
+      api.login
+        .vipLogin({
+          avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
+          nickname: this.$parent.globalData.userInfo.nickName,
+          openid: this.$parent.globalData.openId,
+          phone: this.phoneNumber,
+          verificationCode: this.authCode
+        })
+        .then(res => {
+          if (res.data.code == 200) {
+            clearInterval(this.countUtil);
+            if (
+              res.data.data.permission.role == '学生' ||
+              res.data.data.permission.role == '学生家长' ||
+              res.data.data.permission.role == '普通用户'
+            ) {
+              wepy.setStorageSync('role', 'student');
             } else {
-              wepy.showToast({
-                title: res.data.message,
-                icon: 'none',
-                duration: 1000
-              });
+              wepy.setStorageSync('role', 'teacher');
             }
-          });
-      }
-    },
-    auth(num) {
-      switch (num) {
-        case '3':
-          //游客登录
-          api.login
-            .vistorLogin({
-              avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
-              nickName: this.$parent.globalData.userInfo.nickName,
-              openid: this.$parent.globalData.openId
-            })
-            .then(res => {
-              if (res.data.code == 200) {
-                wepy.setStorageSync('role', 'vistor');
-                wepy.setStorageSync('token', res.data.data.token);
-                wepy.setStorageSync('userId', res.data.data.appUser.id);
-                wepy.setStorageSync('vipId', null);
-                wepy.setStorageSync('userInfo', JSON.stringify(res.data.data));
-                wepy.redirectTo({
-                  url: '/pages/home'
-                });
-              } else {
-                wepy.showToast({
-                  title: res.data.message,
-                  icon: 'none',
-                  duration: 1000
-                });
-              }
+            wepy.setStorageSync('token', res.data.data.token);
+            wepy.setStorageSync('userId', res.data.data.appUser.id);
+            wepy.setStorageSync('vipId', res.data.data.appUser.vipUserId);
+            wepy.setStorageSync('userInfo', JSON.stringify(res.data.data));
+            wepy.redirectTo({
+              url: '/pages/home'
             });
-          break;
-        case '1':
-          //VIP登录
-          api.login
-            .vipLogin({
-              avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
-              nickname: this.$parent.globalData.userInfo.nickName,
-              openid: this.$parent.globalData.openId,
-              phone: this.phoneNumber,
-              verificationCode: this.authCode
-            })
-            .then(res => {
-              if (res.data.code == 200) {
-                clearInterval(this.countUtil);
-                if (
-                  res.data.data.permission.role == '学生' ||
-                  res.data.data.permission.role == '学生家长' ||
-                  res.data.data.permission.role == '普通用户'
-                ) {
-                  wepy.setStorageSync('role', 'student');
-                } else {
-                  wepy.setStorageSync('role', 'teacher');
-                }
-                wepy.setStorageSync('token', res.data.data.token);
-                wepy.setStorageSync('userId', res.data.data.appUser.id);
-                wepy.setStorageSync('vipId', res.data.data.appUser.vipUserId);
-                wepy.setStorageSync('userInfo', JSON.stringify(res.data.data));
-                wepy.redirectTo({
-                  url: '/pages/home'
-                });
-              } else {
-                wepy.showToast({
-                  title: res.data.message,
-                  icon: 'none',
-                  duration: 1000
-                });
-              }
+          } else {
+            wepy.showToast({
+              title: res.data.message,
+              icon: 'none',
+              duration: 1000
             });
-          break;
-        case '2':
-          wepy.setStorageSync('role', 'student');
-          wepy.redirectTo({
-            url: '/pages/home'
-          });
-          break;
-        default:
-          break;
-      }
-    },
-    //获取鉴权
-    getAuth(e) {
-      if (e.detail.userInfo) {
-        this.$parent.globalData.userInfo = e.detail.userInfo;
-        this.showAuth = false;
-      }
+          }
+        });
     },
     setPhone(e) {
       this.phoneNumber = e.detail.value;
@@ -300,6 +244,62 @@ export default class Index extends wepy.page {
     }, 1000);
     this.$apply();
   }
+  //游客登录
+  vistorSubmit() {
+    //游客登录
+    api.login
+      .vistorLogin({
+        avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
+        nickName: this.$parent.globalData.userInfo.nickName,
+        openid: this.$parent.globalData.openId
+      })
+      .then(res => {
+        if (res.data.code == 200) {
+          wepy.setStorageSync('role', 'vistor');
+          wepy.setStorageSync('token', res.data.data.token);
+          wepy.setStorageSync('userId', res.data.data.appUser.id);
+          wepy.setStorageSync('vipId', null);
+          wepy.setStorageSync('userInfo', JSON.stringify(res.data.data));
+          wepy.redirectTo({
+            url: '/pages/home'
+          });
+        } else {
+          wepy.showToast({
+            title: res.data.message,
+            icon: 'none',
+            duration: 1000
+          });
+        }
+      });
+  }
+  //进入登录
+  async login() {
+    let vipId = await wepy.getStorageSync('vipId');
+    if (!vipId || vipId == 'null') {
+      this.showLogin = true;
+      this.$apply();
+    } else {
+      api.login
+        .refresh({
+          openid: this.$parent.globalData.openId
+        })
+        .then(res => {
+          // wepy.setStorageSync('role', 'teacher')
+          if (res.data.code === 200) {
+            wepy.setStorageSync('token', res.data.data);
+            wepy.redirectTo({
+              url: '/pages/home'
+            });
+          } else {
+            wepy.showToast({
+              title: res.data.message,
+              icon: 'none',
+              duration: 1000
+            });
+          }
+        });
+    }
+  }
   events = {};
   watch = {};
   computed = {};
@@ -316,22 +316,6 @@ export default class Index extends wepy.page {
     if (downloadFile == '') {
       wepy.setStorageSync('downloadFile', '[]');
     }
-    await wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          _self.showAuth = false;
-        } else {
-          _self.showAuth = true;
-        }
-        this.$apply();
-        /*
-         * res.authSetting = {
-         *   "scope.userInfo": true,
-         *   "scope.userLocation": true
-         * }
-         */
-      }
-    });
   }
   onShow() {}
 }
@@ -416,6 +400,12 @@ export default class Index extends wepy.page {
     color: #fff;
     text-align: center;
     font-size: 14px;
+  }
+  .vistorBtn {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
   }
   .regist {
     width: 100%;
