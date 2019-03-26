@@ -171,6 +171,7 @@ export default class Index extends wepy.page {
             } else {
               wepy.setStorageSync('role', 'teacher');
             }
+            wepy.setStorageSync('phone', this.phoneNumber);
             wepy.setStorageSync('token', res.data.data.token);
             wepy.setStorageSync('userId', res.data.data.appUser.id);
             wepy.setStorageSync('vipId', res.data.data.appUser.vipUserId);
@@ -260,6 +261,7 @@ export default class Index extends wepy.page {
           wepy.setStorageSync('userId', res.data.data.appUser.id);
           wepy.setStorageSync('vipId', null);
           wepy.setStorageSync('userInfo', JSON.stringify(res.data.data));
+          wepy.setStorageSync('phone', 'null');
           wepy.redirectTo({
             url: '/pages/home'
           });
@@ -405,7 +407,9 @@ export default class Index extends wepy.page {
     background: transparent;
     border: none;
     outline: none;
-    color: #fff;
+    color: #999;
+    font-size: 14px;
+    margin-top: 4px;
   }
   .regist {
     width: 100%;

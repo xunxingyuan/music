@@ -26,7 +26,7 @@ export default class extends wepy.app {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#D0B485',
       navigationBarTitleText: 'LS艺术界',
-      navigationBarTextStyle: 'write',
+      navigationBarTextStyle: 'white',
       navigationStyle: 'custom'
     },
     requiredBackgroundModes: ['audio']

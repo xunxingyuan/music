@@ -78,7 +78,8 @@
       searchResult: [],
       showSearch: true,
       searchValue: '',
-      pageNumber: 1
+      pageNumber: 1,
+      role: ''
     };
     components = {
       learnlist: LearnList,
@@ -87,8 +88,9 @@
       scorelist: ScoreList,
       top: Top
     };
-    onReachBottom() {
+    onReachBottom(val) {
       //console.log('bottom');
+      console.log(val)
       this.loadMore()
     };
     loadMore() {
@@ -189,7 +191,10 @@
     events = {};
     watch = {};
     computed = {};
-    onLoad() {};
+    onLoad() {
+      this.role = wepy.getStorageSync('role');
+      
+    };
     onShow() {};
     checkId(id,arr){
       let flag = true

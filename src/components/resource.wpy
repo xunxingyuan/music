@@ -60,9 +60,6 @@ export default class Resource extends wepy.component {
         url: url
       });
     },
-    reachBottom() {
-      //console.log('reach Bottom');
-    },
     viewDetail(item) {
       wepy.setStorageSync('selectResource', JSON.stringify(item));
       let url = '/pages/resource/resource?id=' + item.id;
@@ -100,12 +97,15 @@ export default class Resource extends wepy.component {
     }
   };
   events = {
-    reachBottom: () => {
+    reachBottom: (val, self) => {
       let num = Math.floor(this.resourceData.length / 10) + 1;
       if (this.pageNumber != num) {
         this.pageNumber = num;
       }
-      this.getResource();
+      console.log(val);
+      if (val === 'resource') {
+        this.getResource();
+      }
     }
   };
   watch = {};

@@ -18,15 +18,14 @@
             <text>{{item.name}}</text>
             <image src="{{item.image}}" mode="aspectFill" lazy-load="true">
             </image>
-
             <!-- <image wx:if="{{item.id != 780&&item.id != 779&&item.id != 781}}" src="../resource/piano.jpg" mode="aspectFill" lazy-load="true">
-            </image>
-            <image wx:if="check(item.name,'吉他')" src="../resource/guitar.jpg" mode="aspectFill" lazy-load="true">
-            </image>
-            <image wx:if="{{item.id == 779}}" src="../resource/piano.jpg" mode="aspectFill" lazy-load="true">
-            </image>
-            <image wx:if="{{item.id == 781}}" src="../resource/common.jpg" mode="aspectFill" lazy-load="true">
-            </image> -->
+              </image>
+              <image wx:if="check(item.name,'吉他')" src="../resource/guitar.jpg" mode="aspectFill" lazy-load="true">
+              </image>
+              <image wx:if="{{item.id == 779}}" src="../resource/piano.jpg" mode="aspectFill" lazy-load="true">
+              </image>
+              <image wx:if="{{item.id == 781}}" src="../resource/common.jpg" mode="aspectFill" lazy-load="true">
+              </image> -->
           </view>
         </view>
       </repeat>
@@ -96,21 +95,23 @@
         this.selectItem = item;
         this.getCategoryLesson(item);
       },
-      
     };
     events = {
-      reachBottom: () => {
+      reachBottom: (val,self) => {
+        console.log(val,self)
         let num = Math.floor(this.lists.length / 10) + 1;
-        if (this.showContain) {
+        if (this.showContain&&val=='learn') {
           if (this.choseIndex == 0) {
             if (this.pageNumber != num) {
               this.pageNumber = num;
             }
+            console.log('search all list')
             this.getLearn();
           } else if (this.choseIndex == 1) {
             if (this.typeParam.pageNumber != num) {
               this.typeParam.pageNumber = num;
             }
+            console.log('search category list')
             this.getCategoryLesson(this.selectItem);
           } else if (this.choseIndex == 2) {}
         }
@@ -129,7 +130,7 @@
       let searchData = {
         pageNumber: this.pageNumber
       };
-      // //console.log(userData);
+      console.log('get Learn');
       if (role == 'student') {
         searchData['ccode'] == userData.vipUser.ccode;
       }
@@ -179,6 +180,12 @@
               }
             }
           });
+          // this.lists = this.lists.sort(function(a, b) {
+          //   let reg = new RegExp(/[0-9]+/) 
+          //   let aNum = a.name.match(reg)
+          //   let bNum = b.name.match(reg)
+          //   return aNum - bNum;
+          // });
           this.$apply();
         }
       });
@@ -213,20 +220,26 @@
               }
             });
           }
+          this.lists = this.lists.sort(function(a, b) {
+            let reg = new RegExp(/[0-9]+/) 
+            let aNum = a.name.match(reg)
+            let bNum = b.name.match(reg)
+            return aNum - bNum;
+          });
           this.showContain = true;
           this.$apply();
         }
       });
     }
-    setImage(list){
+    setImage(list) {
       list.forEach(element => {
-        if(element.name.indexOf('吉他')>-1){
+        if (element.name.indexOf('吉他') > -1) {
           element.image = '../resource/guitar.jpg'
-        }else if(element.name.indexOf('键盘')>-1){
+        } else if (element.name.indexOf('键盘') > -1) {
           element.image = '../resource/piano.jpg'
-        }else if(element.name.indexOf('机鼓')>-1){
+        } else if (element.name.indexOf('机鼓') > -1) {
           element.image = '../resource/jigu.jpg'
-        }else{
+        } else {
           element.image = '../resource/piano.jpg'
         }
       });

@@ -38,6 +38,12 @@
       switch (role) {
         case 'vistor':
           this.menu = [{
+            name: '课程',
+            icon: 'home',
+            icon_src: 'home2',
+            active_src: 'home',
+            id: 'learn'
+          },{
             name: '资源',
             icon: 'resorce',
             icon_src: 'music',

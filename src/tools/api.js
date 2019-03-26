@@ -2,6 +2,16 @@ import wepy from 'wepy';
 
 const url = 'https://music.gzjtit.com:9501';
 
+function setphone(data) {
+  if (data) {
+    data.phone = wepy.getStorageSync('phone');
+  } else {
+    data = {
+      phone: wepy.getStorageSync('phone')
+    };
+  }
+}
+
 export default {
   //微信验证
   auth: data => {
@@ -37,23 +47,28 @@ export default {
   course: {
     getCourse: data => {
       let reqUrl = url + '/api/course/getById';
+      setphone(data);
       return requestData(reqUrl, data, 'GET');
     },
     searchCourse: data => {
+      setphone(data);
       let reqUrl = url + '/api/course/getByPage';
       return requestData(reqUrl, data, 'GET');
     },
     searchCourseNew: data => {
+      setphone(data);
       let reqUrl = url + '/api/course/search';
       return requestData(reqUrl, data, 'GET');
     },
     //获取分类
     getCategory: data => {
+      setphone(data);
       let reqUrl = url + '/api/course/getCourseType';
       return requestData(reqUrl, data, 'GET');
     },
     //获取分类课程
     getCategoryLesson: data => {
+      setphone(data);
       let reqUrl = url + '/api/course/getByType';
       return requestData(reqUrl, data, 'GET');
     }

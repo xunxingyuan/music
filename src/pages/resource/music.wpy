@@ -37,8 +37,8 @@ export default class Music extends wepy.page {
     top: Top
   };
   methods = {};
-  onReachBottom() {
-    //console.log('bottom');
+  onReachBottom(val, self) {
+    console.log(val);
     let num = Math.floor(this.musicList.length / 10) + 1;
     if (this.pageNumber != num) {
       this.pageNumber = num;
@@ -78,6 +78,7 @@ export default class Music extends wepy.page {
   onShow() {}
   async loadMore() {
     let _self = this;
+    console.log('load more');
     let res = await api.music.searchMusic({
       pageNumber: _self.pageNumber
     });

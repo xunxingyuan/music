@@ -79,13 +79,12 @@
       },
     };
     onReachBottom() {
-      //console.log('reachbottom')
-      this.$broadcast('reachBottom');
+      this.$broadcast('reachBottom',this.activeTab);
     }
     events = {
       'changeTab': (data, $event) => {
         this.activeTab = data;
-        this.$broadcast('reachBottom');
+        this.$broadcast('reachBottom',this.activeTab);
         this.$apply();
       }
     };
