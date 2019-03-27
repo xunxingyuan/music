@@ -5,7 +5,7 @@
             <image class='icon' animation="{{animationData}}" src="../../resource/music.png" mode="scaleToFill" lazy-load="false"></image>
         </view>
         <view class="ctrl">
-            
+            <text class="title">{{musicName}}</text>
             <view class="stepView">
                 <view class="step">
                     <text>{{getTime}}</text>
@@ -17,9 +17,16 @@
                     <text wx:if="{{totalTime!=='00:00'}}">{{totalTime}}</text>
                 </view>
             </view>
-            <text class="title">{{musicName}}</text>
         </view>
         <view class="close">
+            <view class="btn" @tap="play" wx:if="{{!playStatus}}">
+                <image class='icon' src="../../resource/play.png" mode="scaleToFill" lazy-load="false">
+                </image>
+            </view>
+            <view class="btn" @tap="pause" wx:if="{{playStatus}}">
+                <image class='icon' src="../../resource/pause.png" mode="scaleToFill" lazy-load="false">
+                </image>
+            </view>
             <text @tap="closePlay">关闭</text>
         </view>
     </view>
@@ -37,7 +44,7 @@
             musicPlayer: '',
             musicLen: 190,
             musicStep: 0,
-            playStatus: false,
+            playStatus: true,
             stepCtrl: '',
             stepValue: 0,
             stepTime: 0,
@@ -51,14 +58,20 @@
         methods = {
             sliderChange: function(val) {
                 console.log(val);
-                this.musicPlayer.play();
+                // this.musicPlayer.play();
                 this.musicPlayer.seek(val.detail.value);
             },
             play: function() {
+                this.playStatus = true;
                 this.musicPlayer.play();
+                this.refreshList()
+                this.$apply();
             },
             pause: function() {
+                this.playStatus = false;
+                clearInterval(this.timeInterval)
                 this.musicPlayer.pause();
+                this.$apply();
             },
             closePlay: function() {
                 wepy.setStorageSync('playState', JSON.stringify({
@@ -72,6 +85,7 @@
         };
         watch = {
             url: () => {
+                this.refreshList()
                 let _self = this;
                 this.musicName = this.music;
                 wepy.setStorageSync('playState', JSON.stringify({
@@ -85,20 +99,24 @@
                     innerAudioContext.autoplay = true;
                     innerAudioContext.title = this.music
                     innerAudioContext.src = this.url;
-                    // innerAudioContext.onPlay(() => {
-                    //     console.log('开始播放');
-                    //     _self.playStatus = true;
-                    //     _self.$apply();
-                    // });
-                    // innerAudioContext.onPause(() => {
-                    //     console.log('播放暂停');
-                    //     _self.playStatus = false;
-                    //     _self.$apply();
-                    // });
-                    innerAudioContext.onTimeUpdate(() => {
-                        _self.musicLen = Math.floor(innerAudioContext.duration);
-                        _self.musicStep = Math.floor(innerAudioContext.currentTime);
+                    innerAudioContext.onPlay(() => {
+                        console.log('开始播放');
+                        _self.playStatus = true;
                         _self.$apply();
+                    });
+                    innerAudioContext.onPause(() => {
+                        console.log('播放暂停');
+                        _self.playStatus = false;
+                        this.animationData = ""
+                        clearInterval(this.timeInterval)
+                        _self.$apply();
+                    });
+                    innerAudioContext.onTimeUpdate(() => {
+                        if (innerAudioContext.duration && innerAudioContext.currentTime) {
+                            _self.musicLen = Math.floor(innerAudioContext.duration);
+                            _self.musicStep = Math.floor(innerAudioContext.currentTime);
+                            _self.$apply();
+                        }
                     });
                     innerAudioContext.onError(res => {
                         console.log(res.errMsg);
@@ -110,13 +128,21 @@
                         clearInterval(this.timeInterval)
                         this.$emit('closePlay');
                     });
-                    innerAudioContext.onStop(() => {
-                        wepy.setStorageSync('playState', JSON.stringify({
-                            name: '',
-                            url: ''
-                        }));
+                    innerAudioContext.onEnded(res =>{
                         clearInterval(this.timeInterval)
-                        this.$emit('closePlay')
+                        _self.playStatus = false;
+                        _self.$apply();
+                    })
+                    innerAudioContext.onStop(() => {
+                        clearInterval(this.timeInterval)
+                        _self.playStatus = false;
+                        _self.$apply();
+                        // wepy.setStorageSync('playState', JSON.stringify({
+                        //     name: '',
+                        //     url: ''
+                        // }));
+                        // clearInterval(this.timeInterval)
+                        // this.$emit('closePlay')
                     })
                     _self.$apply();
                 }
@@ -156,7 +182,6 @@
                 timingFunction: "linear"
             })
             this.$apply()
-            this.refreshList()
             let _self = this
             let music = wepy.getStorageSync('playState');
             let detail = JSON.parse(music)
@@ -169,6 +194,7 @@
                 this.musicPlayer.title = detail.name
                 this.musicPlayer.url = detail.url
                 this.musicPlayer.play()
+                this.refreshList()
                 this.musicPlayer.onTimeUpdate(() => {
                     _self.musicLen = Math.floor(this.musicPlayer.duration);
                     _self.musicStep = Math.floor(this.musicPlayer.currentTime);
@@ -180,7 +206,8 @@
         onShow() {};
         refreshList() {
             let _self = this
-            let animation = _self.animation 
+            let animation = _self.animation
+            clearInterval(this.timeInterval)
             //连续动画需要添加定时器,所传参数每次+1就行
             this.timeInterval = setInterval(function() {
                 _self.rotateIndex = _self.rotateIndex + 1;
@@ -199,7 +226,7 @@
         background: #f7f7f7;
         border-top: solid 1px #ddd;
         position: fixed;
-        bottom: 0;
+        bottom: 25rpx;
         left: 0;
         padding: 10rpx;
         display: flex;
@@ -220,6 +247,7 @@
                 padding: 0 10px;
                 height: 40rpx;
                 line-height: 40rpx;
+                margin-top: 10rpx;
             }
             .stepView {
                 display: flex;
@@ -237,14 +265,23 @@
             }
         }
         .close {
-            width: 40px;
-            min-width: 40px;
+            width: 90rpx;
+            min-width: 90rpx;
             height: 100%;
             display: flex;
+            flex-flow: column;
             align-items: center;
             justify-content: center;
             color: red;
             font-size: 12px;
+            .btn {
+                margin-bottom: 10rpx;
+                .icon {
+                    margin: 0;
+                    width: 70rpx;
+                    height: 70rpx;
+                }
+            }
         }
     }
 </style>

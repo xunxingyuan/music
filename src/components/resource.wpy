@@ -41,7 +41,7 @@ import api from '@/tools/api.js';
 import Search from '@/components/common/search';
 export default class Resource extends wepy.component {
   config = {
-    navigationBarTitleText: '资源'
+    // navigationBarTitleText: '资源'
   };
   props = {};
   data = {

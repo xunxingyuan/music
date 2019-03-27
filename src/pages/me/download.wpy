@@ -342,7 +342,7 @@ export default class Download extends wepy.page {
 
 <style lang='less'>
 .download {
-  padding-bottom: 150rpx;
+  padding-bottom: 180rpx;
   .tips {
     text-align: center;
     line-height: 3rem;

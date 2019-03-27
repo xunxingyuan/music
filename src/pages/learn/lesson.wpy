@@ -146,7 +146,7 @@
 
 <style lang='less'>
   .lesson {
-    padding-bottom: 150rpx;
+    padding-bottom: 180rpx;
     .block {
       margin-bottom: 10px;
       background: #f9f9f9;

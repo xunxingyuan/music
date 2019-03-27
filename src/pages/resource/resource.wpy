@@ -47,7 +47,7 @@ import MusicPlay from '../../components/music/play';
 
 export default class Resource extends wepy.page {
   config = {
-    navigationBarTitleText: '曲集详情'
+    // navigationBarTitleText: '曲集详情'
   };
   data = {
     albumData: {},
@@ -153,7 +153,7 @@ export default class Resource extends wepy.page {
 
 <style lang='less'>
 .resourceData {
-  padding-bottom: 150rpx;
+  padding-bottom: 180rpx;
   .resBox {
     background: #fff;
     margin-bottom: 20rpx;

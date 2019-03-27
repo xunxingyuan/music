@@ -122,7 +122,7 @@ export default class Collection extends wepy.page {
 
 <style lang='less'>
 .collection {
-  padding-bottom: 150rpx;
+  padding-bottom: 180rpx;
 
   .tips {
     text-align: center;

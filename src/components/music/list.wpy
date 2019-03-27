@@ -348,7 +348,7 @@ export default class musicList extends wepy.component {
 .musicList {
   width: 100%;
   height: auto;
-  margin-bottom: 150rpx;
+  margin-bottom: 180rpx;
 
   .musicItem {
     background: #fff;
