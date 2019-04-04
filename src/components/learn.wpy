@@ -53,13 +53,13 @@
           name: '最新课程'
         },
         {
-          name: '全部课程'
+          name: '课程分类'
         },
         {
           name: '专题'
         }
       ],
-      choseIndex: 0,
+      choseIndex: 1,
       showContain: true,
       categoryList: [],
       typeParam: {
@@ -120,7 +120,7 @@
     watch = {};
     computed = {};
     onLoad() {
-      this.getLearn();
+      this.getCategory();
     };
     getLearn() {
       let id = wepy.getStorageSync('userId');

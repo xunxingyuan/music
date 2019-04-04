@@ -222,22 +222,24 @@
 <style lang='less'>
     .musicPlay {
         width: 100%;
-        height: 145rpx;
+        height: 170rpx;
         background: #f7f7f7;
         border-top: solid 1px #ddd;
         position: fixed;
-        bottom: 25rpx;
+        bottom: 0;
         left: 0;
         padding: 10rpx;
+        // padding-bottom: 35rpx;
         display: flex;
         box-sizing: border-box;
         .icon {
-            width: 120rpx;
-            height: 120rpx;
+            width: 140rpx;
+            height: 140rpx;
             margin-right: 3px;
         }
         .ctrl {
             flex: 1;
+            margin-bottom: 35rpx;
             .title {
                 display: block;
                 overflow: hidden;
