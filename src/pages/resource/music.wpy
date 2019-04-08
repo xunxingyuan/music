@@ -29,7 +29,8 @@ export default class Music extends wepy.page {
     playState: 'hidden',
     showCtrl: 1,
     musicList: [],
-    pageNumber: 1
+    pageNumber: 1,
+    selectItem: ''
   };
   components = {
     search: Search,
@@ -37,6 +38,18 @@ export default class Music extends wepy.page {
     top: Top
   };
   methods = {};
+  onShareAppMessage() {
+    let path =
+      '/pages/resource/player/shareMusic?url=' +
+      this.selectItem.url +
+      '&&name=' +
+      this.selectItem.title;
+    return {
+      title: this.selectItem.title,
+      path: path
+      // imageUrl: 'https://music.gzjtit.com:9501/static/icons/music.png'
+    };
+  }
   onReachBottom(val, self) {
     console.log(val);
     let num = Math.floor(this.musicList.length / 10) + 1;
@@ -48,6 +61,11 @@ export default class Music extends wepy.page {
   events = {
     download: item => {
       console.log(item);
+    },
+    selectItem: item => {
+      console.log('item change');
+      this.selectItem = item;
+      this.$apply();
     }
   };
   watch = {};

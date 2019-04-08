@@ -318,6 +318,7 @@ export default class Index extends wepy.page {
     if (downloadFile == '') {
       wepy.setStorageSync('downloadFile', '[]');
     }
+    wepy.showShareMenu({ withShareTicket: true });
   }
   onShow() {}
 }
@@ -429,7 +430,7 @@ export default class Index extends wepy.page {
   .logoText {
     font-size: 42px;
     color: #fff;
-    margin-bottom: 8rem;
+    margin-bottom: 100%;
     display: block;
   }
 }

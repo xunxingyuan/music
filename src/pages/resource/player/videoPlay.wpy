@@ -2,7 +2,7 @@
 <template>
   <view class='videoPlay mainPage'>
     <top title='视频' backColor="black" back='yes'></top>
-    <video @tap.stop='controlVideo' custom-cache="{{false}}" id='myVideo' bindplay='videoPlay' bindpause='videoPause' bindended='videoEnd' hidden="{{showInput}}" class='show' poster="{{videoImg}}" src="{{videoSrc}}" objectFit="contain"></video>
+    <video id='myVideo' vslide-gesture="true" autoplay="true" show-mute-btn="true" play-btn-position="center" enable-play-gesture="true" hidden="{{showInput}}" class='show' poster="{{videoImg}}" src="{{videoSrc}}" objectFit="contain"></video>
     <view class='videoTitle'>{{videoTitle}}</view>
     <view hidden="{{showInput}}" class='ctrl'>
       <view class='item' @tap="downloadSrc">
@@ -419,6 +419,14 @@
     events = {};
     watch = {};
     computed = {};
+    onShareAppMessage() {
+      let path = '/pages/resource/player/shareVideo?url=' + this.videoSrc + '&&title=' + this.videoTitle + '&&img=' + this.videoImg
+      return {
+        title: '视频分享',
+        path: path,
+        imageUrl: this.videoImg
+      }
+    };
     onLoad(options) {
       wepy.setStorageSync('playState', JSON.stringify({
         name: '',
@@ -434,7 +442,7 @@
       this.videoSrc = options.url
       this.imgList = this.$parent.globalData.imgList
       this.$apply()
-      if (options.url.split('ttp://').length > 1) {
+      if (options.url.split('ttps://').length > 1) {
         wepy.showShareMenu({
           withShareTicket: true
         });

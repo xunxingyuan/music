@@ -1,0 +1,95 @@
+<!--  -->
+<template>
+  <view class="videoShare">
+    <top title="视频" backColor="black" back="no"></top>
+    <video
+      class="videoBox"
+      title="{{title}}"
+      play-btn-position="center"
+      vslide-gesture="true"
+      autoplay="true"
+      enable-play-gesture="true"
+      show-mute-btn="true"
+      src="{{src}}"
+      poster="{{imgSrc}}"
+      controls
+    ></video>
+    <view class="title">
+      <text>{{title}}</text>
+    </view>
+    <view class="btnBox">
+      <button size="mini" type="primary" @tap="toLogin">登录查看更多</button>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import Top from '@/components/common/top';
+
+export default class videoShare extends wepy.page {
+  data = {
+    src: '',
+    title: '',
+    imgSrc: ''
+  };
+
+  components = {
+    top: Top
+  };
+
+  methods = {
+    toLogin() {
+      wepy.redirectTo({
+        url: '/pages/index'
+      });
+    }
+  };
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad(options) {
+    if (options.url && options.title && options.img) {
+      this.src = options.url;
+      this.title = options.title;
+      this.imgSrc = options.img;
+      this.$apply();
+    } else {
+      wepy.redirectTo({
+        url: '/pages/index'
+      });
+    }
+  }
+
+  onShow() {}
+}
+</script>
+
+<style lang='less'>
+.videoShare {
+  padding-top: 150rpx;
+  .videoBox {
+    width: 100%;
+  }
+  .title {
+    box-sizing: border-box;
+    width: 100%;
+    background: #fff;
+    padding: 5px 10px;
+    line-height: 1.5;
+    word-break: break-all;
+    margin-top: -4px;
+  }
+  .btnBox {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20%;
+  }
+}
+</style>

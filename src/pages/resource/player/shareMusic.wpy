@@ -1,0 +1,76 @@
+<!--  -->
+<template>
+  <view class="shareMusic">
+    <top title="音频" backColor="black" back="no"></top>
+    <view class="btnBox">
+      <button size="mini" type="primary" @tap="toLogin">登录查看更多</button>
+    </view>
+    <musicPlay wx:if="{{showMusicPlay}}" :music="title" :url="musicSrc"></musicPlay>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import Top from '@/components/common/top';
+import MusicPlay from '@/components/music/play';
+export default class shareMusic extends wepy.page {
+  data = {
+    showMusicPlay: true,
+    title: '',
+    musicSrc: ''
+  };
+  components = {
+    top: Top,
+    musicPlay: MusicPlay
+  };
+  methods = {
+    toLogin() {
+      wepy.redirectTo({
+        url: '/pages/index'
+      });
+    }
+  };
+  events = {
+    closePlay: function() {
+      this.showMusicPlay = false;
+      this.title = '';
+      this.musicSrc = '';
+      this.$apply();
+    }
+  };
+  watch = {};
+  computed = {};
+  onLoad(options) {
+    if (options.url && options.name) {
+      wepy.setStorageSync(
+        'playState',
+        JSON.stringify({
+          name: options.name,
+          url: options.url
+        })
+      );
+      this.title = options.name;
+      this.musicSrc = options.url;
+      this.showMusicPlay = true;
+      this.$apply();
+    } else {
+      wepy.redirectTo({
+        url: '/pages/index'
+      });
+    }
+  }
+  onShow() {}
+}
+</script>
+
+<style lang='less'>
+.shareMusic {
+  .btnBox {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+</style>

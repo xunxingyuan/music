@@ -128,7 +128,7 @@
                         clearInterval(this.timeInterval)
                         this.$emit('closePlay');
                     });
-                    innerAudioContext.onEnded(res =>{
+                    innerAudioContext.onEnded(res => {
                         clearInterval(this.timeInterval)
                         _self.playStatus = false;
                         _self.$apply();
@@ -186,22 +186,21 @@
             let music = wepy.getStorageSync('playState');
             let detail = JSON.parse(music)
             this.musicName = this.music ? this.music : detail.name;
-            const musicPlay = wx.getBackgroundAudioManager();
-            this.musicPlayer = musicPlay;
+            this.musicPlayer = wx.getBackgroundAudioManager();
+            this.musicPlayer.autoplay = true
+            this.musicPlayer.onTimeUpdate(() => {
+                _self.musicLen = Math.floor(this.musicPlayer.duration);
+                _self.musicStep = Math.floor(this.musicPlayer.currentTime);
+                _self.$apply();
+            });
             console.log(detail)
             if (detail.url != '') {
-                this.musicPlayer.autoplay = true
                 this.musicPlayer.title = detail.name
-                this.musicPlayer.url = detail.url
+                this.musicPlayer.src = detail.url
                 this.musicPlayer.play()
                 this.refreshList()
-                this.musicPlayer.onTimeUpdate(() => {
-                    _self.musicLen = Math.floor(this.musicPlayer.duration);
-                    _self.musicStep = Math.floor(this.musicPlayer.currentTime);
-                    _self.$apply();
-                });
             }
-            this.$apply()
+            _self.$apply()
         };
         onShow() {};
         refreshList() {
@@ -228,8 +227,7 @@
         position: fixed;
         bottom: 0;
         left: 0;
-        padding: 10rpx;
-        // padding-bottom: 35rpx;
+        padding: 10rpx; // padding-bottom: 35rpx;
         display: flex;
         box-sizing: border-box;
         .icon {

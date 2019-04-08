@@ -4,8 +4,8 @@
     <top title='搜索' backColor="black" back='yes'></top>
     <view class='search'>
       <!-- <image class='icon' src="../resource/search1.png" mode="scaleToFill"
-            lazy-load="false">
-          </image> -->
+              lazy-load="false">
+            </image> -->
       <i class='icon iconfont icon-sousuo'></i>
       <input bindfocus="bindfocus" bindinput="bindKeyInput" class='searchBoxItem' type="text" placeholder="输入搜索内容" confirm-type="search" bindconfirm="searchData"> </input>
     </view>
@@ -16,14 +16,14 @@
       <view class='typeContain'>
         <radio @tap="setType('music')" checked="{{selectType === 'music'}}" name="id" /> 音频
         <!-- <view>
-                                  <view>
-                                    <checkbox-group @change="checkboxChange">
-                                      <label wx:for="{{musicType}}">
-                                        <checkbox value="{{item.name}}" checked="{{item.checked}}" name="id" /> {{item.value}}
-                                      </label>
-                                    </checkbox-group>
-                                  </view>
-                                </view> -->
+                                    <view>
+                                      <checkbox-group @change="checkboxChange">
+                                        <label wx:for="{{musicType}}">
+                                          <checkbox value="{{item.name}}" checked="{{item.checked}}" name="id" /> {{item.value}}
+                                        </label>
+                                      </checkbox-group>
+                                    </view>
+                                  </view> -->
       </view>
       <view class='typeContain'>
         <radio @tap="setType('score')" checked="{{selectType === 'score'}}" name="id" /> 图谱
@@ -79,7 +79,8 @@
       showSearch: true,
       searchValue: '',
       pageNumber: 1,
-      role: ''
+      role: '',
+      selectItem: ''
     };
     components = {
       learnlist: LearnList,
@@ -127,7 +128,7 @@
           }).then((res) => {
             if (res.data.code === 200) {
               res.data.data.forEach(element => {
-                if(this.checkId(element.id , this.searchResult)){
+                if (this.checkId(element.id, this.searchResult)) {
                   this.searchResult.push(element)
                 }
               });
@@ -149,7 +150,7 @@
           api.course.searchCourseNew(reqData).then((res) => {
             if (res.data.code === 200) {
               res.data.data.forEach(element => {
-                if(this.checkId(element.id , this.searchResult)){
+                if (this.checkId(element.id, this.searchResult)) {
                   this.searchResult.push(element)
                 }
               });
@@ -163,9 +164,9 @@
             title: this.searchValue
           }).then((res) => {
             res.data.forEach(element => {
-              if(this.checkId(element.id , this.searchResult)){
-                  this.searchResult.push(element)
-                }
+              if (this.checkId(element.id, this.searchResult)) {
+                this.searchResult.push(element)
+              }
             });
             this.$apply()
           })
@@ -188,18 +189,35 @@
         this.selectType = val
       },
     };
-    events = {};
+    onShareAppMessage() {
+      let path =
+        '/pages/resource/player/shareMusic?url=' +
+        this.selectItem.url +
+        '&&name=' +
+        this.selectItem.title;
+      return {
+        title: this.selectItem.title,
+        path: path,
+        // imageUrl: 'https://music.gzjtit.com:9501/static/icons/music.png'
+      };
+    }
+    events = {
+      selectItem: item => {
+        console.log('item change');
+        this.selectItem = item;
+        this.$apply();
+      }
+    };
     watch = {};
     computed = {};
     onLoad() {
       this.role = wepy.getStorageSync('role');
-      
     };
     onShow() {};
-    checkId(id,arr){
+    checkId(id, arr) {
       let flag = true
       arr.forEach(element => {
-        if(element.id === id){
+        if (element.id === id) {
           flag = false
         }
       });

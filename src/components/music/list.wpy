@@ -50,6 +50,9 @@
     </repeat>
     <view class="musicCtrlBox" wx:if="{{showCtrl != 1}}" @tap="cancelShowMusicCtrl">
       <view class="flex">
+        <view wx:if="{{showShare}}" class="ctrl vip" @tap.stop="shareMusic({{selectItem}})">
+          <button class="share" open-type="share">分享</button>
+        </view>
         <view class="ctrl vip" @tap.stop="downloadMusic({{selectItem}})">VIP-下载歌曲</view>
         <view class="ctrl vip" @tap.stop="collectMusic({{selectItem}})">VIP-收藏歌曲</view>
         <view class="ctrl" @tap.stop="showIntro">歌曲简介</view>
@@ -100,7 +103,8 @@ export default class musicList extends wepy.component {
     imgList: '',
     showMusicPlay: false,
     choseMusic: '',
-    choseMusicUrl: ''
+    choseMusicUrl: '',
+    showShare: false
   };
   components = {
     musicPlay: MusicPlay
@@ -149,6 +153,9 @@ export default class musicList extends wepy.component {
     showMusicCtrl(item) {
       this.showCtrl = 0;
       this.selectItem = item;
+      console.log(this.selectItem);
+      this.$emit('selectItem', item);
+      this.$apply();
     },
     cancelShowMusicCtrl() {
       this.showCtrl = 1;
@@ -188,6 +195,21 @@ export default class musicList extends wepy.component {
         content: this.selectItem.introduction,
         showCancel: false
       });
+    },
+    async shareMusic(item) {
+      let userId = await wepy.getStorageSync('userId');
+      let userInfo = await wepy.getStorageSync('userInfo');
+      let permission = JSON.parse(userInfo).permission;
+      if (item.isFree == 0 || permission.playFree == 'yes') {
+      } else {
+        wepy.showToast({
+          title: '权限不足', //提示的内容,
+          icon: 'none', //图标,
+          duration: 2000, //延迟时间,
+          mask: true, //显示透明蒙层，防止触摸穿透,
+          success: res => {}
+        });
+      }
     },
     async downloadMusic(item) {
       // console.log(this.$parent);
@@ -322,15 +344,22 @@ export default class musicList extends wepy.component {
       this.$apply();
     }
   };
+
   watch = {};
   computed = {};
-  onLoad() {
+  async onLoad() {
     this.imgList = this.$parent.$parent.globalData.imgList;
     let music = wepy.getStorageSync('playState');
     let detail = JSON.parse(music);
     if (detail.name && detail.url) {
       this.showMusicPlay = true;
       this.$apply();
+    }
+    let userId = await wepy.getStorageSync('userId');
+    let userInfo = await wepy.getStorageSync('userInfo');
+    let permission = JSON.parse(userInfo).permission;
+    if (permission.playVip == 'yes') {
+      this.showShare = true;
     }
 
     this.$apply();
@@ -455,6 +484,19 @@ export default class musicList extends wepy.component {
         text-align: center;
         font-size: 14px;
         border-bottom: solid 1px #ddd;
+        .share {
+          outline: none;
+          border: none;
+          background: transparent;
+          color: #d0b485;
+          font-size: 14px;
+          border-radius: 0;
+          height: 100rpx;
+          line-height: 100rpx;
+        }
+        .share::after {
+          border: none;
+        }
       }
       .vip {
         color: #d0b485;
