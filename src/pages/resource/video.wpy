@@ -165,6 +165,10 @@
       }
       .indroduce {
         font-size: 15px;
+        width: 90%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
       }
       .intro {
         height: 1.8rem;

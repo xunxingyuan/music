@@ -2,7 +2,10 @@
 <template>
   <view class="listContain">
     <repeat for="{{listData}}" key="index" index="index" item="item">
-      <view class="listItem" @tap="toLesson({{item}})">
+      <view
+        class="listItem {{item.permission?'permisson': 'unpermission'}}"
+        @tap="toLesson({{item}})"
+      >
         <view class="msgTop flex">
           <view class="time">
             <!-- <view class='date'>{{item.schedule}} <text>/ {{item.day}}</text>
@@ -40,10 +43,20 @@ export default class List extends wepy.component {
   components = {};
   methods = {
     toLesson(item) {
-      let url = '/pages/learn/lesson?id=' + item.id;
-      wepy.navigateTo({
-        url: url
-      });
+      if (item.permission) {
+        let url = '/pages/learn/lesson?id=' + item.id;
+        wepy.navigateTo({
+          url: url
+        });
+      } else {
+        wepy.showToast({
+          title: '暂无查看课程权限', //提示的内容,
+          icon: 'none', //图标,
+          duration: 1000, //延迟时间,
+          mask: true, //显示透明蒙层，防止触摸穿透,
+          success: res => {}
+        });
+      }
     }
   };
   events = {};
@@ -117,6 +130,11 @@ export default class List extends wepy.component {
         color: #333;
       }
     }
+  }
+  .permisson {
+  }
+  .unpermission {
+    background: #ccc;
   }
 }
 </style>

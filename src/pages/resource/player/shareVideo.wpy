@@ -18,7 +18,7 @@
       <text>{{title}}</text>
     </view>
     <view class="btnBox">
-      <button size="mini" type="primary" @tap="toLogin">登录查看更多</button>
+      <button class="loginBtn" size="mini" type="primary" @tap="toLogin">浏览全部资源</button>
     </view>
   </view>
 </template>
@@ -90,6 +90,10 @@ export default class videoShare extends wepy.page {
     align-items: center;
     justify-content: center;
     margin-top: 20%;
+    .loginBtn {
+      background: #141416;
+      color: #fff;
+    }
   }
 }
 </style>

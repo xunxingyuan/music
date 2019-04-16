@@ -36,14 +36,15 @@
               </image>
             </view>
             <!-- <view
-                    class="btn"
-                    @longpress="beginForward"
-                    @touchend="stopForward"
-                    @touchcancel="stopForward"
-                    >快进</view>-->
+                        class="btn"
+                        @longpress="beginForward"
+                        @touchend="stopForward"
+                        @touchcancel="stopForward"
+                        >快进</view>-->
           </view>
         </view>
       </view>
+      <button class="loginBtn" size="mini" type="primary" @tap="toLogin">浏览全部资源</button>
     </view>
   </view>
 </template>
@@ -65,9 +66,10 @@
       stepValue: 0,
       stepTime: 0,
       stepSpeed: 1,
-      animation:'',
+      animation: '',
       animationData: {},
-      animationCtrl: ''
+      rotateIndex: 0,
+      timeInterval: '',
     };
     components = {
       top: Top
@@ -79,49 +81,25 @@
         this.musicPlayer.seek(val.detail.value);
       },
       play: function() {
+        this.refreshList()
         this.musicPlayer.play();
       },
       pause: function() {
+        clearInterval(this.timeInterval)
         this.musicPlayer.pause();
+      },
+      toLogin() {
+        wepy.redirectTo({
+          url: '/pages/index'
+        });
       }
-      // beginForward: function() {
-      //   this.stepTime = 0;
-      //   this.stepValue = 0;
-      //   this.stepSpeed = 1;
-      //   this.musicPlayer.play();
-      //   this.musicPlayer.pause();
-      //   this.stepCtrl = setInterval(() => {
-      //     this.stepTime += 1;
-      //     if (this.stepTime > 5) {
-      //       this.stepSpeed = 5;
-      //     } else if (this.stepTime > 10) {
-      //       this.stepSpeed = 10;
-      //     } else {
-      //       this.stepSpeed = 1;
-      //     }
-      //     this.$apply();
-      //     this.stepValue += this.stepSpeed;
-      //     this.musicStep += this.stepValue;
-      //     if (this.musicStep === this.musicLen) {
-      //       clearInterval(this.stepCtrl);
-      //     }
-      //     this.$apply();
-      //   }, 1000);
-      //   this.$apply();
-      // },
-      // stopForward: function() {
-      //   clearInterval(this.stepCtrl);
-      //   this.musicPlayer.play();
-      //   let val = this.musicStep + this.stepValue;
-      //   this.musicPlayer.seek(val);
-      // }
     };
     events = {
       'routerchange': () => {
         this.musicPlayer.destroy()
       }
     };
-    onUnload(){
+    onUnload() {
       this.musicPlayer.destroy()
     };
     watch = {};
@@ -153,51 +131,64 @@
     };
     onLoad(options) {
       let _self = this;
-      // this.videoId = options.url
-      const musicPlayer = wx.createInnerAudioContext();
-      this.musicPlayer = musicPlayer
-      let innerAudioContext = this.musicPlayer;
-      innerAudioContext.autoplay = true;
-      innerAudioContext.src = options.url;
+      // options.name = '欢乐颂 Ode to Joy - Ochestra Version'
+      // options.url = "https://music.gzjtit.com:9501/static/music/d0110a777a5c456d87f0515ab995c81c.mp3"
+      if (options.url && options.name) {
+        const musicPlayer = wx.createInnerAudioContext();
+        this.musicPlayer = musicPlayer
+        let innerAudioContext = this.musicPlayer;
+        innerAudioContext.autoplay = true;
+        innerAudioContext.src = options.url;
+        this.musicName = options.name
+        innerAudioContext.onPlay(() => {
+          console.log('开始播放');
+          _self.playStatus = true;
+          _self.$apply();
+        });
+        innerAudioContext.onPause(() => {
+          console.log('播放暂停');
+          _self.playStatus = false;
+          _self.$apply();
+        });
+        innerAudioContext.onTimeUpdate(() => {
+          _self.musicLen = Math.floor(innerAudioContext.duration);
+          _self.musicStep = Math.floor(innerAudioContext.currentTime);
+          _self.$apply();
+        });
+        innerAudioContext.onError(res => {
+          console.log(res.errMsg);
+          console.log(res.errCode);
+        });
 
-      this.musicName = options.name
-      innerAudioContext.onPlay(() => {
-        console.log('开始播放');
-        _self.playStatus = true;
-        // _self.animationCtrl = setInterval(()=>{
-        //   _self.createAnimation()
-        // },1000)
+        clearInterval(this.timeInterval)
+        this.rotateIndex = 0
+        this.animation = wx.createAnimation({
+            duration: 1000,
+            timingFunction: "linear"
+        })
+        this.refreshList()
+
+
         _self.$apply();
-      });
-      innerAudioContext.onPause(() => {
-        console.log('播放暂停');
-        _self.playStatus = false;
-        // clearInterval(this.animationCtrl);
-        _self.$apply();
-      });
-      innerAudioContext.onTimeUpdate(() => {
-        _self.musicLen = Math.floor(innerAudioContext.duration);
-        _self.musicStep = Math.floor(innerAudioContext.currentTime);
-        _self.$apply();
-      });
-      innerAudioContext.onError(res => {
-        console.log(res.errMsg);
-        console.log(res.errCode);
-      });
-      // let animation = wx.createAnimation({
-      //   duration: 1000,
-      //   timingFunction: 'ease',
-      // })
-      // _self.animation = animation
-      _self.$apply();
+      } else {
+        wepy.redirectTo({
+          url: '/pages/index'
+        });
+      }
     }
     onShow() {};
-    createAnimation() {
-      let _self = this
-      _self.animation.rotate(45)
-      _self.animationData = _self.animation.export();
-      _self.$apply();
-    }
+     refreshList() {
+            let _self = this
+            let animation = _self.animation
+            clearInterval(this.timeInterval)
+            //连续动画需要添加定时器,所传参数每次+1就行
+            this.timeInterval = setInterval(function() {
+                _self.rotateIndex = _self.rotateIndex + 1;
+                animation.rotate(60 * (_self.rotateIndex)).step()
+                _self.animationData = animation.export()
+                _self.$apply()
+            }, 1000)
+        }
   }
 </script>
 
@@ -216,9 +207,13 @@
       background: #fff;
       padding: 2rem;
       padding-top: 250rpx;
+      display: flex;
+      flex-flow: column;
+      justify-content: space-around;
+      align-items: center;
       .musicInner {
         width: 100%;
-        height: 100%;
+        height: 90%;
         display: flex;
         flex-flow: column;
         justify-content: space-around;
@@ -240,7 +235,7 @@
         .logo {
           height: 20vh;
           width: 100%; // border: solid 1px #ddd;
-          margin: 3rem 0;
+          
           display: flex;
           align-items: center;
           justify-content: center;
@@ -267,7 +262,7 @@
           }
           .flex {
             display: flex;
-            margin-top: 1.5rem;
+            margin-top: 1rem;
             .btn {
               margin: 0 2rem;
               .icon {
@@ -277,6 +272,11 @@
             }
           }
         }
+      }
+      .loginBtn{
+        margin-top: 10%;
+        background: #141416;
+        color: #fff;
       }
     }
   }

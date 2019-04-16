@@ -9,18 +9,16 @@
     </view>
     <view class="resBox">
       <view class="title">音频</view>
-      <repeat
-        wx:if="{{musicListdata.length!==0}}"
-        for="{{musicListdata}}"
-        key="index"
-        index="index"
-        item="item"
-      >
-        <view class="flex musicItem" @tap="audioPlay({{item}})">
-          <text>{{item.title}}</text>
-          <view>
-            <i class="iconfont icon-shipin"></i>
-            <text></text>
+      <repeat wx:if="{{musicListdata.length!==0}}" for="{{musicListdata}}" key="index" index="index" item="item">
+        <view class="flex musicItem">
+          <text @tap="audioPlay({{item}})">{{item.title}}</text>
+          <view class="flex">
+            <view class="shareBox flex" @tap="shareMusic({{item}})">
+              <image class="share" src="../../resource/share.png" mode="scaleToFill" lazy-load="false" open-type="share">
+              </image>
+              <button class="shareBtn" open-type="share">分享</button>
+            </view>
+            <i class="iconfont icon-shipin" @tap="audioPlay({{item}})"></i>
           </view>
         </view>
       </repeat>
@@ -37,150 +35,162 @@
 </template>
 
 <script>
-import wepy from 'wepy';
-import MusicList from '@/components/music/list';
-import ScoreList from '@/components/score/list';
-import VideoList from '@/components/video/list';
-import Top from '@/components/common/top';
-import api from '@/tools/api.js';
-import MusicPlay from '../../components/music/play';
-
-export default class Resource extends wepy.page {
-  config = {
-    // navigationBarTitleText: '曲集详情'
-  };
-  data = {
-    albumData: {},
-    videolistdata: [],
-    musicListdata: [],
-    notationListdata: [],
-    showMusicPlay: false,
-    choseMusic: '',
-    choseMusicUrl: ''
-  };
-  components = {
-    musiclist: MusicList,
-    scorelist: ScoreList,
-    videolist: VideoList,
-    top: Top,
-    musicPlay: MusicPlay
-  };
-  onReachBottom() {
-    //console.log('bottom');
+  import wepy from 'wepy';
+  import MusicList from '@/components/music/list';
+  import ScoreList from '@/components/score/list';
+  import VideoList from '@/components/video/list';
+  import Top from '@/components/common/top';
+  import api from '@/tools/api.js';
+  import MusicPlay from '../../components/music/play';
+  export default class Resource extends wepy.page {
+    config = {
+      // navigationBarTitleText: '曲集详情'
+    };
+    data = {
+      albumData: {},
+      videolistdata: [],
+      musicListdata: [],
+      notationListdata: [],
+      showMusicPlay: false,
+      choseMusic: '',
+      choseMusicUrl: '',
+      selectItem: ''
+    };
+    components = {
+      musiclist: MusicList,
+      scorelist: ScoreList,
+      videolist: VideoList,
+      top: Top,
+      musicPlay: MusicPlay
+    };
+    onReachBottom() {
+      //console.log('bottom');
+    }
+    onShareAppMessage() {
+      let path =
+        '/pages/resource/player/musicPlay?url=' +
+        this.selectItem.url +
+        '&&name=' +
+        this.selectItem.title;
+      return {
+        title: this.selectItem.title,
+        path: path
+        // imageUrl: 'https://music.gzjtit.com:9501/static/icons/music.png'
+      };
+    }
+    methods = {
+      audioPlay(item) {
+        this.choseMusic = item.title;
+        this.choseMusicUrl = item.url;
+        this.showMusicPlay = true;
+        this.$apply();
+      },
+      shareMusic(item) {
+        this.selectItem = item
+      }
+    };
+    events = {
+      download: item => {
+        console.log(item);
+      },
+      closePlay: function() {
+        this.showMusicPlay = false;
+        this.choseMusicUrl = '';
+        this.$apply();
+      }
+    };
+    watch = {};
+    computed = {};
+    onLoad(options) {
+      let id = options.id;
+      // let resultData = wepy.getStorageSync('selectResource');
+      // let albumData = JSON.parse(resultData)
+      // //console.log(albumData)
+      // this.videolistdata = albumData.videoList
+      // this.musicListdata = albumData.musicList
+      // this.notationListdata = albumData.notationList
+      // this.$apply()
+      // //console.log(this.musicListdata);
+      // let res = await api.music.getAlbumByID({
+      //   id: id
+      // })
+      api.music
+        .getAlbumByID({
+          id: id
+        })
+        .then(res => {
+          if (res.data.code === 200) {
+            this.videolistdata = res.data.data.videoList;
+            this.musicListdata = res.data.data.musicList;
+            this.notationListdata = res.data.data.notationList;
+            this.$apply();
+          }
+        });
+      let music = wepy.getStorageSync('playState');
+      let detail = JSON.parse(music);
+      if (detail.name && detail.url) {
+        this.showMusicPlay = true;
+        this.$apply();
+      }
+    }
+    onShow() {}
   }
-  methods = {
-    audioPlay(item) {
-      this.choseMusic = item.title;
-      this.choseMusicUrl = item.url;
-      this.showMusicPlay = true;
-      this.$apply();
-
-      // let url =
-      //   '/pages/resource/player/musicPlay?url=' +
-      //   item.url +
-      //   '&name=' +
-      //   item.title;
-      // wepy.navigateTo({
-      //   url: url
-      // });
-      // let backgroundAudioManager = wx.getBackgroundAudioManager()
-      // backgroundAudioManager.title = item.title
-      // wepy.showModal({
-      //   title: '播放音乐', //提示的标题,
-      //   content: '是否开始播放音乐：' + item.title, //提示的内容,
-      //   showCancel: true, //是否显示取消按钮,
-      //   cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
-      //   cancelColor: '#000000', //取消按钮的文字颜色,
-      //   confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
-      //   confirmColor: '#3CC51F', //确定按钮的文字颜色,
-      //   success: res => {
-      //     if (res.confirm) {
-      //       backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
-      //     }
-      //   }
-      // });
-      // this.playState = 'show'
-    }
-  };
-  events = {
-    download: item => {
-      console.log(item);
-    },
-    closePlay: function() {
-      this.showMusicPlay = false;
-      this.choseMusicUrl = '';
-      this.$apply();
-    }
-  };
-  watch = {};
-  computed = {};
-  onLoad(options) {
-    let id = options.id;
-    // let resultData = wepy.getStorageSync('selectResource');
-    // let albumData = JSON.parse(resultData)
-    // //console.log(albumData)
-    // this.videolistdata = albumData.videoList
-    // this.musicListdata = albumData.musicList
-    // this.notationListdata = albumData.notationList
-    // this.$apply()
-    // //console.log(this.musicListdata);
-    // let res = await api.music.getAlbumByID({
-    //   id: id
-    // })
-    api.music
-      .getAlbumByID({
-        id: id
-      })
-      .then(res => {
-        if (res.data.code === 200) {
-          this.videolistdata = res.data.data.videoList;
-          this.musicListdata = res.data.data.musicList;
-          this.notationListdata = res.data.data.notationList;
-          this.$apply();
-        }
-      });
-
-    let music = wepy.getStorageSync('playState');
-    let detail = JSON.parse(music);
-    if (detail.name && detail.url) {
-      this.showMusicPlay = true;
-      this.$apply();
-    }
-  }
-  onShow() {}
-}
 </script>
 
 <style lang='less'>
-.resourceData {
-  padding-bottom: 180rpx;
-  .resBox {
-    background: #fff;
-    margin-bottom: 20rpx;
-    .title {
-      height: 70rpx;
-      line-height: 70rpx;
-      color: #888;
-      font-size: 13px;
-      text-align: left;
-      padding-left: 1rem;
-    }
-    .musicItem {
-      height: 80rpx;
-      align-items: center;
-      padding: 0 1rem;
-      justify-content: space-between;
-      font-size: 14px;
-      color: #333;
-    }
-    .tips {
-      width: 100%;
-      text-align: center;
-      height: 3rem;
-      line-height: 3rem;
-      font-size: 14px;
-      color: #666;
+  .resourceData {
+    padding-bottom: 180rpx;
+    .resBox {
+      background: #fff;
+      margin-bottom: 20rpx;
+      .title {
+        height: 70rpx;
+        line-height: 70rpx;
+        color: #888;
+        font-size: 13px;
+        text-align: left;
+        padding-left: 1rem;
+      }
+      .musicItem {
+        height: 80rpx;
+        align-items: center;
+        padding: 0 1rem;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #333;
+        text {
+          width: 70%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .shareBox {
+          position: relative;
+          .share {
+            width: 13px;
+            height: 13px;
+            margin-right: 8px;
+            margin-top: 2px;
+          }
+          .shareBtn {
+            position: absolute;
+            opacity: 0;
+            z-index: 5;
+            width: 13px;
+            height: 100%;
+            top: 0;
+            left: 0;
+          }
+        }
+      }
+      .tips {
+        width: 100%;
+        text-align: center;
+        height: 3rem;
+        line-height: 3rem;
+        font-size: 14px;
+        color: #666;
+      }
     }
   }
-}
 </style>

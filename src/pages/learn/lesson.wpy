@@ -24,11 +24,15 @@
     <view class='block'>
       <text class='title'>音频</text>
       <repeat for="{{lessonData.musicList}}" key="index" index="index" item="item">
-        <view class='flex musicItem' @tap="audioPlay({{item}})">
-          <text>{{item.title}}</text>
-          <view>
-            <i class="iconfont icon-shipin"></i>
-            <text></text>
+        <view class='flex musicItem'>
+          <text @tap="audioPlay({{item}})">{{item.title}}</text>
+          <view class="flex">
+            <view class="shareBox flex" @tap="shareMusic({{item}})">
+              <image class="share" src="../../resource/share.png" mode="scaleToFill" lazy-load="false" open-type="share" >
+            </image>
+            <button class="shareBtn" open-type="share">分享</button>
+            </view>
+            <i class="iconfont icon-shipin" @tap="audioPlay({{item}})"></i>
           </view>
         </view>
       </repeat>
@@ -39,8 +43,9 @@
       <view class='imgBox flex'>
         <repeat for="{{lessonData.notationList}}" key="index" index="index" item="item">
           <view class='img'>
-            <image src="{{item.url}}" @tap="viewScore({{item.url}})"></image>
+            <image src="{{item.url}}" @tap="viewScore({{item.url}})" ></image>
             <view>{{item.title}}</view>
+            
           </view>
         </repeat>
         <text class='tips' wx:if="{{lessonData.notationList.length === 0}}">暂无相关曲谱</text>
@@ -68,7 +73,8 @@
       videoList: [],
       showMusicPlay: false,
       choseMusic: '',
-      choseMusicUrl: ''
+      choseMusicUrl: '',
+      selectItem: ''
     };
     components = {
       top: Top,
@@ -88,32 +94,27 @@
         });
       },
       audioPlay(item) {
-        // let url = '/pages/resource/player/musicPlay?url=' + item.url + '&name=' + item.title
-        // wepy.navigateTo({
-        //   url: url
-        // });
         this.choseMusic = item.title;
         this.choseMusicUrl = item.url;
         this.showMusicPlay = true;
         this.$apply();
-        // let backgroundAudioManager = wx.getBackgroundAudioManager()
-        // backgroundAudioManager.title = item.title
-        // wepy.showModal({
-        //   title: '播放音乐', //提示的标题,
-        //   content: '是否开始播放音乐：' + item.title, //提示的内容,
-        //   showCancel: true, //是否显示取消按钮,
-        //   cancelText: '取消', //取消按钮的文字，默认为取消，最多 4 个字符,
-        //   cancelColor: '#000000', //取消按钮的文字颜色,
-        //   confirmText: '确定', //确定按钮的文字，默认为取消，最多 4 个字符,
-        //   confirmColor: '#3CC51F', //确定按钮的文字颜色,
-        //   success: res => {
-        //     if (res.confirm){
-        //       backgroundAudioManager.src = item.url // 设置了 src 之后会自动播放
-        //     }
-        //   }
-        // });
       },
+      shareMusic(item){
+        this.selectItem = item
+      }
     };
+    onShareAppMessage() {
+      let path =
+        '/pages/resource/player/musicPlay?url=' +
+        this.selectItem.url +
+        '&&name=' +
+        this.selectItem.title;
+      return {
+        title: this.selectItem.title,
+        path: path
+        // imageUrl: 'https://music.gzjtit.com:9501/static/icons/music.png'
+      };
+    }
     events = {
       closePlay: function() {
         this.showMusicPlay = false;
@@ -204,6 +205,32 @@
         height: 80rpx;
         line-height: 80rpx;
         border-bottom: solid 1px #ddd;
+        text {
+          width: 70%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .shareBox{
+          position: relative;
+          .share {
+            width: 13px;
+            height: 13px;
+            margin-right: 8px;
+            margin-top: 1px;
+          }
+          .shareBtn{
+            position: absolute;
+            opacity: 0;
+            z-index: 5;
+            width: 13px;
+            height: 100%;
+            top: 0;
+            left: 0;
+          }
+          
+        }
+        
       }
     }
     .last {

@@ -191,7 +191,7 @@
     };
     onShareAppMessage() {
       let path =
-        '/pages/resource/player/shareMusic?url=' +
+        '/pages/resource/player/musicPlay?url=' +
         this.selectItem.url +
         '&&name=' +
         this.selectItem.title;
