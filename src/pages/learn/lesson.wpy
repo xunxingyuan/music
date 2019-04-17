@@ -23,14 +23,14 @@
     </view>
     <view class='block'>
       <text class='title'>音频</text>
-      <repeat for="{{lessonData.musicList}}" key="index" index="index" item="item">
+      <repeat for="{{lessonData.musicList}}" key="index" index="index" item="item" >
         <view class='flex musicItem'>
           <text @tap="audioPlay({{item}})">{{item.title}}</text>
           <view class="flex">
-            <view class="shareBox flex" @tap="shareMusic({{item}})">
+            <view class="shareBox flex" >
               <image class="share" src="../../resource/share.png" mode="scaleToFill" lazy-load="false" open-type="share" >
             </image>
-            <button class="shareBtn" open-type="share">分享</button>
+            <button class="shareBtn" data-shareModel="{{item}}" open-type="share">分享</button>
             </view>
             <i class="iconfont icon-shipin" @tap="audioPlay({{item}})"></i>
           </view>
@@ -101,16 +101,18 @@
       },
       shareMusic(item){
         this.selectItem = item
+        this.$apply();
       }
     };
-    onShareAppMessage() {
+    onShareAppMessage(res) {
+      let shareModel = res.target.dataset.sharemodel;
       let path =
         '/pages/resource/player/musicPlay?url=' +
-        this.selectItem.url +
+        shareModel.url +
         '&&name=' +
-        this.selectItem.title;
+        shareModel.title;
       return {
-        title: this.selectItem.title,
+        title: shareModel.title,
         path: path
         // imageUrl: 'https://music.gzjtit.com:9501/static/icons/music.png'
       };
@@ -131,6 +133,9 @@
       })
       if (result.data.code === 200) {
         this.lessonData = result.data.data
+        if(this.lessonData.musicList.length>0){
+          this.selectItem = this.lessonData.musicList[0]
+        }
         this.videoList = result.data.data.videoList
         this.$apply()
       }
