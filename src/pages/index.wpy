@@ -38,12 +38,12 @@
             type="primary"
             class="auth"
             open-type="getUserInfo"
-            bindgetuserinfo="registSubmit"
+            bindgetuserinfo="registSubmitUser"
           >提交注册</button>
         </view>
       </view>
     </view>
-    <image class="loginBg" src="../resource/login_bg.jpg" mode="scaleToFill" lazy-load="false">
+    <image class="loginBg" src="../resource/login_bg.jpg" mode="scaleToFill" lazy-load="false"></image>
   </view>
 </template>
 
@@ -78,7 +78,8 @@ export default class Index extends wepy.page {
       this.login();
     },
     //提交注册
-    registSubmit(val) {
+    registSubmitUser(val) {
+      console.log(val);
       this.$parent.globalData.userInfo = val.detail.userInfo;
       this.$apply();
       this.registSubmit();
@@ -93,62 +94,6 @@ export default class Index extends wepy.page {
     regist() {
       this.showRegist = true;
     },
-    registSubmit() {
-      console.log(this.$parent.globalData.userInfo);
-      if (this.username == '') {
-        wepy.showToast({
-          title: '用户名不能为空',
-          icon: 'none',
-          duration: 1000
-        });
-        return;
-      }
-      if (this.phoneNumber == '') {
-        wepy.showToast({
-          title: '手机号码不能为空',
-          icon: 'none',
-          duration: 1000
-        });
-        return;
-      }
-      if (this.authCode == '') {
-        wepy.showToast({
-          title: '验证码不能为空',
-          icon: 'none',
-          duration: 1000
-        });
-        return;
-      }
-      api.login
-        .regist({
-          avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
-          name: this.username,
-          nickname: this.$parent.globalData.userInfo.nickName,
-          openid: this.$parent.globalData.openId,
-          phone: this.phoneNumber,
-          verificationCode: this.authCode,
-          sex: this.$parent.globalData.userInfo.gender
-        })
-        .then(res => {
-          if (res.data.code == 200) {
-            wepy.showToast({
-              title: '注册成功！',
-              icon: 'none',
-              duration: 1000
-            });
-            this.showTimeCount = false;
-            this.timeLeft = 60;
-            this.showRegist = false;
-          } else {
-            wepy.showToast({
-              title: res.data.message,
-              icon: 'none',
-              duration: 1000
-            });
-          }
-        });
-    },
-
     auth() {
       //VIP登录
       api.login
@@ -302,6 +247,61 @@ export default class Index extends wepy.page {
         });
     }
   }
+  registSubmit() {
+    console.log(this.$parent.globalData.userInfo);
+    if (this.username == '') {
+      wepy.showToast({
+        title: '用户名不能为空',
+        icon: 'none',
+        duration: 1000
+      });
+      return;
+    }
+    if (this.phoneNumber == '') {
+      wepy.showToast({
+        title: '手机号码不能为空',
+        icon: 'none',
+        duration: 1000
+      });
+      return;
+    }
+    if (this.authCode == '') {
+      wepy.showToast({
+        title: '验证码不能为空',
+        icon: 'none',
+        duration: 1000
+      });
+      return;
+    }
+    api.login
+      .regist({
+        avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
+        name: this.username,
+        nickname: this.$parent.globalData.userInfo.nickName,
+        openid: this.$parent.globalData.openId,
+        phone: this.phoneNumber,
+        verificationCode: this.authCode,
+        sex: this.$parent.globalData.userInfo.gender
+      })
+      .then(res => {
+        if (res.data.code == 200) {
+          wepy.showToast({
+            title: '注册成功！',
+            icon: 'none',
+            duration: 1000
+          });
+          this.showTimeCount = false;
+          this.timeLeft = 60;
+          this.showRegist = false;
+        } else {
+          wepy.showToast({
+            title: res.data.message,
+            icon: 'none',
+            duration: 1000
+          });
+        }
+      });
+  }
   events = {};
   watch = {};
   computed = {};
@@ -318,7 +318,9 @@ export default class Index extends wepy.page {
     if (downloadFile == '') {
       wepy.setStorageSync('downloadFile', '[]');
     }
-    wepy.showShareMenu({ withShareTicket: true });
+    wepy.showShareMenu({
+      withShareTicket: true
+    });
   }
   onShow() {}
 }
