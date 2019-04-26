@@ -10,7 +10,7 @@
       </view>
       <view class="coverBox" wx:if="{{showLogin}}" @tap="hide">
         <view class="loginCheck" @tap.stop="show">
-          <text>LS艺术界</text>
+          <text class="registTitle">LS艺术界</text>
           <view class="msg">
             <input type="number" bindinput="setPhone" placeholder="输入VIP手机号码">
             <view class="authCode">
@@ -362,8 +362,9 @@ export default class Index extends wepy.page {
       flex-flow: column;
       justify-content: space-around;
       align-items: center;
+      border-radius: 6px;
       .registTitle {
-        font-size: 20px;
+        font-size: 24px;
       }
       .msg {
         padding: 0 12%;
