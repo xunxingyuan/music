@@ -263,8 +263,10 @@
   .learnContain {
     width: 100%;
     height: 100%;
+    overflow: auto;
     min-height: 10rem;
     position: relative;
+    padding-bottom: 130rpx;
     .uptop {
       margin-top: 0.5rem;
       margin-bottom: 140rpx;
@@ -303,17 +305,19 @@
     }
     .categoryList {
       display: flex;
-      flex-wrap: wrap;
+      flex-flow: column;
+      
+      // flex-wrap: wrap;
       box-sizing: border-box;
       padding: 0 0.5rem;
       .categoryBlock {
-        width: 50%;
+        width: 100%;
         height: auto;
         padding: 0.5rem;
         box-sizing: border-box;
         .blockInner {
           width: 100%;
-          height: 250rpx;
+          height: 200rpx;
           background: #010101;
           color: #fff;
           display: flex;
@@ -324,7 +328,7 @@
           padding: 5px;
           box-sizing: border-box;
           text-align: center;
-          border-radius: 3px;
+          border-radius: 6px;
           position: relative;
           image {
             position: absolute;
@@ -338,6 +342,10 @@
             z-index: 10;
             margin-left: 10px;
             margin-top: 5px;
+            font-size: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0 4px;
+            border-radius: 3px;
           }
         }
       }
