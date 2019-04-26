@@ -50,7 +50,7 @@ export default class List extends wepy.component {
         });
       } else {
         wepy.showToast({
-          title: '暂无查看课程权限', //提示的内容,
+          title: '请先完成初级阶段学习任务，不要太贪心哦', //提示的内容,
           icon: 'none', //图标,
           duration: 1000, //延迟时间,
           mask: true, //显示透明蒙层，防止触摸穿透,
