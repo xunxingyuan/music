@@ -44,7 +44,7 @@
             active_src: 'home',
             id: 'learn'
           },{
-            name: '资源',
+            name: '曲库',
             icon: 'resorce',
             icon_src: 'music',
             active_src: 'music1',
@@ -66,7 +66,7 @@
             active_src: 'home',
             id: 'learn'
           }, {
-            name: '资源',
+            name: '曲库',
             icon: 'resorce',
             icon_src: 'music',
             active_src: 'music1',
@@ -88,7 +88,7 @@
             active_src: 'home2',
             id: 'learn'
           }, {
-            name: '资源',
+            name: '曲库',
             icon: 'resorce',
             icon_src: 'music',
             active_src: 'music1',

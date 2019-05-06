@@ -3,31 +3,37 @@
   <view class="resourceBox">
     <view class="content">
       <repeat for="{{resourceData}}" key="index" index="index" item="item">
-        <view class="item flex">
-          <view class="name" @tap="viewDetail({{item}})">
-            <text class="title">{{item.title}}</text>
+        <!-- <view class="item flex">
+            <view class="name" @tap="viewDetail({{item}})">
+              <text class="title">{{item.title}}</text>
+              <text class="vip" wx:if="{{item.isFree==0}}">VIP</text>
+              <text class="free" wx:if="{{item.isFree!=0}}">FREE</text>
+            </view>
+            <view class="detail">
+              <view class="number">
+                
+                <i class="iconfont icon-shipin"></i>
+                {{item.videoList.length}}
+              </view>
+              <view class="number">
+                
+                <i class="iconfont icon-laba"></i>
+                {{item.musicList.length}}
+              </view>
+              <view class="number">
+                
+                <i class="iconfont icon-iconfontqupu"></i>
+                {{item.notationList.length}}
+              </view>
+            </view>
+          </view> -->
+        <view class="srcBlock" @tap="viewDetail({{item}})">
+          <image  class="bg" src="{{item.image}}" mode="aspectFill" lazy-load="false">
+          </image>
+          <view class="tag">
+            <text>{{item.title}}</text>
             <text class="vip" wx:if="{{item.isFree==0}}">VIP</text>
-            <text class="free" wx:if="{{item.isFree!=0}}">FREE</text>
-          </view>
-          <view class="detail">
-            <view class="number">
-              <!-- <image class='icon' src="{{imgList.play}}" mode="scaleToFill" lazy-load="false">
-              </image>-->
-              <i class="iconfont icon-shipin"></i>
-              {{item.videoList.length}}
-            </view>
-            <view class="number">
-              <!-- <image class='icon' src="{{imgList.voice}}" mode="scaleToFill" lazy-load="false">
-              </image>-->
-              <i class="iconfont icon-laba"></i>
-              {{item.musicList.length}}
-            </view>
-            <view class="number">
-              <!-- <image class='icon' src="{{imgList.score}}" mode="scaleToFill" lazy-load="false">
-              </image>-->
-              <i class="iconfont icon-iconfontqupu"></i>
-              {{item.notationList.length}}
-            </view>
+              <text class="free" wx:if="{{item.isFree!=0}}">FREE</text>
           </view>
         </view>
       </repeat>
@@ -36,187 +42,237 @@
 </template>
 
 <script>
-import wepy from 'wepy';
-import api from '@/tools/api.js';
-import Search from '@/components/common/search';
-export default class Resource extends wepy.component {
-  config = {
-    // navigationBarTitleText: '资源'
-  };
-  props = {};
-  data = {
-    imgList: '',
-    resourceData: [],
-    pageNumber: 1
-  };
-  components = {
-    search: Search
-  };
-  methods = {
-    viewVideo(item) {
-      let url =
-        '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id;
-      wepy.navigateTo({
-        url: url
-      });
-    },
-    viewDetail(item) {
-      wepy.setStorageSync('selectResource', JSON.stringify(item));
-      let url = '/pages/resource/resource?id=' + item.id;
-      let userInfo = wepy.getStorageSync('userInfo');
-      let permission = JSON.parse(userInfo).permission;
-      if (item.isFree == 0) {
-        if (permission.playVip == 'yes') {
-          wepy.navigateTo({
-            url: url
-          });
-        } else {
-          wepy.showToast({
-            title: '权限不足', //提示的内容,
-            icon: 'none', //图标,
-            duration: 2000, //延迟时间,
-            mask: true, //显示透明蒙层，防止触摸穿透,
-            success: res => {}
-          });
-        }
-      } else {
-        if (permission.playFree == 'yes') {
-          wepy.navigateTo({
-            url: url
-          });
-        } else {
-          wepy.showToast({
-            title: '权限不足', //提示的内容,
-            icon: 'none', //图标,
-            duration: 2000, //延迟时间,
-            mask: true, //显示透明蒙层，防止触摸穿透,
-            success: res => {}
-          });
-        }
-      }
-    }
-  };
-  events = {
-    reachBottom: (val, self) => {
-      let num = Math.floor(this.resourceData.length / 10) + 1;
-      if (this.pageNumber != num) {
-        this.pageNumber = num;
-      }
-      console.log(val);
-      if (val === 'resource') {
-        this.getResource();
-      }
-    }
-  };
-  watch = {};
-  computed = {};
-  onLoad() {
-    this.imgList = this.$parent.$parent.globalData.imgList;
-    this.getResource();
-  }
-  onShow() {}
-  getResource() {
-    let _self = this;
-    api.music
-      .searchMusic({
-        pageNumber: this.pageNumber
-      })
-      .then(res => {
-        if (res.data.code === 200) {
-          if (this.pageNumber === 1) {
-            this.resourceData = res.data.data;
+  import wepy from 'wepy';
+  import api from '@/tools/api.js';
+  import Search from '@/components/common/search';
+  export default class Resource extends wepy.component {
+    config = {
+      // navigationBarTitleText: '资源'
+    };
+    props = {};
+    data = {
+      imgList: '',
+      resourceData: [],
+      pageNumber: 1
+    };
+    components = {
+      search: Search
+    };
+    methods = {
+      viewVideo(item) {
+        let url =
+          '/pages/resource/player/videoPlay?url=' + item.url + '&id=' + item.id;
+        wepy.navigateTo({
+          url: url
+        });
+      },
+      viewDetail(item) {
+        wepy.setStorageSync('selectResource', JSON.stringify(item));
+        let url = '/pages/resource/resource?id=' + item.id;
+        let userInfo = wepy.getStorageSync('userInfo');
+        let permission = JSON.parse(userInfo).permission;
+        if (item.isFree == 0) {
+          if (permission.playVip == 'yes') {
+            wepy.navigateTo({
+              url: url
+            });
           } else {
-            res.data.data.forEach(element => {
-              if (this.checkId(element.id, this.resourceData)) {
-                this.resourceData.push(element);
-              }
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
             });
           }
-          _self.$apply();
+        } else {
+          if (permission.playFree == 'yes') {
+            wepy.navigateTo({
+              url: url
+            });
+          } else {
+            wepy.showToast({
+              title: '权限不足', //提示的内容,
+              icon: 'none', //图标,
+              duration: 2000, //延迟时间,
+              mask: true, //显示透明蒙层，防止触摸穿透,
+              success: res => {}
+            });
+          }
+        }
+      }
+    };
+    events = {
+      reachBottom: (val, self) => {
+        let num = Math.floor(this.resourceData.length / 10) + 1;
+        if (this.pageNumber != num) {
+          this.pageNumber = num;
+        }
+        console.log(val);
+        if (val === 'resource') {
+          this.getResource();
+        }
+      }
+    };
+    watch = {};
+    computed = {};
+    onLoad() {
+      this.imgList = this.$parent.$parent.globalData.imgList;
+      this.getResource();
+    }
+    onShow() {}
+    getResource() {
+      let _self = this;
+      api.music
+        .searchMusic({
+          pageNumber: this.pageNumber
+        })
+        .then(res => {
+          if (res.data.code === 200) {
+            if (this.pageNumber === 1) {
+              this.resourceData = res.data.data;
+            } else {
+              res.data.data.forEach(element => {
+                if (this.checkId(element.id, this.resourceData)) {
+                  this.resourceData.push(element);
+                }
+              });
+            }
+            this.resourceData.forEach(element => {
+              switch (element.title) {
+                case '摇滚吉他':
+                  element.image = '../resource/src/yaogun.jpeg'
+                  break;
+                case '键盘弹唱':
+                  element.image = '../resource/src/jianpan.jpg'
+                  break;
+                case '吉他弹唱':
+                  element.image = '../resource/src/guita.jpg'
+                  break;
+                case '经典古典':
+                  element.image = '../resource/src/tan.jpg'
+                  break;
+                case '影视原声':
+                  element.image = '../resource/src/yuan.jpeg'
+                  break;
+                default:
+                  element.image = '../resource/src/tan.jpg'
+                  break;
+              }
+            });
+            _self.$apply();
+          }
+        });
+    }
+    checkId(id, arr) {
+      let flag = true;
+      arr.forEach(element => {
+        if (element.id === id) {
+          flag = false;
         }
       });
+      return flag;
+    }
   }
-  checkId(id, arr) {
-    let flag = true;
-    arr.forEach(element => {
-      if (element.id === id) {
-        flag = false;
-      }
-    });
-    return flag;
-  }
-}
 </script>
 
 <style lang='less'>
-.resourceBox {
-  width: 100%;
-  overflow: auto;
-  height: 100%;
-  position: relative;
-  padding-bottom: 130rpx;
-  padding-top: 100rpx;
-  .content {
-    .item {
-      background: #fff;
-      border-bottom: solid 1px #f7f7f7; // margin-bottom: 1px;
-      min-height: 120rpx;
-      padding: 0 1rem;
-      // line-height: 120rpx;
-      justify-content: space-between;
-      .name {
-        font-size: 16px;
-        color: #000;
-        display: flex;
-        align-items: center;
-        flex: 1;
-        text {
-          padding: 2px 6px;
-          height: auto;
-          font-size: 12px;
-          border-radius: 2px;
-          margin-left: 5px;
-          // height: 1rem;
-          // line-height: 1rem;
-        }
-        .title {
-          // width: 50%;
-          // line-height: 120rpx;
-          // height: 120rpx;
-          // word-break: break-all; // overflow: hidden;
-        }
-        .free {
-          background: #f0fcf4;
-          color: #67a677;
-        }
-        .vip {
-          background: rgba(208, 180, 133, 0.14);
-          color: #d0b485;
-        }
-      }
-      .detail {
-        color: #c1c1c1;
-        display: flex;
-        align-items: center;
-        width: 150px;
-        .number {
-          margin-left: 1rem;
-          font-size: 12px;
+  .resourceBox {
+    width: 100%;
+    overflow: auto;
+    height: 100%;
+    position: relative;
+    padding-bottom: 130rpx;
+    padding-top: 100rpx;
+    .content {
+      padding: 10rpx 0;
+      .item {
+        background: #fff;
+        border-bottom: solid 1px #f7f7f7; // margin-bottom: 1px;
+        min-height: 120rpx;
+        padding: 0 1rem; // line-height: 120rpx;
+        justify-content: space-between;
+        .name {
+          font-size: 16px;
+          color: #000;
           display: flex;
           align-items: center;
-          .iconfont {
-            font-size: 16px;
-            margin-right: 2px;
+          flex: 1;
+          text {
+            padding: 2px 6px;
+            height: auto;
+            font-size: 12px;
+            border-radius: 2px;
+            margin-left: 5px; // height: 1rem;
+            // line-height: 1rem;
+          }
+          .title {
+            // width: 50%;
+            // line-height: 120rpx;
+            // height: 120rpx;
+            // word-break: break-all; // overflow: hidden;
+          }
+          .free {
+            background: #f0fcf4;
+            color: #67a677;
+          }
+          .vip {
+            background: rgba(208, 180, 133, 0.14);
+            color: #d0b485;
           }
         }
-        .icon {
-          width: 1rem;
-          height: 1rem;
-          display: inline-block;
-          margin-right: 5px;
+        .detail {
+          color: #c1c1c1;
+          display: flex;
+          align-items: center;
+          width: 150px;
+          .number {
+            margin-left: 1rem;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            .iconfont {
+              font-size: 16px;
+              margin-right: 2px;
+            }
+          }
+          .icon {
+            width: 1rem;
+            height: 1rem;
+            display: inline-block;
+            margin-right: 5px;
+          }
+        }
+      }
+      .srcBlock {
+        padding: 10rpx 20rpx;
+        position: relative;
+        .bg {
+          width: 100%;
+          height: 200rpx;
+          border-radius: 6px;
+        }
+        .tag{
+          position: absolute;
+          left: 40rpx;
+          top: 30rpx;
+          background: rgba(0, 0, 0, 0.2);
+          padding: 0 4px;
+          color: #fff;
+          border-radius: 3px;
+          font-size: 20px;
+          .free {
+            margin-left: 10rpx;
+            background: #f0fcf4;
+            color: #67a677;
+          }
+          .vip {
+            margin-left: 10rpx;
+            background: rgba(208, 180, 133, 0.14);
+            color: #d0b485;
+          }
         }
       }
     }
   }
-}
 </style>
