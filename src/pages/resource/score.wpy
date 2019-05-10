@@ -3,6 +3,17 @@
   <view class='score mainPage'>
     <top title='曲谱' backColor="black" back='yes'></top>
     <search></search>
+    <view class="topBox">
+      <swiper indicator-dots autoplay circular>
+        <block wx:for="{{recommend}}" wx:key="">
+          <swiper-item>
+            <image @tap="viewScore({{item}})" class="topImg" mode="aspectFill" src="{{item.url}}"></image>
+            <view class="indroduce">{{item.title}}</view>
+          </swiper-item>
+        </block>
+      </swiper>
+    </view>
+    <view class="videoTitle">全部资源</view>
     <list :imgList.sync="imgList"></list>
   </view>
 </template>
@@ -19,6 +30,7 @@
       imgSrc: 'http://192.168.100.246:9501/static/notation/qxlsflkjasdgfldasgkldjasogifu.jpg',
       imgList: [],
       pageNumber: 1,
+      recommend:[]
     };
     components = {
       search: Search,
@@ -33,7 +45,19 @@
       }
       this.loadMore()
     };
-    methods = {};
+    methods = {
+      viewScore(item) {
+        let current = item.url
+        let arr = []
+        this.recommend.forEach(element => {
+          arr.push(element.url)
+        });
+        wepy.previewImage({
+          current: current, // 当前显示图片的http链接
+          urls: arr //需要预览的图片链接列表,
+        });
+      }
+    };
     events = {};
     watch = {};
     computed = {};
@@ -43,6 +67,12 @@
         pageNumber: _self.pageNumber
       }).then((res) => {
         _self.imgList = res.data
+
+        _self.imgList.forEach((element,index) => {
+          if(index<5){
+            _self.recommend.push(element)
+          }
+        });
         _self.$apply()
       })
     };
@@ -72,5 +102,58 @@
 </script>
 
 <style lang='less'>
-
+.score{
+  .topBox {
+      width: 100%;
+      height: 530rpx;
+      display: flex;
+      flex-flow: column;
+      position: relative;
+      padding: 0 12px 0 12px;
+      box-sizing: border-box;
+      background: transparent; // background: linear-gradient(to bottom, #D0B485, #e3e3e6);
+      swiper {
+        height: 530rpx;
+      }
+      .topImg {
+        width: 100%;
+        height: 450rpx;
+        border: solid 1px #eee;
+      }
+      .indroduce {
+        font-size: 15px;
+        width: 90%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+      }
+      .intro {
+        height: 1.8rem;
+        line-height: 1.8rem;
+        font-size: 15px;
+      }
+      .detail {
+        flex: 1;
+        background: #fff;
+        text-align: left;
+        display: flex;
+        justify-content: flex-end;
+        padding: 0 1rem;
+        align-items: center;
+        .number {
+          margin-left: 1rem;
+          color: #353535;
+        }
+      }
+    }
+    .videoTitle {
+      
+      height: 1.8rem;
+      line-height: 1.8rem;
+      color: #353535;
+      padding-left: 12px;
+      font-size: 16px;
+      padding-top: 4px;
+    }
+}
 </style>

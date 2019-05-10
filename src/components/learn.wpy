@@ -19,13 +19,13 @@
             <image src="{{item.image}}" mode="aspectFill" lazy-load="true">
             </image>
             <!-- <image wx:if="{{item.id != 780&&item.id != 779&&item.id != 781}}" src="../resource/piano.jpg" mode="aspectFill" lazy-load="true">
-                </image>
-                <image wx:if="check(item.name,'吉他')" src="../resource/guitar.jpg" mode="aspectFill" lazy-load="true">
-                </image>
-                <image wx:if="{{item.id == 779}}" src="../resource/piano.jpg" mode="aspectFill" lazy-load="true">
-                </image>
-                <image wx:if="{{item.id == 781}}" src="../resource/common.jpg" mode="aspectFill" lazy-load="true">
-                </image> -->
+                    </image>
+                    <image wx:if="check(item.name,'吉他')" src="../resource/guitar.jpg" mode="aspectFill" lazy-load="true">
+                    </image>
+                    <image wx:if="{{item.id == 779}}" src="../resource/piano.jpg" mode="aspectFill" lazy-load="true">
+                    </image>
+                    <image wx:if="{{item.id == 781}}" src="../resource/common.jpg" mode="aspectFill" lazy-load="true">
+                    </image> -->
           </view>
         </view>
       </repeat>
@@ -145,47 +145,7 @@
               }
             });
           }
-          this.lists.forEach(element => {
-            if (element.schedule.length > 8) {
-              let date = element.schedule;
-              let day = new Date(date).getDay();
-              switch (day) {
-                case 1:
-                  element['day'] = '周一';
-                  break;
-                case 2:
-                  element['day'] = '周二';
-                  break;
-                case 3:
-                  element['day'] = '周三';
-                  break;
-                case 4:
-                  element['day'] = '周四';
-                  break;
-                case 5:
-                  element['day'] = '周五';
-                  break;
-                case 6:
-                  element['day'] = '周六';
-                  break;
-                case 0:
-                  element['day'] = '周日';
-                  break;
-                default:
-                  break;
-              }
-              if (element.schedule.length > 5) {
-                element.schedule = element.schedule.slice(5, 10);
-                // element.schedule = element.schedule.replace('-', '-')
-              }
-            }
-          });
-          // this.lists = this.lists.sort(function(a, b) {
-          //   let reg = new RegExp(/[0-9]+/) 
-          //   let aNum = a.name.match(reg)
-          //   let bNum = b.name.match(reg)
-          //   return aNum - bNum;
-          // });
+          this.setLesson(this.lists)
           this.$apply();
         }
       });
@@ -229,22 +189,40 @@
             });
           }
           this.showContain = true;
+          this.setLesson(this.lists)
           this.$apply();
         }
       });
     }
     setImage(list) {
-      list.forEach(element => {
-        if (element.name.indexOf('吉他') > -1) {
-          element.image = '../resource/guitar.jpg'
-        } else if (element.name.indexOf('键盘') > -1) {
-          element.image = '../resource/piano.jpg'
-        } else if (element.name.indexOf('机鼓') > -1) {
-          element.image = '../resource/jigu.jpg'
-        } else {
-          element.image = '../resource/piano.jpg'
-        }
-      });
+      if (list) {
+        list.forEach(element => {
+          if (element.name.indexOf('吉他') > -1) {
+            element.image = '../resource/guitar.jpg'
+          } else if (element.name.indexOf('键盘') > -1) {
+            element.image = '../resource/piano.jpg'
+          } else if (element.name.indexOf('机鼓') > -1) {
+            element.image = '../resource/jigu.jpg'
+          } else {
+            element.image = '../resource/piano.jpg'
+          }
+        });
+      }
+    }
+    setLesson(list) {
+      if (list) {
+        list.forEach(element => {
+          if (element.typeName.indexOf('吉他') > -1) {
+            element.image = '../resource/guitar.jpg'
+          } else if (element.typeName.indexOf('键盘') > -1) {
+            element.image = '../resource/piano.jpg'
+          } else if (element.typeName.indexOf('机鼓') > -1) {
+            element.image = '../resource/jigu.jpg'
+          } else {
+            element.image = '../resource/piano.jpg'
+          }
+        });
+      }
     }
     getCategory() {
       api.course.getCategory().then(res => {
@@ -305,9 +283,7 @@
     }
     .categoryList {
       display: flex;
-      flex-flow: column;
-      
-      // flex-wrap: wrap;
+      flex-flow: column; // flex-wrap: wrap;
       box-sizing: border-box;
       padding: 0 0.5rem;
       .categoryBlock {

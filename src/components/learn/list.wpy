@@ -2,31 +2,23 @@
 <template>
   <view class="listContain">
     <repeat for="{{listData}}" key="index" index="index" item="item">
-      <view
-        class="listItem {{item.permission?'permisson': 'unpermission'}}"
-        @tap="toLesson({{item}})"
-      >
+      <view class="listItem {{item.permission?'permisson': 'unpermission'}}" @tap="toLesson({{item}})">
         <view class="msgTop flex">
-          <view class="time">
-            <!-- <view class='date'>{{item.schedule}} <text>/ {{item.day}}</text>
-            </view>-->
-            {{item.name}}
+          <view class="pic">
+            <image class="picBox"  src="{{item.image}}" mode="scaleToFill" lazy-load="false">
+            </image>
           </view>
-          <view class="count">
-            <text>视频 {{item.videoList.length}}</text>
-            <text>音频 {{item.musicList.length}}</text>
-            <text>曲谱 {{item.notationList.length}}</text>
+          <view class="content">
+            <view class="titleName">
+              {{item.name}}
+              
+            </view>
+            <view class="count">
+              <text>视频 {{item.videoList.length}}</text>
+              <text>音频 {{item.musicList.length}}</text>
+              <text>曲谱 {{item.notationList.length}}</text>
+            </view>
           </view>
-        </view>
-        <view class="skillBox" wx:if="{{index == 0}}">
-          <repeat for="{{item.knowledgePoints}}" key="index" index="index" item="item">
-            <text>{{item.name}}</text>
-          </repeat>
-        </view>
-        <view class="msgBot flex" wx:if="{{item.teacherName!==''||item.className!=='[]'}}">
-          <text wx:if="{{item.className!=='[]'}}">{{item.className}}</text>
-          <text class="line" wx:if="{{item.teacherName!==''&&item.className!=='[]'}}">|</text>
-          <text wx:if="{{item.teacherName!==''}}">{{item.teacherName}}更新</text>
         </view>
       </view>
     </repeat>
@@ -34,107 +26,126 @@
 </template>
 
 <script>
-import wepy from 'wepy';
-export default class List extends wepy.component {
-  props = {
-    listData: Array
-  };
-  data = {};
-  components = {};
-  methods = {
-    toLesson(item) {
-      if (item.permission) {
-        let url = '/pages/learn/lesson?id=' + item.id;
-        wepy.navigateTo({
-          url: url
-        });
-      } else {
-        wepy.showToast({
-          title: '请先完成初级阶段学习任务，不要太贪心哦', //提示的内容,
-          icon: 'none', //图标,
-          duration: 1000, //延迟时间,
-          mask: true, //显示透明蒙层，防止触摸穿透,
-          success: res => {}
-        });
+  import wepy from 'wepy';
+  export default class List extends wepy.component {
+    props = {
+      listData: Array
+    };
+    data = {};
+    components = {};
+    methods = {
+      toLesson(item) {
+        if (item.permission) {
+          let url = '/pages/learn/lesson?id=' + item.id;
+          wepy.navigateTo({
+            url: url
+          });
+        } else {
+          wepy.showToast({
+            title: '请先完成初级阶段学习任务，不要太贪心哦', //提示的内容,
+            icon: 'none', //图标,
+            duration: 1000, //延迟时间,
+            mask: true, //显示透明蒙层，防止触摸穿透,
+            success: res => {}
+          });
+        }
       }
+    };
+    events = {};
+    watch = {};
+    computed = {
+      
+    };
+    onLoad() {
+      
     }
-  };
-  events = {};
-  watch = {};
-  computed = {
-    getDay(date) {
-      return date;
-    }
-  };
-  onLoad() {}
-  onShow() {}
-}
+    onShow() {
+      
+    };
+    
+  }
 </script>
 
 <style lang='less'>
-.listContain {
-  width: 100%;
-  height: auto;
-  .listItem {
-    margin: 0.5rem 1rem;
-    margin-bottom: 1rem;
-    // padding: 0.5rem 0 0 0;
-    background: #fff;
-    border-radius: 3px;
-    box-shadow: 0 0 5px 4px rgba(0, 0, 0, 0.04);
-    .msgTop {
-      padding: 1rem 1rem;
-      justify-content: space-between;
-      // margin-bottom: 0.5rem;
-      .time {
-        font-size: 20px;
-        color: rgba(0, 0, 0, 0.8);
-        font-weight: 600;
-        flex: 1;
-        line-height: 1.2;
-        word-break: break-all;
-        // padding: 5px 0;
-        // text-overflow: ellipsis;
-        // white-space: nowrap;
-        // overflow: hidden;
+  .listContain {
+    width: 100%;
+    height: auto;
+    .listItem {
+      margin: 0.5rem 1rem;
+      margin-bottom: 1rem; // padding: 0.5rem 0 0 0;
+      background: #fff;
+      border-radius: 3px;
+      box-shadow: 0 0 5px 4px rgba(0, 0, 0, 0.04);
+      .msgTop {
+        box-sizing: border-box;
+        height: 180rpx;
+        padding: 15rpx 20rpx;
+        justify-content: space-between;
+        align-items: center; // margin-bottom: 0.5rem;
+        .pic {
+          .picBox {
+            width: 140rpx;
+            height: 140rpx;
+            border-radius: 70rpx;
+          }
+          margin-right: 40rpx;
+        }
+        .content {
+          flex: 1;
+          text-align: left;
+          height: 100%;
+          display: flex;
+          flex-flow: column;
+          justify-content: space-between;
+          padding:  5rpx 0;
+          box-sizing: border-box;
+          .titleName {
+            font-size: 20px;
+            color: rgba(0, 0, 0, 0.8);
+            font-weight: 600;
+            flex: 1;
+            line-height: 1.2;
+            word-break: break-all;
+            max-height: 100rpx;
+            overflow: hidden;
+          }
+          .count {
+            font-size: 14px;
+            
+            text {
+              color: #666;
+              margin-right: 0.5rem;
+            }
+          }
+        }
       }
-      .count {
-        font-size: 15px;
-        min-width: 9rem;
-        text-align: center;
+      .msgBot {
+        height: 70rpx;
+        border-top: solid 1px #f7f7f7;
+        font-size: 12px;
+        color: #999; // width: 100%;
+        justify-content: flex-start;
+        padding: 0 1rem;
+        .line {
+          margin: 0 0.5rem;
+        }
+      }
+      .skillBox {
+        display: flex;
+        flex-flow: column;
+        padding: 0 1rem;
+        padding-bottom: 8px;
+        margin-top: -8px;
         text {
-          margin-left: 0.5rem;
+          font-size: 14px;
+          line-height: 1.5;
+          color: #333;
         }
       }
     }
-    .msgBot {
-      height: 70rpx;
-      border-top: solid 1px #f7f7f7;
-      font-size: 12px;
-      color: #999; // width: 100%;
-      justify-content: flex-start;
-      padding: 0 1rem;
-      .line {
-        margin: 0 0.5rem;
-      }
-    }
-    .skillBox {
-      display: flex;
-      flex-flow: column;
-      padding: 0 1rem;
-      padding-bottom: 8px;
-      margin-top: -8px;
-      text {
-        font-size: 14px;
-        line-height: 1.5;
-        color: #333;
-      }
+    .permisson {}
+    .unpermission {
+      background: #ccc;
     }
   }
-  .permisson {
-  }
-  .unpermission {
-    background: #ccc;
-  }
-}
 </style>
