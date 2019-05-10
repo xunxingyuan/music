@@ -2,14 +2,14 @@
 <template>
   <view class="resourceData mainPage">
     <top title="资源" backColor="black" back="yes"></top>
-    <view class="resBox">
+    <view class="resBox" wx:if="{{videolistdata.length!=0}}">
       <view class="title">视频</view>
       <videolist wx:if="{{videolistdata.length!==0}}" :list.sync="videolistdata"></videolist>
       <view wx:if="{{videolistdata.length==0}}" class="tips">当前曲集视频列表为空</view>
     </view>
-    <view class="resBox">
+    <view class="resBox" wx:if="{{musicListdata.length!=0}}">
       <view class="title">音频</view>
-      <repeat wx:if="{{musicListdata.length!==0}}" for="{{musicListdata}}" key="index" index="index" item="item" >
+      <repeat wx:if="{{musicListdata.length!==0}}" for="{{musicListdata}}" key="index" index="index" item="item">
         <view class="flex musicItem">
           <text @tap="audioPlay({{item}})">{{item.title}}</text>
           <view class="flex">
@@ -25,7 +25,7 @@
       <view wx:if="{{musicListdata.length==0}}" class="tips">当前曲集视频列表为空</view>
       <!-- <musiclist :musicList.sync="musicListdata"></musiclist> -->
     </view>
-    <view class="resBox">
+    <view class="resBox" wx:if="{{notationListdata.length!=0}}">
       <view class="title">曲谱</view>
       <scorelist wx:if="{{notationListdata.length!==0}}" :imgList.sync="notationListdata"></scorelist>
       <view wx:if="{{notationListdata.length==0}}" class="tips">当前曲集曲谱列表为空</view>
@@ -124,7 +124,7 @@
             this.videolistdata = res.data.data.videoList;
             this.musicListdata = res.data.data.musicList;
             this.notationListdata = res.data.data.notationList;
-            if(this.musicListdata.length>0){
+            if (this.musicListdata.length > 0) {
               this.selectItem = this.musicListdata[0]
             }
             this.$apply();

@@ -89,6 +89,7 @@
             border-radius: 70rpx;
           }
           margin-right: 40rpx;
+          margin-top: 10rpx;
         }
         .content {
           flex: 1;
