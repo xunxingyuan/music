@@ -112,6 +112,10 @@
           wepy.navigateTo({
             url: '/pages/me/mySkill'
           });
+        } else if (item.id === 6) {
+          wepy.navigateTo({
+            url: '/pages/me/friend'
+          });
         }
       }
     };
@@ -155,6 +159,11 @@
               icon: 'message',
               name: '我的评论',
               id: 5
+            },
+            {
+              icon: 'user2',
+              name: '我的好友',
+              id: 6
             }
           ];
           break;
@@ -178,6 +187,11 @@
               icon: 'message',
               name: '我的评论',
               id: 5
+            },
+            {
+              icon: 'user2',
+              name: '我的好友',
+              id: 6
             }
           ];
           break;
@@ -200,7 +214,7 @@
     position: relative;
     .exit {
       width: 100%;
-      margin-top: 150rpx;
+      margin-top: 75rpx;
       display: flex;
       align-items: center;
       justify-content: center;

@@ -186,6 +186,39 @@ export default {
       let reqUrl = url + '/api/collect/getUserCollect';
       return requestData(reqUrl, data, 'GET');
     }
+  },
+  //好友
+  friend: {
+    //获取好友列表
+    getFriendList: data => {
+      let reqUrl = url + '/api/friend/getAllFriend';
+      return requestData(reqUrl, data, 'GET');
+    },
+    //获取推荐好友
+    getRecommend: data => {
+      let reqUrl = url + '/api/user/matchUser';
+      return requestData(reqUrl, data, 'GET');
+    },
+    //获取好友申请
+    getRequest: data => {
+      let reqUrl = url + '/api/friend/getFriendApply';
+      return requestData(reqUrl, data, 'GET');
+    },
+    //发送好友请求
+    sendRequest: data => {
+      let reqUrl = url + '/api/friend/addFriendApply';
+      return requestData(reqUrl, data, 'GET');
+    },
+    //查找好友
+    findFriend: data => {
+      let reqUrl = url + '/api/user/getByPhone';
+      return requestData(reqUrl, data, 'GET');
+    },
+    //回复好友申请
+    replyRequest: data => {
+      let reqUrl = url + '/api/friend/replyApplication';
+      return requestData(reqUrl, data, 'GET');
+    }
   }
 };
 

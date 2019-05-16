@@ -1,0 +1,131 @@
+<!--  -->
+<template>
+  <view class="friendRecommend mainPage">
+    <top title="好友推荐" backColor="black" back="yes"></top>
+    <view>
+      <repeat for="{{recommendList}}" key="index" index="index" item="item">
+          <view class="friendItem">
+                <image class="icon" src="{{item.appUser.avatarUrl}}" mode="scaleToFill" lazy-load="false">
+                </image>
+                <text class="name">{{item.name}}</text>
+                <view class="status">
+                    <text class="agree" @tap="sendRequest({{item}})">发送好友请求</text>
+                </view>
+            </view>
+      </repeat>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import api from '@/tools/api.js';
+import Top from '@/components/common/top';
+
+export default class FriendRecommend extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  };
+
+  data = {
+    recommendList: [],
+    userPhone: ''
+  };
+
+  components = {
+    top: Top
+  };
+
+  methods = {
+      sendRequest(item) {
+                api.friend.sendRequest({
+                    info: '',
+                    requesterPhone: this.userPhone,
+                    respondPhone: item.phone
+                }).then((res) => {
+                    if (res.data.code == 200) {
+                        wepy.showToast({
+                            title: '请求发送成功', //提示的内容,
+                            icon: 'none', //图标,
+                            duration: 2000, //延迟时间,
+                            mask: true, //显示透明蒙层，防止触摸穿透,
+                            success: res => {}
+                        });
+                    }
+                })
+            },
+  };
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {
+    let userInfo = wepy.getStorageSync('userInfo');
+    let userData = JSON.parse(userInfo);
+    let phone = userData.vipUser.phone;
+    this.userPhone = phone
+    this.getRecommend(phone);
+  }
+
+  onShow() {}
+  getRecommend(phone) {
+    api.friend
+      .getRecommend({
+        phone: phone
+      })
+      .then(res => {
+          if(res.data.code == 200){
+              this.recommendList = res.data.data;
+                this.$apply();
+          }
+        
+      });
+  }
+}
+</script>
+
+<style lang='less'>
+.friendRecommend{
+    .friendItem {
+            height: 100rpx;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            background: #f7f7f7;
+            .icon {
+                width: 32px;
+                height: 32px;
+                margin-right: 10px;
+                border-radius: 16px;
+            }
+            .name {
+                flex: 1;
+                border-bottom: solid 1px #ddd;
+                height: 100rpx;
+                line-height: 100rpx;
+                font-size: 16px;
+            }
+            .status {
+                width: auto;
+                font-size: 12px;
+                border: none;
+                height: 100rpx;
+                display: flex;
+                align-items: center;
+                border-bottom: solid 1px #ddd;
+                .refuse {
+                    color: red;
+                }
+                .agree {
+                    color: green;
+                }
+                .pass {
+                    margin-right: 10px;
+                }
+            }
+        }
+}
+</style>

@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <view class="mainPage musicPlay">
-    <top title="音频" backColor="black" back="yes"></top>
+    <top title="音频" backColor="black" back="no"></top>
     <view class="musicBox">
       <view class="musicInner">
         <view class="title">

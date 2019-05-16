@@ -1,0 +1,101 @@
+<!--  -->
+<template>
+  <view class="friendContain mainPage">
+    <top title="我的好友" backColor="black" back="yes"></top>
+    <view class="friendItem" @tap="changeTo('add')">
+      <image class="icon" src="../../resource/friend/friend_add.png" mode="scaleToFill" lazy-load="false"></image>
+      <text>添加好友</text>
+    </view>
+    <view class="friendItem" @tap="changeTo('recommend')">
+      <image class="icon" src="../../resource/friend/friends.png" mode="scaleToFill" lazy-load="false"></image>
+      <text>好友推荐</text>
+    </view>
+    <view class="mid"></view>
+    <repeat for="{{friendList}}" key="index" index="index" item="item">
+      <view class="friendItem">
+        <image class="icon" src="{{item.appUser.avatarUrl}}" mode="scaleToFill" lazy-load="false"></image>
+        <text>{{item.name}}</text>
+      </view>
+    </repeat>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import api from '@/tools/api.js';
+  import Top from '@/components/common/top';
+  export default class Friend extends wepy.page {
+    data = {
+      friendList: [],
+      phoneNumber: ''
+    };
+    components = {
+      top: Top
+    };
+    methods = {
+      changeTo(val) {
+        if (val == 'add') {
+          wepy.navigateTo({
+            url: '/pages/me/friend/friendAdd'
+          });
+        } else if (val == 'recommend') {
+          wepy.navigateTo({
+            url: '/pages/me/friend/friendRecomend'
+          });
+        }
+      }
+    };
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {
+    }
+    onShow() {
+      let userInfo = wepy.getStorageSync('userInfo');
+      let userData = JSON.parse(userInfo);
+      let phone = userData.vipUser.phone;
+      this.phoneNumber = phone;
+      this.getFriend(phone);
+    }
+    getFriend(phone) {
+      api.friend
+        .getFriendList({
+          phone: phone
+        })
+        .then(res => {
+          if (res.data.code == 200) {
+            this.friendList = res.data.data;
+            this.$apply();
+          }
+        });
+    }
+  }
+</script>
+
+<style lang='less'>
+  .friendContain {
+    .friendItem {
+      height: 100rpx;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      background: #f7f7f7;
+      .icon {
+        width: 32px;
+        height: 32px;
+        margin-right: 10px;
+      }
+      text {
+        flex: 1;
+        border-bottom: solid 1px #ddd;
+        height: 100rpx;
+        line-height: 100rpx;
+        font-size: 16px;
+      }
+    }
+    .mid {
+      height: 10rpx;
+      width: 100%;
+    }
+  }
+</style>

@@ -2,8 +2,7 @@
 <template>
   <view class='topBanner {{backColor}}'>
     <view class='backPart flex' @tap="backTo">
-      <image wx:if="{{back == 'yes'}}" class='icon' src="{{imgList.back}}" mode="scaleToFill"
-        lazy-load="false">
+      <image wx:if="{{back == 'yes'}}" class='icon' src="{{imgList.back}}" mode="scaleToFill" lazy-load="false">
       </image>
       <text>{{title}}</text>
     </view>
@@ -11,74 +10,73 @@
 </template>
 
 <script>
-import wepy from 'wepy';
-export default class Top extends wepy.component {
-  props = {
-    title: String,
-    backColor: String,
-    back: String
-  };
-
-  data = {
-    imgList: ''
-  };
-
-  components = {};
-
-  methods = {
-    backTo() {
-      if (this.back == 'yes') {
-        wepy.navigateBack({
-          delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
-        });
-        this.$emit('routerchange')
+  import wepy from 'wepy';
+  export default class Top extends wepy.component {
+    props = {
+      title: String,
+      backColor: String,
+      back: String,
+      backHome: String
+    };
+    data = {
+      imgList: ''
+    };
+    components = {};
+    methods = {
+      backTo() {
+        if (this.backHome == 'yes') {
+          wepy.redirectTo({
+            url: '/pages/index'
+          });
+        } else {
+          if (this.back == 'yes') {
+            wepy.navigateBack({
+              delta: 1, //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+            })
+            this.$emit('routerchange')
+          }
+        }
       }
-    }
-  };
-
-  events = {};
-
-  watch = {};
-
-  computed = {};
-
-  onLoad() {
-    this.imgList = this.$parent.$parent.globalData.imgList
+    };
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {
+      this.imgList = this.$parent.$parent.globalData.imgList
       this.$apply()
+    }
+    onShow() {}
   }
-
-  onShow() {}
-}
 </script>
 
 <style lang='less'>
-.topBanner {
-  height: 150rpx;
-  background: transparent;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  z-index: 100;
-  .backPart {
-    position: absolute;
-    left: 1rem;
-    bottom: 0;
-    height: 100rpx;
-    color: #fff;
-    font-size: 16px;
-    .icon {
-      width: 8px;
-      height: 14px;
-      margin-right: 8px;
+  .topBanner {
+    height: 150rpx;
+    background: transparent;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 100;
+    .backPart {
+      position: absolute;
+      left: 1rem;
+      bottom: 0;
+      height: 100rpx;
+      color: #fff;
+      font-size: 16px;
+      .icon {
+        width: 8px;
+        height: 14px;
+        margin-right: 8px;
+      }
     }
   }
-}
-.no {
-  background: transparent;
-}
-.black {
-  background: #141416;
-}
+  .no {
+    background: transparent;
+  }
+  .black {
+    background: #141416;
+  }
 </style>

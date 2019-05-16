@@ -19,13 +19,13 @@
             <image src="{{item.image}}" mode="aspectFill" lazy-load="true">
             </image>
             <!-- <image wx:if="{{item.id != 780&&item.id != 779&&item.id != 781}}" src="../resource/piano.jpg" mode="aspectFill" lazy-load="true">
-                    </image>
-                    <image wx:if="check(item.name,'吉他')" src="../resource/guitar.jpg" mode="aspectFill" lazy-load="true">
-                    </image>
-                    <image wx:if="{{item.id == 779}}" src="../resource/piano.jpg" mode="aspectFill" lazy-load="true">
-                    </image>
-                    <image wx:if="{{item.id == 781}}" src="../resource/common.jpg" mode="aspectFill" lazy-load="true">
-                    </image> -->
+                      </image>
+                      <image wx:if="check(item.name,'吉他')" src="../resource/guitar.jpg" mode="aspectFill" lazy-load="true">
+                      </image>
+                      <image wx:if="{{item.id == 779}}" src="../resource/piano.jpg" mode="aspectFill" lazy-load="true">
+                      </image>
+                      <image wx:if="{{item.id == 781}}" src="../resource/common.jpg" mode="aspectFill" lazy-load="true">
+                      </image> -->
           </view>
         </view>
       </repeat>
@@ -99,21 +99,23 @@
     events = {
       reachBottom: (val, self) => {
         console.log(val, self)
-        let num = Math.floor(this.lists.length / 10) + 1;
-        if (this.showContain && val == 'learn') {
-          if (this.choseIndex == 0) {
-            if (this.pageNumber != num) {
-              this.pageNumber = num;
-            }
-            console.log('search all list')
-            this.getLearn();
-          } else if (this.choseIndex == 1) {
-            if (this.typeParam.pageNumber != num) {
-              this.typeParam.pageNumber = num;
-            }
-            console.log('search category list')
-            this.getCategoryLesson(this.selectItem);
-          } else if (this.choseIndex == 2) {}
+        if (this.lists) {
+          let num = Math.floor(this.lists.length / 10) + 1;
+          if (this.showContain && val == 'learn') {
+            if (this.choseIndex == 0) {
+              if (this.pageNumber != num) {
+                this.pageNumber = num;
+              }
+              console.log('search all list')
+              this.getLearn();
+            } else if (this.choseIndex == 1) {
+              if (this.typeParam.pageNumber != num) {
+                this.typeParam.pageNumber = num;
+              }
+              console.log('search category list')
+              this.getCategoryLesson(this.selectItem);
+            } else if (this.choseIndex == 2) {}
+          }
         }
       }
     };
@@ -180,14 +182,14 @@
               }
             });
           }
-          if (this.lists) {
-            this.lists = this.lists.sort(function(a, b) {
-              let reg = new RegExp(/[0-9]+/)
-              let aNum = a.name.match(reg)
-              let bNum = b.name.match(reg)
-              return aNum - bNum;
-            });
-          }
+          // if (this.lists) {
+          //   this.lists = this.lists.sort(function(a, b) {
+          //     let reg = new RegExp(/[0-9]+/)
+          //     let aNum = a.name.match(reg)
+          //     let bNum = b.name.match(reg)
+          //     return aNum - bNum;
+          //   });
+          // }
           this.showContain = true;
           this.setLesson(this.lists)
           this.$apply();
