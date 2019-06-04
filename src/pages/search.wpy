@@ -229,6 +229,8 @@
         list.forEach(element => {
           if (element.typeName.indexOf('吉他') > -1) {
             element.image = '../resource/guitar.jpg'
+          }else if (element.typeName.indexOf('键盘') > -1 && element.typeName.indexOf('幼少') > -1 ) {
+            element.image = '../resource/youerjianpan.jpg'
           } else if (element.typeName.indexOf('键盘') > -1) {
             element.image = '../resource/piano.jpg'
           } else if (element.typeName.indexOf('机鼓') > -1) {

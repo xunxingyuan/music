@@ -5,7 +5,7 @@
       <view class="listItem {{item.permission?'permisson': 'unpermission'}}" @tap="toLesson({{item}})">
         <view class="msgTop flex">
           <view class="pic">
-            <image class="picBox"  src="{{item.image}}" mode="scaleToFill" lazy-load="false">
+            <image class="picBox"  src="{{item.image}}" mode="aspectFill" lazy-load="false">
             </image>
           </view>
           <view class="content">
