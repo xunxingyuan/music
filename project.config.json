@@ -11,6 +11,8 @@
 	"appid": "wx709c744315a078ec",
 	"projectname": "musiclesson",
 	"miniprogramRoot": "dist/",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
 	"condition": {
 		"search": {
 			"current": -1,

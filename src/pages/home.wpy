@@ -43,7 +43,7 @@
       navigationBarTitleText: ''
     };
     data = {
-      activeTab: 'learn',
+      activeTab: 'resorce',
       role: 'vistor',
       resourceData: [],
       pageNumber: 1
@@ -136,7 +136,7 @@
           this.$apply();
           break;
         case 'teacher':
-          this.activeTab = 'learn';
+          this.activeTab = 'resource';
           this.role = 'teacher';
           // wepy.setNavigationBarTitle({
           //   title: '学习'
@@ -145,7 +145,7 @@
           this.$apply();
           break;
         case 'student':
-          this.activeTab = 'learn';
+          this.activeTab = 'resource';
           this.role = 'student';
           // wepy.setNavigationBarTitle({
           //   title: '学习'
@@ -154,7 +154,7 @@
           this.$apply();
           break;
         default:
-          this.activeTab = 'learn';
+          this.activeTab = 'resource';
           this.$apply();
           break;
       }

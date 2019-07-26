@@ -4,8 +4,8 @@
     <top title='搜索' backColor="black" back='yes'></top>
     <view class='search'>
       <!-- <image class='icon' src="../resource/search1.png" mode="scaleToFill"
-              lazy-load="false">
-            </image> -->
+                lazy-load="false">
+              </image> -->
       <i class='icon iconfont icon-sousuo'></i>
       <input bindfocus="bindfocus" bindinput="bindKeyInput" class='searchBoxItem' type="text" placeholder="输入搜索内容" confirm-type="search" bindconfirm="searchData"> </input>
     </view>
@@ -16,14 +16,14 @@
       <view class='typeContain'>
         <radio @tap="setType('music')" checked="{{selectType === 'music'}}" name="id" /> 音频
         <!-- <view>
-                                    <view>
-                                      <checkbox-group @change="checkboxChange">
-                                        <label wx:for="{{musicType}}">
-                                          <checkbox value="{{item.name}}" checked="{{item.checked}}" name="id" /> {{item.value}}
-                                        </label>
-                                      </checkbox-group>
-                                    </view>
-                                  </view> -->
+                                      <view>
+                                        <checkbox-group @change="checkboxChange">
+                                          <label wx:for="{{musicType}}">
+                                            <checkbox value="{{item.name}}" checked="{{item.checked}}" name="id" /> {{item.value}}
+                                          </label>
+                                        </checkbox-group>
+                                      </view>
+                                    </view> -->
       </view>
       <view class='typeContain'>
         <radio @tap="setType('score')" checked="{{selectType === 'score'}}" name="id" /> 图谱
@@ -229,12 +229,14 @@
         list.forEach(element => {
           if (element.typeName.indexOf('吉他') > -1) {
             element.image = '../resource/guitar.jpg'
-          }else if (element.typeName.indexOf('键盘') > -1 && element.typeName.indexOf('幼少') > -1 ) {
+          } else if (element.typeName.indexOf('键盘') > -1 && element.typeName.indexOf('幼少') > -1) {
             element.image = '../resource/youerjianpan.jpg'
           } else if (element.typeName.indexOf('键盘') > -1) {
             element.image = '../resource/piano.jpg'
           } else if (element.typeName.indexOf('机鼓') > -1) {
             element.image = '../resource/jigu.jpg'
+          } else if (element.name.indexOf('弹唱') > -1) {
+            element.image = '../resource/tanchang.jpg'
           } else {
             element.image = '../resource/piano.jpg'
           }

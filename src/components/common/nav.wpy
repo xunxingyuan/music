@@ -20,7 +20,7 @@
     };
     data = {
       menu: [],
-      activeTab: 'learn'
+      activeTab: 'resource'
     };
     components = {};
     methods = {
@@ -38,17 +38,17 @@
       switch (role) {
         case 'vistor':
           this.menu = [{
-            name: '课程',
-            icon: 'home',
-            icon_src: 'home2',
-            active_src: 'home',
-            id: 'learn'
-          },{
             name: '曲库',
             icon: 'resorce',
             icon_src: 'music',
             active_src: 'music1',
             id: 'resource'
+          },{
+            name: '课程',
+            icon: 'home',
+            icon_src: 'home2',
+            active_src: 'home',
+            id: 'learn'
           }, {
             name: '我的',
             icon: 'mine',
@@ -60,49 +60,50 @@
           break;
         case 'teacher':
           this.menu = [{
+            name: '曲库',
+            icon: 'resorce',
+            icon_src: 'music',
+            active_src: 'music1',
+            id: 'resource'
+          },{
             name: '课程',
             icon: 'home',
             icon_src: 'home2',
             active_src: 'home',
             id: 'learn'
-          }, {
-            name: '曲库',
-            icon: 'resorce',
-            icon_src: 'music',
-            active_src: 'music1',
-            id: 'resource'
-          }, {
+          },  {
             name: '我的',
             icon: 'mine',
             icon_src: 'user',
             active_src: 'user1',
             id: 'me'
           }]
-          this.activeTab = 'learn'
+          this.activeTab = 'resource'
           break;
         case 'student':
           this.menu = [{
+            name: '曲库',
+            icon: 'resorce',
+            icon_src: 'music',
+            active_src: 'music1',
+            id: 'resource'
+          },{
             name: '课程',
             icon: 'home',
             icon_src: 'home',
             active_src: 'home2',
             id: 'learn'
-          }, {
-            name: '曲库',
-            icon: 'resorce',
-            icon_src: 'music',
-            active_src: 'music1',
-            id: 'resource'
-          }, {
+          },  {
             name: '我的',
             icon: 'mine',
             icon_src: 'user',
             active_src: 'user1',
             id: 'me'
           }]
-          this.activeTab = 'learn'
+          this.activeTab = 'resource'
           break;
         default:
+          this.activeTab = 'resource'
           break;
       }
       this.menu.forEach(element => {
